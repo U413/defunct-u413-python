@@ -15,6 +15,7 @@ u413 - an open-source BBS/terminal/PI-themed forum
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Boards:
+	1/0 -- Paradox*
 	i -- Imaginary* ?
 	-1 -- Negative*
 	0 -- All
@@ -124,3 +125,25 @@ Boards:
 	[spoiler(=label)]text[/spoiler] - Hides text under a label until the user clicks a button.
 	[list=start (ex: a A 1, none means unordered)][*]item 1 [*]item 2 [*] item 3 [/list] - Make an ordered or unordered list.
 	[table][row][column]stuff[/column][/row][/table] - Build a table.
+
+Requests sent to u413 should be JSON using the following format:
+{
+	parseAsHtml:true,
+	cli:"HELP"
+}
+
+Responses returned by u413 are JSON with the following format:
+{
+	"Command":"HELP",
+	"ContextStatus":"Disabled",
+	"ContextText":"BOARD 3",
+	"CurrentUser":",
+	"EditText":"This is text that goes into the CLI",
+	"SessionId":"The session ID (usually something like jJJ98s3jd90Jj45ovjsjv6JDc)",
+	"TerminalTitle":"Terminal - Visitor",
+	"ClearScreen":False,
+	"Exit":False,
+	"PasswordField":False,
+	"ScrollToBottom":True,
+	"DisplayItems":[]
+}
