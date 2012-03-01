@@ -1,0 +1,1539 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>U413.Domain</name>
+    </assembly>
+    <members>
+        <member name="T:U413.Domain.Repositories.Objects.TopicRepository">
+            <summary>
+            Repository for persisting topics to the Entity Framework data context.
+            </summary>
+        </member>
+        <member name="T:U413.Domain.Repositories.Interfaces.ITopicRepository">
+            <summary>
+            Repository for storing topics.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.ITopicRepository.AddTopic(U413.Domain.Entities.Topic)">
+            <summary>
+            Adds a topic to the repository.
+            </summary>
+            <param name="topic">The topic to be added.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.ITopicRepository.UpdateTopic(U413.Domain.Entities.Topic)">
+            <summary>
+            Updates an existing topic in the repository.
+            </summary>
+            <param name="topic">The topic to be updated.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.ITopicRepository.DeleteTopic(U413.Domain.Entities.Topic)">
+            <summary>
+            Delete a topic from the repository.
+            </summary>
+            <param name="topic">The topic to be deleted.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.ITopicRepository.GetTopic(System.Int64)">
+            <summary>
+            Get a topic by its unique ID.
+            </summary>
+            <param name="topicID">The unique ID of the topic.</param>
+            <returns>A topic entity.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.ITopicRepository.GetTopics(System.Int16,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            Get all topics on the specified board.
+            </summary>
+            <param name="boardID">The unique ID of the board.</param>
+            <param name="page">The specified page number.</param>
+            <param name="itemsPerPage">The number of items to display per page.</param>
+            <param name="isModerator">True if moderator-only topics should be included.</param>
+            <returns>An enumerable list of topics.</returns>
+        </member>
+        <member name="F:U413.Domain.Repositories.Objects.TopicRepository._entityContainer">
+            <summary>
+            Every repository requires an instance of the Entity Framework data context.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.TopicRepository.AddTopic(U413.Domain.Entities.Topic)">
+            <summary>
+            Adds a topic to the data context.
+            </summary>
+            <param name="topic">The topic to be added.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.TopicRepository.UpdateTopic(U413.Domain.Entities.Topic)">
+            <summary>
+            Updates an existing topic in the data context.
+            </summary>
+            <param name="topic">The topic to be updated.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.TopicRepository.DeleteTopic(U413.Domain.Entities.Topic)">
+            <summary>
+            Deletes a topic from the data context.
+            </summary>
+            <param name="topic">The topic to be deleted.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.TopicRepository.GetTopic(System.Int64)">
+            <summary>
+            Gets a topic from the data context by its unique ID.
+            </summary>
+            <param name="topicId">The unique ID of the topic.</param>
+            <returns>A topic entity.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.TopicRepository.GetTopics(System.Int16,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            Retrieve all topics for the specified board.
+            </summary>
+            <param name="boardId">The unique ID of the board.</param>
+            <param name="page">The page number.</param>
+            <param name="itemsPerPage">The number of items to display per page.</param>
+            <param name="isModerator">True if moderator-only topics should be included.</param>
+            <returns>An enumerable list of topics.</returns>
+        </member>
+        <member name="T:U413.Domain.Repositories.Interfaces.IShortUrlRepository">
+            <summary>
+            Repository for storing short URLs.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IShortUrlRepository.AddShortUrl(U413.Domain.Entities.ShortURL)">
+            <summary>
+            Add short URL to repository.
+            </summary>
+            <param name="shortUrl">The short URL to be added.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IShortUrlRepository.DeleteShortUrl(U413.Domain.Entities.ShortURL)">
+            <summary>
+            Delete short URL from the repository.
+            </summary>
+            <param name="shortUrl">The short URL to be deleted.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IShortUrlRepository.GetShortUrl(System.Int64)">
+            <summary>
+            Get short URL by it's unique ID.
+            </summary>
+            <param name="shortUrlID">The unique ID of the short URL.</param>
+            <returns>A short URL entity.</returns>
+        </member>
+        <member name="T:U413.Domain.Entities.Topic">
+            <summary>
+            Extension methods for the Topic entity.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Entities.Topic.IsModsOnly">
+            <summary>
+            Checks if the topic or board is moderator-only.
+            </summary>
+            <returns>True if the topic or its board is moderator-only.</returns>
+        </member>
+        <member name="T:U413.Domain.Entities.User">
+            <summary>
+            Extensions for the User entity.
+            </summary>
+        </member>
+        <member name="T:U413.Domain.Entities.Reply">
+            <summary>
+            Extension methods for the Reply entity.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Entities.Reply.IsModsOnly">
+            <summary>
+            Checks if the reply, the topic, or the board is moderator only.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:U413.Domain.Commands.Interfaces.ICommand">
+            <summary>
+            A command that is available for execution by the terminal API.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Commands.Interfaces.ICommand.Invoke(System.String[])">
+            <summary>
+            Executes the command's function and returns a command result.
+            </summary>
+            <param name="args">The arguments passed in from the terminal API.</param>
+            <returns>A command result containing usable information by the UI.</returns>
+        </member>
+        <member name="P:U413.Domain.Commands.Interfaces.ICommand.CommandResult">
+            <summary>
+            The command result created by the terminal API.
+            The command can modify and add to this result and return it to the terminal API.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Commands.Interfaces.ICommand.AvailableCommands">
+            <summary>
+            A list of commands available to the user.
+            The terminal API should set this to the list of commands that are available to the user.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Commands.Interfaces.ICommand.Roles">
+            <summary>
+            The roles that the command is allowed to run under.
+            Note: You can use role templates to simplify what this property returns.
+            Example: RoleTemplates.Visitors
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Commands.Interfaces.ICommand.Name">
+            <summary>
+            The name of the command.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Commands.Interfaces.ICommand.Parameters">
+            <summary>
+            Parameters that can be supplied in the order they should be supplied.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Commands.Interfaces.ICommand.Description">
+            <summary>
+            A brief description of the command. If ShowHelp is true then this is displayed in the help menu.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Commands.Interfaces.ICommand.ShowHelp">
+            <summary>
+            True if the command should be shown in the help menu.
+            Setting this to false can be useful for non-user commands such as INITIALIZE or for hidden commands.
+            </summary>
+        </member>
+        <member name="T:U413.Domain.Repositories.Objects.BanRepository">
+            <summary>
+            A repository for persisting bans to the Entity Framework data context.
+            </summary>
+        </member>
+        <member name="T:U413.Domain.Repositories.Interfaces.IBanRepository">
+            <summary>
+            A repository to store bans.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IBanRepository.GetBanBy_User(System.String)">
+            <summary>
+            Gets a ban by the banned user.
+            </summary>
+            <param name="username">The user who has been banned.</param>
+            <returns>A ban entity.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IBanRepository.AddBan(U413.Domain.Entities.Ban)">
+            <summary>
+            Add a ban to the repository.
+            </summary>
+            <param name="ban">The ban to be added.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IBanRepository.UpdateBan(U413.Domain.Entities.Ban)">
+            <summary>
+            Updates an existing ban in the repository.
+            </summary>
+            <param name="ban">The ban to be updated.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IBanRepository.DeleteBan(U413.Domain.Entities.Ban)">
+            <summary>
+            Delete a ban from the repository.
+            </summary>
+            <param name="ban">The ban to be deleted.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IBanRepository.SaveChanges">
+            <summary>
+            Instruct the repository to persist changes to the underlying data store.
+            </summary>
+        </member>
+        <member name="F:U413.Domain.Repositories.Objects.BanRepository._entityContainer">
+            <summary>
+            Every repository requires an instance of the Entity Framework data context.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.BanRepository.GetBanBy_User(System.String)">
+            <summary>
+            Get a ban by the banned user.
+            </summary>
+            <param name="username">The banned user.</param>
+            <returns>A ban entity.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.BanRepository.AddBan(U413.Domain.Entities.Ban)">
+            <summary>
+            Add a ban to the data context.
+            </summary>
+            <param name="ban">The ban to be added.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.BanRepository.UpdateBan(U413.Domain.Entities.Ban)">
+            <summary>
+            This method is not used. Please just call SaveChanges().
+            </summary>
+            <param name="message">The ban to be updated.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.BanRepository.DeleteBan(U413.Domain.Entities.Ban)">
+            <summary>
+            Deletes a ban from the data context.
+            </summary>
+            <param name="ban">The ban to be deleted.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.BanRepository.SaveChanges">
+            <summary>
+            Persist changes to the data context.
+            </summary>
+        </member>
+        <member name="T:U413.Domain.Repositories.Interfaces.IUserRepository">
+            <summary>
+            Repository for storing users.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IUserRepository.AddUser(U413.Domain.Entities.User)">
+            <summary>
+            Add user to the repository.
+            </summary>
+            <param name="user">The user to be added.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IUserRepository.UpdateUser(U413.Domain.Entities.User)">
+            <summary>
+            Update an existing user in the repository.
+            </summary>
+            <param name="user">The user to be updated.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IUserRepository.DeleteUser(U413.Domain.Entities.User)">
+            <summary>
+            Delete a user from the repository.
+            </summary>
+            <param name="user">The user to be deleted.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IUserRepository.GetUser(System.String)">
+            <summary>
+            Get a user by the username.
+            </summary>
+            <param name="username">The name of the user.</param>
+            <returns>A user entity.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IUserRepository.CheckUserExists(System.String)">
+            <summary>
+            Check if the username exists.
+            </summary>
+            <param name="username">The desired username.</param>
+            <returns>True if the username exists.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IUserRepository.GetStoredUsername(System.String)">
+            <summary>
+            Get the stored version of a username.
+            Note: Preserves casing.
+            </summary>
+            <param name="username">The name of the user.</param>
+            <returns>A correctly cased username.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IUserRepository.GetLoggedInUsers">
+            <summary>
+            Get all users active within the last ten minutes.
+            </summary>
+            <returns>An enumerable list of users.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IUserRepository.AddRoleToUser(U413.Domain.Entities.User,System.String)">
+            <summary>
+            Associate a role with the user.
+            </summary>
+            <param name="roleName">The name of the role to associate.</param>
+        </member>
+        <member name="T:U413.Domain.Repositories.Interfaces.IAliasRepository">
+            <summary>
+            A repository for storing command aliases.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IAliasRepository.AddAlias(U413.Domain.Entities.Alias)">
+            <summary>
+            Adds an alias to the repository.
+            </summary>
+            <param name="alias">The alias to be added.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IAliasRepository.DeleteAlias(U413.Domain.Entities.Alias)">
+            <summary>
+            Deletes an alias from the repository.
+            </summary>
+            <param name="alias">The alias to be deleted.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IAliasRepository.GetAlias(System.String,System.String)">
+            <summary>
+            Obtains an alias by username and shortcut.
+            </summary>
+            <param name="username">The name of the user specifying the alias.</param>
+            <param name="shortcut">The shortcut defined by the user.</param>
+            <returns>A command alias.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IAliasRepository.GetAliases(System.String)">
+            <summary>
+            Get all aliases by username.
+            </summary>
+            <param name="username">The name of the user.</param>
+            <returns>An enumerable list of aliases.</returns>
+        </member>
+        <member name="T:U413.Domain.Entities.ShortURL">
+            <summary>
+            Extension methods for the ShortURL entity.
+            </summary>
+        </member>
+        <member name="T:U413.Domain.Repositories.Objects.ShortUrlRepository">
+            <summary>
+            Repository for persisting short URLs to the Entity Framework data context.
+            </summary>
+        </member>
+        <member name="F:U413.Domain.Repositories.Objects.ShortUrlRepository._entityContainer">
+            <summary>
+            Every repository requires an instance of the Entity Framework data context.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.ShortUrlRepository.AddShortUrl(U413.Domain.Entities.ShortURL)">
+            <summary>
+            Adds a short URL to the data context.
+            </summary>
+            <param name="shortUrl">The short URL to be added.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.ShortUrlRepository.DeleteShortUrl(U413.Domain.Entities.ShortURL)">
+            <summary>
+            Deletes a short URL from the data context.
+            </summary>
+            <param name="shortUrl">The short URL to be deleted.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.ShortUrlRepository.GetShortUrl(System.Int64)">
+            <summary>
+            Gets a short URL from the data context by its unique ID.
+            </summary>
+            <param name="shortUrlID">The unique ID of the short URL.</param>
+            <returns>A short URL entity.</returns>
+        </member>
+        <member name="T:U413.Domain.Repositories.Interfaces.IBoardRepository">
+            <summary>
+            A repository for storing boards.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IBoardRepository.AddBoard(U413.Domain.Entities.Board)">
+            <summary>
+            Adds a board to the repository.
+            </summary>
+            <param name="board">The board to be added.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IBoardRepository.UpdateBoard(U413.Domain.Entities.Board)">
+            <summary>
+            Updates an existing board in the repository.
+            </summary>
+            <param name="board">The board to be updated.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IBoardRepository.DeleteBoard(U413.Domain.Entities.Board)">
+            <summary>
+            Deletes a board from the repository.
+            </summary>
+            <param name="board">The board to be deleted.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IBoardRepository.GetBoard(System.Int16)">
+            <summary>
+            Retrieve a board by its unique ID.
+            </summary>
+            <param name="boardID">The unique ID of the desired board.</param>
+            <returns>A board entity.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IBoardRepository.GetBoards(System.Boolean)">
+            <summary>
+            Retrieve an enumerable list of all boards.
+            </summary>
+            <param name="loadModeratorBoards">True if moderator-only boards should be included.</param>
+            <returns>An enumerable list of boards.</returns>
+        </member>
+        <member name="T:U413.Domain.Enums.DisplayMode">
+            <summary>
+            Represents the available display options for some text.
+            </summary>
+        </member>
+        <member name="T:U413.Domain.Entities.Board">
+            <summary>
+            Extension methods for the Board entity.
+            </summary>
+        </member>
+        <member name="T:U413.Domain.Utilities.BBCodeUtility">
+            <summary>
+            Utilities for handling tag conversion. The UI can utilize this utility when parsing text containing BBCode tags.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Utilities.BBCodeUtility.ConvertTagsToHtml(System.String)">
+            <summary>
+            Find formatting tags in the text and transform them into the appropriate HTML.
+            </summary>
+            <param name="text">The text to be transformed.</param>
+            <returns>A formatted string.</returns>
+        </member>
+        <member name="M:U413.Domain.Utilities.BBCodeUtility.SimplifyComplexTags(System.String,U413.Domain.Repositories.Interfaces.IReplyRepository,System.Boolean)">
+            <summary>
+            Find formatting tags in the text and transform them into static tags.
+            </summary>
+            <param name="text">The text to be transformed.</param>
+            <param name="replyRepository">An instance of IReplyRepository.</param>
+            <param name="isModerator">True if the current user is a moderator.</param>
+            <returns>A formatted string.</returns>
+        </member>
+        <member name="M:U413.Domain.Utilities.BBCodeUtility.TransformTags(System.String,System.Func{System.String,System.String,System.String,System.String})">
+            <summary>
+            Match all tags in the text with a regular expression.
+            </summary>
+            <param name="input">The text to be matched against.</param>
+            <param name="handleTags">A function to interpret and transform tags.</param>
+            <returns>Text with transformed tags.</returns>
+        </member>
+        <member name="M:U413.Domain.Utilities.BBCodeUtility.ConfirmHttp(System.String)">
+            <summary>
+            Checks if a string begins with http. If not, it adds it.
+            </summary>
+            <param name="url">The URL to check.</param>
+            <returns>URL complete with http://</returns>
+        </member>
+        <member name="T:U413.Domain.Repositories.Objects.UserRepository">
+            <summary>
+            Repository for persisting users to the Entity Framework data context.
+            </summary>
+        </member>
+        <member name="F:U413.Domain.Repositories.Objects.UserRepository._entityContainer">
+            <summary>
+            Every repository requires an instance of the Entity Framework data context.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.UserRepository.AddUser(U413.Domain.Entities.User)">
+            <summary>
+            Adds a user to the data context.
+            </summary>
+            <param name="user">The user to be added.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.UserRepository.UpdateUser(U413.Domain.Entities.User)">
+            <summary>
+            Updates an existing user in the data context.
+            </summary>
+            <param name="user">The user to be updated.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.UserRepository.DeleteUser(U413.Domain.Entities.User)">
+            <summary>
+            Deletes a user from the data context.
+            </summary>
+            <param name="user">The user to be deleted.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.UserRepository.GetUser(System.String)">
+            <summary>
+            Retrieve user from the data context by the username.
+            </summary>
+            <param name="username">The name of the user.</param>
+            <returns>A user entity.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.UserRepository.CheckUserExists(System.String)">
+            <summary>
+            Check if a user currently exists in the data context.
+            </summary>
+            <param name="username">The desired username.</param>
+            <returns>True if the user already exists.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.UserRepository.GetStoredUsername(System.String)">
+            <summary>
+            Get the stored version of a username.
+            Note: Preserves casing.
+            </summary>
+            <param name="username">The name of the user.</param>
+            <returns>A correctly cased username.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.UserRepository.GetLoggedInUsers">
+            <summary>
+            Retrieve all users from the data context that have been active within the last ten minutes.
+            </summary>
+            <returns>An enumerable list of users.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.UserRepository.AddRoleToUser(U413.Domain.Entities.User,System.String)">
+            <summary>
+            Associate a role with the user.
+            </summary>
+            <param name="roleName">The name of the role to associate.</param>
+        </member>
+        <member name="T:U413.Domain.Settings.RoleTemplates">
+            <summary>
+            Pre-defined role templates for use inside command classes.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Settings.RoleTemplates.Visitor">
+            <summary>
+            Returns only the visitor role.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Settings.RoleTemplates.OnlyUsers">
+            <summary>
+            Returns only the user role.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Settings.RoleTemplates.ModsAndUsers">
+            <summary>
+            Returns the moderator and user roles.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Settings.RoleTemplates.AllLoggedIn">
+            <summary>
+            Returns all roles for logged in users.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Settings.RoleTemplates.Everyone">
+            <summary>
+            Returns all roles.
+            </summary>
+        </member>
+        <member name="T:U413.Domain.Repositories.Objects.ReplyRepository">
+            <summary>
+            Repository for persisting data to the Entity Framework data context.
+            </summary>
+        </member>
+        <member name="T:U413.Domain.Repositories.Interfaces.IReplyRepository">
+            <summary>
+            Repository for storing topic replies.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IReplyRepository.AddReply(U413.Domain.Entities.Reply)">
+            <summary>
+            Adds a reply to the repository.
+            </summary>
+            <param name="reply">The reply to be added.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IReplyRepository.UpdateReply(U413.Domain.Entities.Reply)">
+            <summary>
+            Updates an existing reply in the repository.
+            </summary>
+            <param name="reply">The reply to be added.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IReplyRepository.DeleteReply(U413.Domain.Entities.Reply)">
+            <summary>
+            Deletes a reply from the repository.
+            </summary>
+            <param name="reply">The reply to be deleted.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IReplyRepository.GetReply(System.Int64)">
+            <summary>
+            Get a reply by its unique ID.
+            </summary>
+            <param name="replyID">The unique ID of the reply.</param>
+            <returns>A reply entity.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IReplyRepository.GetReplies(System.Int64,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            Get all replies for a single topic.
+            </summary>
+            <param name="topicID">The unique ID of the topic.</param>
+            <param name="isModerator">True if moderator-only replies should be returned.</param>
+            <returns>An enumerable list of replies.</returns>
+        </member>
+        <member name="F:U413.Domain.Repositories.Objects.ReplyRepository._entityContainer">
+            <summary>
+            Every repository requires an instance of the Entity Framework data context.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.ReplyRepository.AddReply(U413.Domain.Entities.Reply)">
+            <summary>
+            Adds a reply to the data context.
+            </summary>
+            <param name="reply">The reply to be added.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.ReplyRepository.UpdateReply(U413.Domain.Entities.Reply)">
+            <summary>
+            Updates an existing reply in the data context.
+            </summary>
+            <param name="reply">The reply to be updated.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.ReplyRepository.DeleteReply(U413.Domain.Entities.Reply)">
+            <summary>
+            Deletes a reply from the data context.
+            </summary>
+            <param name="reply">The reply to be deleted.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.ReplyRepository.GetReply(System.Int64)">
+            <summary>
+            Gets a reply from the data context by its unique ID.
+            </summary>
+            <param name="replyID">The unique ID of the reply.</param>
+            <returns>A reply entity.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.ReplyRepository.GetReplies(System.Int64,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            Gets all replies from the data context by the unique topic ID.
+            </summary>
+            <param name="topicID">The unique topic ID.</param>
+            <param name="isModerator">True if moderator-only replies should be included.</param>
+            <returns>An enumerable list of replies.</returns>
+        </member>
+        <member name="T:U413.Domain.ExtensionMethods.DateTimeExtensions">
+            <summary>
+            Extensions to DateTime objects.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.ExtensionMethods.DateTimeExtensions.ConvertToTimezone(System.DateTime,System.String)">
+            <summary>
+            Extension to convert a DateTime to the specified timezone.
+            </summary>
+            <param name="dateTime">The DateTime to be converted.</param>
+            <param name="timeZone">The time zone to convert the date/time to.</param>
+            <returns>A modified DateTime object.</returns>
+        </member>
+        <member name="M:U413.Domain.ExtensionMethods.DateTimeExtensions.TimePassed(System.DateTime)">
+            <summary>
+            Total time passed since specified date.
+            </summary>
+            <param name="dateTime">Date to subtract from current date.</param>
+            <returns>string</returns>
+        </member>
+        <member name="M:U413.Domain.ExtensionMethods.DateTimeExtensions.TimeUntil(System.DateTime)">
+            <summary>
+            Total time passed since specified date.
+            </summary>
+            <param name="dateTime">Date to subtract from current date.</param>
+            <returns>string</returns>
+        </member>
+        <member name="M:U413.Domain.ExtensionMethods.DateTimeExtensions.Pluralize(System.Int32,System.String)">
+            <summary>
+            Pluralizes the specified noun, based on the specified count.
+            </summary>
+            <param name="num">The count.</param>
+            <param name="noun">Noun, pluralizable by adding 's' to the end.</param>
+            <returns>string</returns>
+        </member>
+        <member name="T:U413.Domain.Repositories.Interfaces.IVariableRepository">
+            <summary>
+            A repository for storing application variables.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IVariableRepository.ModifyVariable(U413.Domain.Entities.Variable)">
+            <summary>
+            Adds or edits a variable in the repository.
+            </summary>
+            <param name="variable">The variable to be added.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IVariableRepository.GetVariable(System.String)">
+            <summary>
+            Gets a variable from the variable repository.
+            </summary>
+            <param name="name">The name of the variable.</param>
+        </member>
+        <member name="T:U413.Domain.Repositories.Interfaces.IChannelStatusRepository">
+            <summary>
+            A repository to store channel statuses.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IChannelStatusRepository.GetChannelStatusBy_ChannelAndUsername(System.String,System.String)">
+            <summary>
+            Get channel status by channel and username.
+            </summary>
+            <param name="channel">The name of the channel.</param>
+            <param name="username">The name of the user.</param>
+            <returns>A channel status entity.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IChannelStatusRepository.AddChannelStatus(U413.Domain.Entities.ChannelStatus)">
+            <summary>
+            Adds a channel status to the repository.
+            </summary>
+            <param name="channelStatus">The channel status to be added.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IChannelStatusRepository.UpdateChannelStatus">
+            <summary>
+            Updates an existing channel status in the repository.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IChannelStatusRepository.DeleteChannelStatus(U413.Domain.Entities.ChannelStatus)">
+            <summary>
+            Deletes a channel status from the repository.
+            </summary>
+            <param name="channelStatus">The channel status to be deleted.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IChannelStatusRepository.GetOpenChannelsBy_Username(System.String)">
+            <summary>
+            Get a list of channel statuses by username.
+            </summary>
+            <param name="username">The name of the user.</param>
+            <returns>An enumerable list of channel statuses.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IChannelStatusRepository.GetActiveUsersBy_Channel(System.String)">
+            <summary>
+            Get a list of active channel statuses by channel.
+            </summary>
+            <param name="channel">The channel name.</param>
+            <returns>An enumerable list of channel statuses.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IChannelStatusRepository.GetIdleUsersBy_Channel(System.String)">
+            <summary>
+            Get a list of idle channel statuses by channel.
+            </summary>
+            <param name="channel">The channel name.</param>
+            <returns>An enumerable list of channel statuses.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IChannelStatusRepository.GetActiveChannels">
+            <summary>
+            Get all active channel statuses.
+            </summary>
+            <returns>An enumerable list of channel statuses.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IChannelStatusRepository.ChannelOpen(System.String,System.String)">
+            <summary>
+            Check if a channel is open.
+            </summary>
+            <param name="username">The name of the user.</param>
+            <param name="channel">The channel name.</param>
+            <returns>True if the channel is open.</returns>
+        </member>
+        <member name="T:U413.Domain.Objects.CommandResult">
+            <summary>
+            This object contains information that is usable by a UI project in determining what and how to display the results of the terminal API.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Objects.CommandResult.#ctor">
+            <summary>
+            Set default values for certain properties.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Objects.CommandResult.WriteLine">
+            <summary>
+            Writes a blank line to the display.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Objects.CommandResult.WriteLine(System.String,System.Object[])">
+            <summary>
+            Writes a line of text to the display.
+            </summary>
+            <param name="text">The text to be written.</param>
+            <param name="args">An object or objects to write using format.</param>
+        </member>
+        <member name="M:U413.Domain.Objects.CommandResult.WriteLine(U413.Domain.Enums.DisplayMode,System.String,System.Object[])">
+            <summary>
+            Writes a line of text to the display with custom display options.
+            </summary>
+            /// <param name="displayMode">The custom display mode.</param>
+            <param name="text">The text to be written.</param>
+            <param name="args">An object or objects to write using format.</param>
+        </member>
+        <member name="P:U413.Domain.Objects.CommandResult.Command">
+            <summary>
+            The command that was executed.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Objects.CommandResult.CommandContext">
+            <summary>
+            The command context as set by the executed command.
+            This should usually be passed back into the terminal API on the next execution.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Objects.CommandResult.Exit">
+            <summary>
+            True if the UI should close down the terminal.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Objects.CommandResult.ClearScreen">
+            <summary>
+            True if the UI should clear the screen.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Objects.CommandResult.CurrentUser">
+            <summary>
+            The currently logged in user.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Objects.CommandResult.PasswordField">
+            <summary>
+            True if there is a password prompt pending.
+            This is useful if the UI wishes to obfuscate the password being entered by the user.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Objects.CommandResult.EditText">
+            <summary>
+            Text to be edited. UI should populate command line with this text.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Objects.CommandResult.Display">
+            <summary>
+            The display array contains various objects to be displayed.
+            The UI should know how to interpret each one and display them correctly.
+            
+            The available types are:
+            
+            string - should output directly to terminal.
+            int - should pause for a specified time.
+            </summary>
+        </member>
+        <member name="T:U413.Domain.Objects.CommandContext">
+            <summary>
+            The command context describes the current state of the terminal.
+            It helps the terminal API make decisions about how to execute commands.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Objects.CommandContext.SetPrompt(System.String,System.String[],System.String)">
+            <summary>
+            Sets up a prompt where all data from the command line will be dumped into the PromptData collection.
+            </summary>
+            <param name="command">The command to be set as the contexted command.</param>
+            <param name="args">The arguments to be set as the contexted arguments.</param>
+            <param name="text">The custom text to display next to the command line.</param>
+        </member>
+        <member name="M:U413.Domain.Objects.CommandContext.Set(U413.Domain.Enums.ContextStatus,System.String,System.String[],System.String)">
+            <summary>
+            Set the current command context.
+            </summary>
+            <param name="status">The status of the context you are setting.</param>
+            <param name="command">The command to be set as the contexted command.</param>
+            <param name="args">The arguments to be set as the contexted arguments.</param>
+            <param name="text">The custom text to display next to the command line.</param>
+        </member>
+        <member name="M:U413.Domain.Objects.CommandContext.Backup">
+            <summary>
+            Save the current command context as the previous command context.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Objects.CommandContext.Restore">
+            <summary>
+            Restore the current command context to the state of the previous command context.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Objects.CommandContext.Deactivate">
+            <summary>
+            Disable the current command context.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Objects.CommandContext.Command">
+            <summary>
+            The currently contexted command.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Objects.CommandContext.Args">
+            <summary>
+            The currently contexted arguments.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Objects.CommandContext.Text">
+            <summary>
+            The console text to display for the current context.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Objects.CommandContext.PromptData">
+            <summary>
+            Custom string array for storing multi-word values from prompts.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Objects.CommandContext.CurrentPage">
+            <summary>
+            The currently displayed page.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Objects.CommandContext.Status">
+            <summary>
+            The current status of the context.
+            
+            Options:
+            
+            Disabled - The context is disabled.
+            Passive - The context contains data but normal command execution should be attempted first.
+            Forced - The context has data and must be used for command execution.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Objects.CommandContext.PreviousContext">
+            <summary>
+            Stores the previous command context when the Backup method is called.
+            </summary>
+        </member>
+        <member name="T:U413.Domain.ExtensionMethods.StringExtensions">
+            <summary>
+            Extentions to string types.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.ExtensionMethods.StringExtensions.IsNullOrEmpty(System.String[])">
+            <summary>
+            Checks if a string array is null or contains no elements.
+            </summary>
+            <param name="arg">The value to be avaluated.</param>
+            <returns>True if the array is null or contains no elements.</returns>
+        </member>
+        <member name="M:U413.Domain.ExtensionMethods.StringExtensions.IsShort(System.String)">
+            <summary>
+            Check if the value of the string is a 16-bit integer.
+            </summary>
+            <param name="arg">The value to be evaluated.</param>
+            <returns>True if the value is a 16-bit integer.</returns>
+        </member>
+        <member name="M:U413.Domain.ExtensionMethods.StringExtensions.IsInt(System.String)">
+            <summary>
+            Check if the value of the string is a 32-bit integer.
+            </summary>
+            <param name="arg">The value to be evaluated.</param>
+            <returns>True if the value is a 32-bit integer.</returns>
+        </member>
+        <member name="M:U413.Domain.ExtensionMethods.StringExtensions.IsLong(System.String)">
+            <summary>
+            Check if the value of the string is a 64-bit integer.
+            </summary>
+            <param name="arg">The value to be evaluated.</param>
+            <returns>True if the value is a 64-bit integer.</returns>
+        </member>
+        <member name="M:U413.Domain.ExtensionMethods.StringExtensions.ToShort(System.String)">
+            <summary>
+            Convert the string to a 16-bit integer.
+            </summary>
+            <param name="arg">The value to be converted.</param>
+            <returns>A 16-bit integer.</returns>
+        </member>
+        <member name="M:U413.Domain.ExtensionMethods.StringExtensions.ToInt(System.String)">
+            <summary>
+            Convert the string to a 32-bit integer.
+            </summary>
+            <param name="arg">The value to be converted.</param>
+            <returns>A 32-bit integer.</returns>
+        </member>
+        <member name="M:U413.Domain.ExtensionMethods.StringExtensions.ToLong(System.String)">
+            <summary>
+            Convert the string to a 64-bit integer.
+            </summary>
+            <param name="arg">The value to be converted.</param>
+            <returns>A 64-bit integer.</returns>
+        </member>
+        <member name="M:U413.Domain.ExtensionMethods.StringExtensions.Is(System.String,System.String)">
+            <summary>
+            Short-hand method for comparing two strings while ignoring case.
+            </summary>
+            <param name="arg">The string initiating the comparison.</param>
+            <param name="valueToCompare">The string to compare.</param>
+            <returns>True if the two strings are equal.</returns>
+        </member>
+        <member name="T:U413.Domain.TerminalApi">
+            <summary>
+            The terminal API is the entry point to U413.Domain.
+            Pass in a command string adn U413.Domain will parse it and execute it.
+            Set a command context first and U413.Domain will handle the command context as well.
+            Set a user and U413.Domain will automatically determine which commands are avialable based on the user's roles.
+            </summary>
+        </member>
+        <member name="F:U413.Domain.TerminalApi._currentUser">
+            <summary>
+            The current user. Use this for desktop applications where the User object can stay in memory the whole time.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.TerminalApi.#ctor(System.Collections.Generic.List{U413.Domain.Commands.Interfaces.ICommand},U413.Domain.Repositories.Interfaces.IUserRepository,U413.Domain.Repositories.Interfaces.IAliasRepository,U413.Domain.Repositories.Interfaces.IMessageRepository)">
+            <summary>
+            Creates a new instance of the API. Ideally this should be created by Ninject to ensure all dependencies are handled appropriately.
+            Note: A U413Bindings class lives in the U413.Domain.Ninject.BindingModules namespace. Use this when building your Ninject kernel to ensure proper dependency injection.
+            
+            Sampel: IKernel kernel = new StandardKernel(new U413Bindings());
+            </summary>
+            <param name="commands">A list of all commands available to the application.</param>
+            <param name="userRepository">The user repository used to retrieve the current user from the database.</param>
+        </member>
+        <member name="M:U413.Domain.TerminalApi.ExecuteCommand(System.String)">
+            <summary>
+            Accepts a command string and handles the parsing and execution of the command and the included arguments.
+            </summary>
+            <param name="commandString">The command string. Usually a string passed in from a command line interface by the user.</param>
+            <returns>A CommandResult option containing properties relevant to how data should be processed by the UI.</returns>
+        </member>
+        <member name="M:U413.Domain.TerminalApi.DisplayHelp(System.Collections.Generic.IEnumerable{U413.Domain.Commands.Interfaces.ICommand},System.String[],U413.Domain.Objects.CommandResult)">
+            <summary>
+            Display help information for all available commands, or invoke the help argument for a specifically supplied command.
+            </summary>
+            <param name="commands">The list of available commands.</param>
+            <param name="args">Any arguments passed in.</param>
+            <returns>A CommandResult option containing properties relevant to how data should be processed by the UI.</returns>
+        </member>
+        <member name="P:U413.Domain.TerminalApi.ParseAsHtml">
+            <summary>
+            If set to true then U413.Domain will automatically parse the display results for HTML viewing.
+            Line-breaks will be turned into <br /> tags.
+            BBCode tags will be parsed and turned into their HTML equivalents.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.TerminalApi.Username">
+            <summary>
+            The current username. This is an alternative to setting CurrentUser.
+            Setting the username will cause the terminal API to pull the user from the database based on their username.
+            This is ideal for web applications where a User object cannot be held in memory the entire time and must be retrieved on each request.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.TerminalApi.CommandContext">
+            <summary>
+            The command context tells the terminal API what state the application is in.
+            It must be set before calling the ExecuteCommand method and it is returned as part of the command result returned by ExecuteCommand.
+            
+            Options:
+            
+            Disabled - normal command execution will occur.
+            Passive - normal command execution will occur. If the command is unrecognized then it attempts to use the command context and appends the current command string as additional arguments to the contexted command.
+            Forced - The contexted command will be used no matter what and the command string will be appended as additional arguments. If the "CANCEL" command is provided by itself then the context is restored to it's state before it was set to forced.
+            </summary>
+        </member>
+        <member name="T:U413.Domain.Repositories.Interfaces.IMessageRepository">
+            <summary>
+            A repository to store messages.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IMessageRepository.GetMessage(System.Int64)">
+            <summary>
+            Gets a message by its unique ID.
+            </summary>
+            <param name="messageId">The unique ID of the message.</param>
+            <returns>A message entity.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IMessageRepository.GetMessages(System.String,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            Get received messages for user.
+            </summary>
+            <param name="username">The name of the user.</param>
+            <param name="page">The page number.</param>
+            <param name="itemsPerPage">The number of items to display per page.</param>
+            <returns>An enumerable list of messages.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IMessageRepository.GetAllMessages(System.String,System.Boolean)">
+            <summary>
+            Retrieves a list of all messages from the data context for user.
+            </summary>
+            <param name="username">The name of the user.</param>
+            <param name="sent">True if retrieving sent messages.</param>
+            <returns>An enumerable list of messages.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IMessageRepository.AddMessage(U413.Domain.Entities.Message)">
+            <summary>
+            Add a message to the repository.
+            </summary>
+            <param name="message">The message to be added.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IMessageRepository.UpdateMessage(U413.Domain.Entities.Message)">
+            <summary>
+            Updates an existing message in the repository.
+            </summary>
+            <param name="message">The message to be updated.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IMessageRepository.DeleteMessage(U413.Domain.Entities.Message)">
+            <summary>
+            Delete a message from the repository.
+            </summary>
+            <param name="message">The message to be deleted.</param>
+        </member>
+        <member name="T:U413.Domain.Ninject.U413Bindings">
+            <summary>
+            This module will automatically register all U413.Domain related bindings.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Ninject.U413Bindings.Load">
+            <summary>
+            Load all U413 bindings.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Ninject.U413Bindings.BindEntityContainer">
+            <summary>
+            Register the entity container and pass in a hard-coded connection string.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Ninject.U413Bindings.BindCommands">
+            <summary>
+            Register all available U413 commands.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Ninject.U413Bindings.BindRepositories">
+            <summary>
+            Register all available repositories.
+            </summary>
+        </member>
+        <member name="T:U413.Domain.Settings.RegularExpressions">
+            <summary>
+            Static class containing common regular expression strings.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Settings.RegularExpressions.BBCodeTags">
+            <summary>
+            Expression to find all root-level BBCode tags. Use this expression recursively to obtain nested tags.
+            </summary>
+        </member>
+        <member name="T:U413.Domain.Repositories.Objects.AliasRepository">
+            <summary>
+            Repository for persisting aliases to the Entity Framework data context.
+            </summary>
+        </member>
+        <member name="F:U413.Domain.Repositories.Objects.AliasRepository._entityContainer">
+            <summary>
+            Every repository requires an instance of the Entity Framework data context.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.AliasRepository.AddAlias(U413.Domain.Entities.Alias)">
+            <summary>
+            Adds an alias to the data context.
+            </summary>
+            <param name="alias">The alias to be added.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.AliasRepository.DeleteAlias(U413.Domain.Entities.Alias)">
+            <summary>
+            Deletes an alias from the data context.
+            </summary>
+            <param name="alias">The alias to be deleted.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.AliasRepository.GetAlias(System.String,System.String)">
+            <summary>
+            Retrieves an alias from the data context by username and shortcut.
+            </summary>
+            <param name="username">The name of the user.</param>
+            <param name="shortcut">The shortcut name.</param>
+            <returns>An alias entity.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.AliasRepository.GetAliases(System.String)">
+            <summary>
+            Retrieves all aliases by username.
+            </summary>
+            <param name="username">The name of the user.</param>
+            <returns>An enumerable list of aliases.</returns>
+        </member>
+        <member name="T:U413.Domain.Objects.CollectionPage`1">
+            <summary>
+            Holds relevant information related to a page of a collection of information.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Objects.CollectionPage`1.Items">
+            <summary>
+            A page of items.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Objects.CollectionPage`1.TotalItems">
+            <summary>
+            Total number of items, regardless of page.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Objects.CollectionPage`1.TotalPages">
+            <summary>
+            The total number of pages.
+            </summary>
+        </member>
+        <member name="T:U413.Domain.Repositories.Objects.BoardRepository">
+            <summary>
+            A repository for persisting boards to the Entity Framework data context.
+            </summary>
+        </member>
+        <member name="F:U413.Domain.Repositories.Objects.BoardRepository._entityContainer">
+            <summary>
+            Every repository requires an instance of the Entity Framework data context.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.BoardRepository.AddBoard(U413.Domain.Entities.Board)">
+            <summary>
+            Adds a board to the data context.
+            </summary>
+            <param name="board">The board to be added.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.BoardRepository.UpdateBoard(U413.Domain.Entities.Board)">
+            <summary>
+            UPdates an existing board in the data context.
+            </summary>
+            <param name="board">The board to be updated.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.BoardRepository.DeleteBoard(U413.Domain.Entities.Board)">
+            <summary>
+            Deletes a board from the data context.
+            </summary>
+            <param name="board">The board to be deleted.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.BoardRepository.GetBoard(System.Int16)">
+            <summary>
+            Retrive a board from the data context by its unique ID.
+            </summary>
+            <param name="boardID">The unique ID of the board.</param>
+            <returns>A board entity.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.BoardRepository.GetBoards(System.Boolean)">
+            <summary>
+            Get all available discussion boards from the data context.
+            </summary>
+            <param name="isModerator">True if moderator-only boards should be included.</param>
+            <returns>An enumerable list of boards.</returns>
+        </member>
+        <member name="T:U413.Domain.Enums.ContextStatus">
+            <summary>
+            Represents the available options for a command context object.
+            </summary>
+        </member>
+        <member name="F:U413.Domain.Enums.ContextStatus.Disabled">
+            <summary>
+            No context is currently active.
+            </summary>
+        </member>
+        <member name="F:U413.Domain.Enums.ContextStatus.Passive">
+            <summary>
+            A context is active but existing commands take priority.
+            </summary>
+        </member>
+        <member name="F:U413.Domain.Enums.ContextStatus.Forced">
+            <summary>
+            A context is active and all data returned fromt he client (except for the cancel command)
+            will be passed to the active command method.
+            </summary>
+        </member>
+        <member name="T:U413.Domain.Repositories.Interfaces.IChatBufferItemRepository">
+            <summary>
+            Repository for storing chat buffer items.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IChatBufferItemRepository.AddChatBufferItem(U413.Domain.Entities.ChatBufferItem)">
+            <summary>
+            Adds a chat buffer item to the repository.
+            </summary>
+            <param name="chatBufferItem">The chat buffer item to be added.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IChatBufferItemRepository.UpdateChatBufferItem(U413.Domain.Entities.ChatBufferItem)">
+            <summary>
+            Updates a chat buffer item in the repository.
+            </summary>
+            <param name="chatBufferItem">The chat buffer item to be updated.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IChatBufferItemRepository.DeleteChatBufferItem(U413.Domain.Entities.ChatBufferItem)">
+            <summary>
+            Delete a chat buffer item from the repository.
+            </summary>
+            <param name="chatBufferItem">The chat buffer item to be deleted.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IChatBufferItemRepository.GetNewChatBufferItemsBy_IDAndChannel(System.Int64,System.String)">
+            <summary>
+            Obtain all new chat buffer items since specified chat buffer item ID.
+            </summary>
+            <param name="chatBufferItemID">The unique ID of the last received item.</param>
+            <param name="channel">The name of the channel.</param>
+            <returns>An enumerable list of chat buffer items.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Interfaces.IChatBufferItemRepository.GetLastChatBufferItemIDBy_Channel(System.String)">
+            <summary>
+            Get the last chat buffer item ID by channel name.
+            </summary>
+            <param name="channel">The name of the channel.</param>
+            <returns>A 64-bit integer unique ID.</returns>
+        </member>
+        <member name="T:U413.Domain.Repositories.Objects.MessageRepository">
+            <summary>
+            Repository for persisting messages to the Entity Framework data context.
+            </summary>
+        </member>
+        <member name="F:U413.Domain.Repositories.Objects.MessageRepository._entityContainer">
+            <summary>
+            Every repository requires an instance of the Entity Framework data context.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.MessageRepository.GetMessage(System.Int64)">
+            <summary>
+            Retrieves a message fromt he data context by its unique ID.
+            </summary>
+            <param name="messageId">The unique ID of the message.</param>
+            <returns>A message entity.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.MessageRepository.GetMessages(System.String,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            Retrieves a page of messages from the data context for a user.
+            </summary>
+            <param name="username">The name of the user.</param>
+            <param name="page">The page number.</param>
+            <param name="itemsPerPage">The number of items to display per page.</param>
+            <param name="sent">True if retrieving sent messages.</param>
+            <returns>A collection page of messages.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.MessageRepository.GetAllMessages(System.String,System.Boolean)">
+            <summary>
+            Retrieves a list of all messages from the data context for user.
+            </summary>
+            <param name="username">The name of the user.</param>
+            <param name="sent">True if retrieving sent messages.</param>
+            <returns>An enumerable list of messages.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.MessageRepository.AddMessage(U413.Domain.Entities.Message)">
+            <summary>
+            Adds a message to the data context.
+            </summary>
+            <param name="message">The message to be added.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.MessageRepository.UpdateMessage(U413.Domain.Entities.Message)">
+            <summary>
+            This method is not used. Please just call SaveChanges().
+            </summary>
+            <param name="message">The message to be updated.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.MessageRepository.DeleteMessage(U413.Domain.Entities.Message)">
+            <summary>
+            Deletes a message from the data context.
+            </summary>
+            <param name="message">The message to be deleted.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.MessageRepository.MessageBelongsToUser(System.String,System.Boolean)">
+            <summary>
+            Expression to determine if a message belongs to a user.
+            </summary>
+            <param name="username">The name of the user.</param>
+            <param name="sent">True if retrieving sent messages.</param>
+            <returns>An expression to be used in a LINQ query.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.MessageRepository.UserDidNotDeleteMessage(System.String,System.Boolean)">
+            <summary>
+            Expression to determine if a message has been deleted by the user.
+            </summary>
+            <param name="username">The name of the user.</param>
+            <param name="sent">True if retrieving sent messages.</param>
+            <returns>An expression to be used in a LINQ query.</returns>
+        </member>
+        <member name="T:U413.Domain.Utilities.ShortCodes">
+            <summary>
+            Utility used to generate alpha-numeric short codes representing 64-bit integer IDs.
+            </summary>
+        </member>
+        <member name="F:U413.Domain.Utilities.ShortCodes.shortcode_Keyspace">
+            <summary>
+            You may change the "shortcode_Keyspace" variable to contain as many or as few characters as you
+            please.  The more characters that aer included in the "shortcode_Keyspace" constant, the shorter
+            the codes you can produce for a given long.
+            </summary>
+        </member>
+        <member name="F:U413.Domain.Utilities.ShortCodes.shortcode_maxLen">
+            <summary>
+            Arbitrary constant for the maximum length of ShortCodes generated by the application.
+            </summary>
+        </member>
+        <member name="F:U413.Domain.Utilities.ShortCodes.rand">
+            <summary>
+            The random object to randomize the character selection.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Utilities.ShortCodes.LongToShortCode(System.Int64)">
+            <summary>
+            Converts a 64-bit integer to a string short code.
+            </summary>
+            <param name="number">The value to be converted.</param>
+            <returns>A string short code.</returns>
+        </member>
+        <member name="M:U413.Domain.Utilities.ShortCodes.ShortCodeToLong(System.String)">
+            <summary>
+            Converts a string short code to a 64-bit integer.
+            </summary>
+            <param name="shortcode">The string short code to be converted.</param>
+            <returns>A 64-bit integer.</returns>
+        </member>
+        <member name="T:U413.Domain.Repositories.Objects.ChatBufferItemRepository">
+            <summary>
+            Repistory for persisting chat buffer items to the Entity Framework data context.
+            </summary>
+        </member>
+        <member name="F:U413.Domain.Repositories.Objects.ChatBufferItemRepository._entityContainer">
+            <summary>
+            Every repository requires an instance of the Entity Framework data context.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.ChatBufferItemRepository.AddChatBufferItem(U413.Domain.Entities.ChatBufferItem)">
+            <summary>
+            Adds a chat buffer item to the data context.
+            </summary>
+            <param name="chatBufferItem">The chat buffer item to be added.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.ChatBufferItemRepository.UpdateChatBufferItem(U413.Domain.Entities.ChatBufferItem)">
+            <summary>
+            Updates an existing chat buffer item in the data context.
+            </summary>
+            <param name="chatBufferItem">The chat buffer item to be updated.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.ChatBufferItemRepository.DeleteChatBufferItem(U413.Domain.Entities.ChatBufferItem)">
+            <summary>
+            Deletes a chat buffer item from the data context.
+            </summary>
+            <param name="chatBufferItem">The chat buffer item to be deleted.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.ChatBufferItemRepository.GetNewChatBufferItemsBy_IDAndChannel(System.Int64,System.String)">
+            <summary>
+            Retrieve all new chat buffer items from the data context for a channel by the last received ID.
+            </summary>
+            <param name="chatBufferItemID">The last received ID.</param>
+            <param name="channel">The channel name.</param>
+            <returns>An enumerable list of chat buffer items</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.ChatBufferItemRepository.GetLastChatBufferItemIDBy_Channel(System.String)">
+            <summary>
+            Get last chat buffer item ID from the data context by channel.
+            </summary>
+            <param name="channel">The name of the channel.</param>
+            <returns>A unique ID for the latest chat buffer item in the channel.</returns>
+        </member>
+        <member name="T:U413.Domain.Repositories.Objects.ChannelStatusRepository">
+            <summary>
+            Repository for persisting channel statuses to the Entity Framework data context.
+            </summary>
+        </member>
+        <member name="F:U413.Domain.Repositories.Objects.ChannelStatusRepository._entityContainer">
+            <summary>
+            Every repository requires an instance of the Entity Framework data context.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.ChannelStatusRepository.GetChannelStatusBy_ChannelAndUsername(System.String,System.String)">
+            <summary>
+            Get channel status from the data context by channel and username.
+            </summary>
+            <param name="channel">The name of the channel.</param>
+            <param name="username">The name of the user.</param>
+            <returns>A channel status entity.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.ChannelStatusRepository.AddChannelStatus(U413.Domain.Entities.ChannelStatus)">
+            <summary>
+            Adds a channel status to the data context.
+            </summary>
+            <param name="channelStatus">The channel status to be added.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.ChannelStatusRepository.UpdateChannelStatus">
+            <summary>
+            Update an existing channel status in the data context.
+            </summary>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.ChannelStatusRepository.DeleteChannelStatus(U413.Domain.Entities.ChannelStatus)">
+            <summary>
+            Delete a channel status from the data context.
+            </summary>
+            <param name="channelStatus">The channel status to be deleted.</param>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.ChannelStatusRepository.GetOpenChannelsBy_Username(System.String)">
+            <summary>
+            Retrieve channel statuses from the data context by username.
+            </summary>
+            <param name="username">The name of the user.</param>
+            <returns>An enumerable list of channel statuses.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.ChannelStatusRepository.GetActiveUsersBy_Channel(System.String)">
+            <summary>
+            Retrieve active channel statuses from the data context by channel.
+            </summary>
+            <param name="channel">The channel name.</param>
+            <returns>An enumerable list of channel statuses.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.ChannelStatusRepository.GetIdleUsersBy_Channel(System.String)">
+            <summary>
+            Retrieve idle channel statuses from the data context by channel.
+            </summary>
+            <param name="channel">The name of the channel.</param>
+            <returns>An enumerable list of channel statuses.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.ChannelStatusRepository.GetActiveChannels">
+            <summary>
+            Retrieve all active channel statuses from the data context.
+            </summary>
+            <returns>An enumerable list of channel statuses.</returns>
+        </member>
+        <member name="M:U413.Domain.Repositories.Objects.ChannelStatusRepository.ChannelOpen(System.String,System.String)">
+            <summary>
+            Determine if a channel is open.
+            </summary>
+            <param name="username">The name of the user.</param>
+            <param name="channel">The name of the channel.</param>
+            <returns>True if the channel is already open for that user.</returns>
+        </member>
+        <member name="T:U413.Domain.Settings.AppSettings">
+            <summary>
+            Various static application settings.
+            </summary>
+        </member>
+        <member name="F:U413.Domain.Settings.AppSettings._connectionString">
+            <summary>
+            The database connection string.
+            </summary>
+            <remarks>
+            This connection string is checked into source control and is publicly available.
+            When checking out the source code you are welcome to use this database.
+            Please do not abuse this priviledge and ruin it for everybody by forcing
+            me to take the development database offline due to abuse.
+            </remarks>
+        </member>
+        <member name="P:U413.Domain.Settings.AppSettings.Logo">
+            <summary>
+            The logo to display on application initialization.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Settings.AppSettings.TopicsPerPage">
+            <summary>
+            The number of topics to display per page.
+            </summary>
+        </member>
+        <member name="P:U413.Domain.Settings.AppSettings.RepliesPerPage">
+            <summary>
+            The number of replies to display per page.
+            </summary>
+        </member>
+    </members>
+</doc>
