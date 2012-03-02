@@ -158,8 +158,8 @@ Database organization:
 User: u413
 	Database: userdata
 		Table: users:
-			INT id,VARCHAR(32) username,CHAR(32) password,BOOL banned,VARCHAR(8) cmd,BYTE stage
-			id of the user,the username,hashed password,true if banned,the last used command,the stage of the command the user is in (if applicable)
+			INT id,VARCHAR(32) username,CHAR(32) password,INT access,BOOL banned,VARCHAR(8) cmd,BYTE stage
+			id of the user,the username,hashed password,the access level of the user (see below),true if banned,the last used command,the stage of the command the user is in (if applicable)
 		Table: banned:
 			INT id,DATETIME end
 			id of the user,the date when their ban is over
@@ -168,14 +168,21 @@ User: u413
 			INT id,VARCHAR(32) name,BOOL onall,BOOL hidden
 			id of the board,the name of the board,true if it's on board all,true if it isn't shown with BOARDS
 		Table: topics
-			INT id,VARCHAR(128?) title,INT board,INT owner,BOOL locked,TEXT post,BOOL edited,INT editor,DATETIME whenedit,DATETIME posted
-			id of the topic,topic title (may be less chars),id of the board,id of the owner,true if no more posts can be made,the text of the original post,true if the topic has been edited,id of the editor of the topic (if applicable),the date the topic was edited (if applicable),the date the topic was posted
+			INT id,VARCHAR(128) title,INT board,INT owner,BOOL locked,TEXT post,BOOL edited,INT editor,DATETIME whenedit,DATETIME posted
+			id of the topic,topic title,id of the board,id of the owner,true if no more posts can be made,the text of the original post,true if the topic has been edited,id of the editor of the topic (if applicable),the date the topic was edited (if applicable),the date the topic was posted
 		Table: posts
 			INT id,INT topic,INT owner,INT offset,BOOL anon,TEXT post,BOOL edited,INT editor,DATETIME whenedit,DATETIME posted
 			id of the post,id of the topic,the offset from the first post (original post=0),true if this post is on the anon board,the content of the post,true if this post has been edited,id of the editor of this post (if applicable),the date the post was edited (if applicable),the date this post was made
 		Table: anons
 			INT id,INT offset,VARCHAR(4) name
-			id of the anonymous topic,up to 4 letter anonymous name (like AAB or OP),the id of the real user
+			id of the anonymous post,up to 4 letter anonymous name (like AAB or OP),the id of the real user
+
+Access Levels:
+	-1 - banned
+	0 - guest
+	10 - normal user
+	20 - mod
+	30 - admin
 
 Usernames to be reserved:
 	PiMaster
