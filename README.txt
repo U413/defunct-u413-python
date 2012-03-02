@@ -20,16 +20,18 @@ Boards:
 	-1 -- Negative*
 	0 -- All
 	1 -- Links
-	2 -- Programming
-	3 -- Anon
-	4 -- Site
+	2 -- Site
+	3 -- Programming
+	4 -- Anon
 	5 -- Video/movies
 	6 -- Audio/music
-	7 -- Literature
-	8 -- Math
-	9 -- Science/skepticism
-	10 -- Foreign
-	11 -- Misc
+	7 -- Games
+	8 -- Literature
+	9 -- Math
+	10 -- Science/skepticism
+	11 -- Foreign
+	12 -- Misc
+	13 -- Test
 	20 -- Brony (20% cooler)*
 	33 -- Religion/spiritualism
 	37 -- Comic (first xkcd comic with "My hobby")*
@@ -37,7 +39,7 @@ Boards:
 	69 -- NSFW (special behavior - doesn't show up in board 0)
 	117 -- Halo (Master Chief's number)*
 	151 -- Anime (151 original pokemon)*
-	278 -- E*
+	271 -- E*
 	314 -- Pi*
 	403 -- Access Denied (possible special behavior - return "Acess denied" for all users)*
 	404 -- Error*
@@ -156,8 +158,8 @@ Database organization:
 User: u413
 	Database: userdata
 		Table: users:
-			INT id,VARCHAR(32) username,CHAR(32) password,BOOL banned
-			id of the user,the username,hashed password,true if banned
+			INT id,VARCHAR(32) username,CHAR(32) password,BOOL banned,VARCHAR(8) cmd,BYTE stage
+			id of the user,the username,hashed password,true if banned,the last used command,the stage of the command the user is in (if applicable)
 		Table: banned:
 			INT id,DATETIME end
 			id of the user,the date when their ban is over
@@ -171,9 +173,13 @@ User: u413
 		Table: posts
 			INT id,INT topic,INT owner,INT offset,BOOL anon,TEXT post,BOOL edited,INT editor,DATETIME whenedit,DATETIME posted
 			id of the post,id of the topic,the offset from the first post (original post=0),true if this post is on the anon board,the content of the post,true if this post has been edited,id of the editor of this post (if applicable),the date the post was edited (if applicable),the date this post was made
-		Table: anontopics
-			INT id,INT users
-			id of the topic,the number of unique users who've posted in the topic (used for calculating anonymous names)
 		Table: anons
-			INT id,VARCHAR(4) name
-			id of the anonymous post,up to 4 letter anonymous name (like AAB or OP)
+			INT id,INT offset,VARCHAR(4) name
+			id of the anonymous topic,up to 4 letter anonymous name (like AAB or OP),the id of the real user
+
+Usernames to be reserved:
+	PiMaster
+	PIbot
+	Admin
+	Mod
+	u413
