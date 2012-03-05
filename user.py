@@ -1,7 +1,5 @@
-import _mysql as mdb
-import uuid
-
-users={} #online users
+'''import _mysql as mdb
+import uuid'''
 
 class User(object):
 	#user levels
@@ -10,18 +8,16 @@ class User(object):
 	member=10
 	mod=20
 	admin=30
-	def __init__(self,name,password):
-		self.login(name,password)
-		self.session=str(uuid.uuid4())
-		users[self.session]=self
+	def __init__(self):
+		self.level=User.guest
 		self.json={
 			"Command":"",
 			"ContextStatus":"Disabled",
 			"ContextText":"",
 			"CurrentUser":None,
 			"EditText":None,
-			"SessionId":self.session,
-			"TerminalTitle":"Terminal - "+name,
+			"SessionId":None,
+			"TerminalTitle":"Terminal - "+"Visitor",
 			"ClearScreen":False,
 			"Exit":False,
 			"PasswordField":False,

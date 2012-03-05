@@ -136,20 +136,24 @@ Requests sent to u413 should be JSON using the following format:
 
 Responses returned by u413 are JSON with the following format:
 {
-	"Command":"HELP",
-	"ContextStatus":"Disabled",
-	"ContextText":"BOARD 3",
-	"CurrentUser":",
-	"EditText":"This is text that goes into the CLI",
-	"SessionId":"The session ID (usually something like jJJ98s3jd90Jj45ovjsjv6JDc)",
-	"TerminalTitle":"Terminal - Visitor",
-	"ClearScreen":false,
-	"Exit":false,
-	"PasswordField":false,
-	"ScrollToBottom":true,
-	"DisplayItems":
+	Command:"HELP",
+	ContextText:"BOARD 3",
+	CurrentUser:",
+	EditText:"This is text that goes into the CLI",
+	SessionId:"The session ID (usually something like jJJ98s3jd90Jj45ovjsjv6JDc)",
+	TerminalTitle:"Terminal - Visitor",
+	ClearScreen:false,
+	Exit:false,
+	PasswordField:false,
+	ScrollToBottom:true,
+	DisplayItems:
 	[
-		/* I'm not 100% sure what goes here -- will be updated later */
+		{
+			Text:"",
+			DontType:false,
+			Mute:true
+		},
+		{...}
 	]
 }
 

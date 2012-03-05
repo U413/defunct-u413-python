@@ -1,4 +1,4 @@
-import cmd
+import _cmd as cmd
 import display
 
 help='''-= Global Commands =-
@@ -51,16 +51,9 @@ help='''-= Global Commands =-
 	[list=start (ex: a A 1, none means unordered)][*]item 1 [*]item 2 [*] item 3 [/list] - Make an ordered or unordered list.
 	[table][row][column]stuff[/column][/row][/table] - Build a table.'''
 
-#build display items
-items=[]
-for line in help.slpl
-
 def cmd_init(user,args):
 	tmp=user.json.copy()
-	tmp.update({"Command":"HELP","DisplayItems":[
-		display.DisplayItem(text="Welcome to..."),
-		dispaly.DisplayItem(text=logo,donttype=True),
-		display.DisplayItem(text='Type "HELP" to begin.')
-	])
+	tmp.update({"Command":"HELP","DisplayItems":[display.Item(text=help)]})
+	return tmp
 
-Command("INITIALIZE","Initialize the terminal",cmd_init)
+cmd.Command("HELP","Print information about commands and tags",cmd_init)
