@@ -1,3 +1,5 @@
+import display
+
 cmds={}
 
 class Command(object):
@@ -17,8 +19,13 @@ class Command(object):
 	def __init__(self,name,description,callback):
 		self.name=name.upper()
 		self.description=description
-		self.callback=callback
+		self._callback=callback
 		cmds[self.name]=self
+
+	def callback(self,args):
+		out=self._callback(args)
+		out["Command"]=self.name
+		return out
 
 def respond(cmd,args,ashtml=True):
 	out=None
@@ -26,12 +33,6 @@ def respond(cmd,args,ashtml=True):
 		out=cmds[cmd].callback(args)
 	else:
 		out=Command.json.copy()
-		out.update({"DisplayItems":[
-			{
-				"Text":'<span class="error">"%s" is not a command.</span>'%cmd,
-				"Mute":False,
-				"DontType":True
-			}
-		]})
+		out.update({"DisplayItems":[display.Item('<span class="error">"%s" is not a command.</span>'%cmd)]})
 	#later on, output tags and check ashtml to convert BBCode to HTML
 	return out

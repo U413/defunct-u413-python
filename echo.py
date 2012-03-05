@@ -1,14 +1,10 @@
 import command
+import display
 
 def echo_func(args):
 	out=command.Command.json.copy()
 	out.update({
-		"DisplayItems":[{
-			"Text":args,
-			"Mute":False,
-			"DontType":False
-		}],
-		"Command":"ECHO"
+		"DisplayItems":[display.Item(args)]
 	})
 	return out
 
