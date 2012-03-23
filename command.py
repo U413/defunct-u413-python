@@ -33,6 +33,6 @@ def respond(cmd,args,user,ashtml=True):
 		out=cmds[cmd].callback(args,user)
 	else:
 		out=Command.json.copy()
-		out.update({"DisplayItems":[display.Item('<span class="error">"%s" is not a command.</span>'%cmd)]})
+		out.update({"DisplayItems":[display.Item('<span class="error">"%s" is not a valid command or is not available in the current context.</span>'%cmd)]})
 	#later on, output tags and check ashtml to convert BBCode to HTML
 	return out
