@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 import cgi
 import cgitb
 cgitb.enable(display=0,logdir="/var/www/u413/error")
@@ -10,6 +10,7 @@ import command
 
 import initialize
 import echo
+import ping
 
 form=cgi.FieldStorage()
 cli=form.getvalue("cli")
