@@ -22,15 +22,15 @@ class Command(object):
 		self._callback=callback
 		cmds[self.name]=self
 
-	def callback(self,args):
-		out=self._callback(args)
+	def callback(self,args,user):
+		out=self._callback(args,user)
 		out["Command"]=self.name
 		return out
 
-def respond(cmd,args,ashtml=True):
+def respond(cmd,args,user,ashtml=True):
 	out=None
 	if cmd in cmds:
-		out=cmds[cmd].callback(args)
+		out=cmds[cmd].callback(args,user)
 	else:
 		out=Command.json.copy()
 		out.update({"DisplayItems":[display.Item('<span class="error">"%s" is not a command.</span>'%cmd)]})

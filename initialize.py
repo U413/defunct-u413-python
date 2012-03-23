@@ -3,7 +3,7 @@ import display
 
 logo=open("logo.txt","r").read()
 
-def init_func(args):
+def init_func(args,user):
 	out=command.Command.json.copy()
 	out.update({
 		"DisplayItems":[

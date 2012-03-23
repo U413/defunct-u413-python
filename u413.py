@@ -28,6 +28,6 @@ print
 
 callback=form.getvalue("callback")
 if callback==None:
-	print json.dumps(command.respond(cmd,arg))
+	print json.dumps(command.respond(cmd,arg,None))
 else:
-	print callback+'('+json.dumps(command.respond(cmd,arg))+')'
+	print callback+'('+json.dumps(command.respond(cmd,arg,None))+')'
