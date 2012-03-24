@@ -12,8 +12,8 @@ u413 - an open-source BBS/terminal/PI-themed forum
     GNU Affero General Public License for more details.
 
     You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.	
+	
 Boards:
 	1/0 -- Paradox*
 	i -- Imaginary* ?
@@ -188,9 +188,18 @@ Access Levels:
 	20 - mod
 	30 - admin
 
+Cookies:
+	|Name|	|Value             |
+	|UID |	|current session id|
+	
 Usernames to be reserved:
 	PiMaster
 	PIbot
 	Admin
 	Mod
 	u413
+
+All above files are to be kept at api.u413.com
+However files in the u413.com folder should be kept at the pulic_html directory where the site will run
+
+Files in u413.com folder are not part of the current program/project and was used for the older version of U413 created by Chevex
