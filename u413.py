@@ -4,7 +4,7 @@
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU Affero General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
+	the Free Software Foundation,either version 3 of the License,or
 	(at your option) any later version.
 
 	This program is distributed in the hope that it will be useful,
@@ -13,7 +13,7 @@
 	GNU Affero General Public License for more details.
 
 	You should have received a copy of the GNU Affero General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.'''
+	along with this program.  If not,see <http://www.gnu.org/licenses/>.'''
 
 import cgi
 import cgitb
@@ -37,32 +37,28 @@ import help
 
 print "Content-type: application/javascript"
 
-flag = 0
-if environ.has_key('HTTP_COOKIE'):
-	for cookie in map(str.strip, str.split(environ['HTTP_COOKIE'], ';')):
-		(key, value ) = str.split(cookie, '=');
-		if key == "Session":
-			currentsession = value
-			currentuser = user.User(currentsession)
-			flag = 1
-			break
-
-if flag == 0:
-	currentuser = user.User('')
-	cookie = Cookie.SimpleCookie()
-	cookie['Session'] = str(currentuser.session)
-	print cookie
-
-print "\n\n"
-
 form=cgi.FieldStorage()
 cli=form.getvalue("cli")
 
-if cli==None:
-	if currentuser.username=="Guest":
-		cli="INITIALIZE"
+if environ.has_key('HTTP_COOKIE'):
+	for cookie in map(str.strip,str.split(environ['HTTP_COOKIE'],';')):
+		(key,value )=str.split(cookie,'=');
+		if key=="Session":
+			currentsession=value
+			currentuser=user.User(currentsession)
+			if cli==None:
+				cli="LOGIN"
+			break
+	#no session
 	else:
-		cli="LOGIN"
+		currentuser=user.User('')
+		cookie=Cookie.SimpleCookie()
+		cookie['Session']=str(currentuser.session)
+		print cookie
+		if cli==None:
+			cli="INITIALIZE"
+
+print "\n\n"
 	
 cmdarg=cli.split(' ',1)
 cmd=cmdarg[0].upper()
