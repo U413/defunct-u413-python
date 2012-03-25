@@ -14,14 +14,8 @@
 	You should have received a copy of the GNU Affero General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.'''
 
-import command
-import display
-
-def ping_func(args,user):
-	out=command.Command.json.copy()
-	out.update({
-		"DisplayItems":[display.Item("PONG "+args)]
-	})
-	return out
-
-command.Command("PING","Tests whether everything runs fine. In which case it will return PONG and any accompanied text.",ping_func)
+import time
+import database as db
+while True:
+	db.query("DELETE FROM sessions WHERE expire<DATE_ADD(NOW(),INTERVAL 6 HOUR);");
+	time.sleep(5*60)

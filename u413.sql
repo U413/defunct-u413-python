@@ -157,7 +157,7 @@ CREATE TABLE IF NOT EXISTS `topics` (
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(32) NOT NULL,
-  `password` char(32) NOT NULL,
+  `password` char(64) NOT NULL,
   `access` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;

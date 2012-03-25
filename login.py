@@ -17,11 +17,17 @@
 import command
 import display
 
-def ping_func(args,user):
+def login_func(args,user):
+	params=args.split(" ")
 	out=command.Command.json.copy()
-	out.update({
-		"DisplayItems":[display.Item("PONG "+args)]
-	})
+	if len(params)==2:
+		out.update({
+			"DisplayItems":[display.Item(user.login(params[0],params[1]))]
+		})
+	else:
+		out.update({
+			"DisplayItems":[display.Item("Invalid Parameters")]
+		})
 	return out
 
-command.Command("PING","Tests whether everything runs fine. In which case it will return PONG and any accompanied text.",ping_func)
+command.Command("LOGIN","Logs a user onto U413",login_func)

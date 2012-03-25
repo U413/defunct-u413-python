@@ -1,3 +1,19 @@
+'''u413 - an open-source BBS/terminal/PI-themed forum
+	Copyright (C) 2012 PiMaster
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Affero General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
+
+	You should have received a copy of the GNU Affero General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.'''
+
 import cgi
 import hashlib
 import uuid
@@ -48,15 +64,15 @@ class User(object):
 		password=sha256(password)
 		r=database.query("SELECT * FROM users WHERE username='%s' AND password='%s';"%(database.escape(username),password))
 		if len(r)==0:
-			return False
+			return "Wrong username or password"
 		r=r[0]
 		self.username=r["username"]
 		self.level=r["access"]
 		self.userid=r["id"]
-		database.query("UPDATE sessions SET username='%s' WHERE id='%s';"%(self.username))
-		database.query("UPDATE sessions SET user='%s' WHERE id='%s';"%(self.userid))
-		database.query("UPDATE sessions SET access='%s' WHERE id='%s';"%(self.level))
-		return True
+		database.query("UPDATE sessions SET username='%s' WHERE id='%s';"%(self.username,self.session))
+		database.query("UPDATE sessions SET user='%s' WHERE id='%s';"%(self.userid,self.session))
+		database.query("UPDATE sessions SET access='%s' WHERE id='%s';"%(self.level,self.session))
+		return "You are now logged in as "+self.username
 	
 	def logout(self):
 		if self.session!="" and self.level!=0:
@@ -68,4 +84,4 @@ class User(object):
 			return False
 		
 	def create_session(self):
-			database.query("INSERT INTO sessions (id,user,expire,username,access,history,cmd,cmddata) VALUES('%s',%s,'%s','%s','%s','','','');"%(self.session,self.userid,time.strftime("%Y-%m-%d %H:%M:%S",time.gmtime()),self.username,self.level))
+			database.query("INSERT INTO sessions (id,user,expire,username,access,history,cmd,cmddata) VALUES('%s',%s,'%s','%s','%s','','','');"%(self.session,self.userid,time.strftime("%Y-%m-%d %H:%M:%S",time.localtime()),self.username,self.level))
