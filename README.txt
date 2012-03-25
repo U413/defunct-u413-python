@@ -200,6 +200,6 @@ Usernames to be reserved:
 	u413
 
 All above files are to be kept at api.u413.com
-However files in the u413.com folder should be kept at the pulic_html directory where the site will run
-
-Files in u413.com folder are not part of the current program/project and was used for the older version of U413 created by Chevex
+These are not the files which are to be kept at public_html (or www) to run the site
+They are not part of the api and hence not part of the current project. They are however , required to run u413
+To get those scripts , you can PM/email PiMaster who is the current Administartor of u413.
