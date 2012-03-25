@@ -1,6 +1,6 @@
 '''u413 - an open-source BBS/terminal/PI-themed forum
 	Copyright (C) 2012 PiMaster
-
+	
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU Affero General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
@@ -17,18 +17,21 @@
 import command
 import display
 
-logo=open("logo.txt","r").read()
-
-def init_func(args,user):
+def help_func(args,user):
 	out=command.Command.json.copy()
-	out.update({
-		"DisplayItems":[
-			display.Item("Welcome to..."),
-			display.Item(logo,donttype=True),
-			display.Item('<span style="color:#f00;">U413 is currently down for maintenance and is expected to be up by April 25.</span>',donttype=True)
-		],
-		"ClearScreen":True
-	})
-	return out
+	if args=="":
+		helpout=''
+		for cmd in command.cmds:
+			if user.level>=command.cmds[cmd].level:
+				helpout+=cmd+" - "+command.cmds[cmd].description+"<br>"
+		out["DisplayItems"]=[display.Item(helpout,donttype=True),display.Item("SHIFT+ENTER to drop down to a new line.",donttype=True)]
+	else:
+		cmd=args.split()[0].upper()
+		if cmd in command.cmds and command.cmds[cmd].level<user.level:
+			#change this to something that shows a more detailed help
+			out["DisplayItems"]=[display.Item("> "+cmd+" - "+command.cmds[cmd].description)]
+		else:
+			out["DisplayItems"]=[display.Item('"%s" is not a command.'%cmd)]
+	return out       
 
-command.Command("INITIALIZE","Initialize the terminal.",init_func,0)
+command.Command("HELP","Prints information about commands.",help_func,0)

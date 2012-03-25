@@ -17,18 +17,16 @@
 import command
 import display
 
-logo=open("logo.txt","r").read()
-
-def init_func(args,user):
+def logout_func(args,user):
 	out=command.Command.json.copy()
-	out.update({
-		"DisplayItems":[
-			display.Item("Welcome to..."),
-			display.Item(logo,donttype=True),
-			display.Item('<span style="color:#f00;">U413 is currently down for maintenance and is expected to be up by April 25.</span>',donttype=True)
-		],
-		"ClearScreen":True
-	})
+	if user.username!="Guest":
+		out.update({
+			"DisplayItems":[display.Item(user.logout())]
+		})
+	else:
+		out.update({
+			"DisplayItems":[display.Item("You are not logged in")]
+		})
 	return out
 
-command.Command("INITIALIZE","Initialize the terminal.",init_func,0)
+command.Command("LOGOUT","Logs out a user who is logged into U413",logout_func,10)

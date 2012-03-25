@@ -24,7 +24,7 @@ def login_func(args,user):
 		out.update({
 			"DisplayItems":[display.Item(user.login(params[0],params[1]))]
 		})
-	elif len(params)==1 and user.username!="Guest":
+	elif args=="" and user.username!="Guest":
 		out.update({
 			"DisplayItems":[display.Item("You are logged in as "+user.username)]
 		})
@@ -34,4 +34,4 @@ def login_func(args,user):
 		})
 	return out
 
-command.Command("LOGIN","Logs a user onto U413",login_func)
+command.Command("LOGIN","Logs a user onto U413",login_func,0)

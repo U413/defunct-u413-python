@@ -32,6 +32,8 @@ import echo
 import ping
 import login
 import logout
+import register
+import help
 
 print "Content-type: application/javascript"
 

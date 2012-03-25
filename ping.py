@@ -24,4 +24,4 @@ def ping_func(args,user):
 	})
 	return out
 
-command.Command("PING","Tests whether everything runs fine. In which case it will return PONG and any accompanied text.",ping_func)
+command.Command("PING","Tests whether everything runs fine. In which case it will return PONG and any accompanied text.",ping_func,0)

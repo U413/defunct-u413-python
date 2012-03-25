@@ -24,4 +24,4 @@ def echo_func(args,user):
 	})
 	return out
 
-command.Command("ECHO","Echo a string to the terminal.",echo_func)
+command.Command("ECHO","Echo a string to the terminal.",echo_func,0)
