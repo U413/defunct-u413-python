@@ -2,6 +2,8 @@ import cgi
 import hashlib
 import uuid
 
+import time
+
 import database
 
 def sha256(data):
@@ -18,7 +20,7 @@ class User(object):
 		self.session=uuid.uuid4()
 		self.level=User.guest
 		self.userid=0
-		create_session()
+		self.create_session()
 	
 	def __init__(self,session):
 		r=database.query("SELECT * FROM sessions WHERE id='%s';"%session)
@@ -27,7 +29,7 @@ class User(object):
 			self.session=uuid.uuid4()
 			self.level=User.guest
 			self.userid=0
-			create_session()
+			self.create_session()
 			return
 		r=r[0]
 		self.session=session
@@ -37,13 +39,13 @@ class User(object):
 			self.session=uuid.uuid4()
 			self.level=User.guest
 			self.userid=0
-			create_session()
+			self.create_session()
 			return
 		r=database.query("SELECT * FROM users WHERE id='%s';"%self.userid)
 		r=r[0]
 		self.username=r["username"]
 		self.level=r["access"]
-		create_session()
+		self.create_session()
 	
 	def login(self,username,password):
 		password=sha256(password)
@@ -61,10 +63,12 @@ class User(object):
 	
 	def logout(self):
 		if self.session!="" and self.level!=0:
-		database.query("UPDATE sessions SET username='%s' WHERE id='Guest';")
-		database.query("UPDATE sessions SET user='%s' WHERE id='0';")
-		database.query("UPDATE sessions SET access='%s' WHERE id='0';")
-		return True
+			database.query("UPDATE sessions SET username='%s' WHERE id='Guest';")
+			database.query("UPDATE sessions SET user='%s' WHERE id='0';")
+			database.query("UPDATE sessions SET access='%s' WHERE id='0';")
+			return True
+		else:
+			return False
 		
 	def create_session(self):
-		database.query("INSERT INTO sessions (id,user,expire,username,history,cmd,cmddata) VALUES('%s',%s,'%s','%s','%s','','','');"%(self.session,self.userid,time.strftime("%Y-%m-%d %H:%M:%S",time.gmtime()),self.username,self.level)
+			database.query("INSERT INTO sessions (id,user,expire,username,access,history,cmd,cmddata) VALUES('%s',%s,'%s','%s','%s','','','');"%(self.session,self.userid,time.strftime("%Y-%m-%d %H:%M:%S",time.gmtime()),self.username,self.level))

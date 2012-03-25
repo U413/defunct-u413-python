@@ -7,11 +7,13 @@ db=mysql.connect("localhost","u413",open("/var/u413.pwd","r").read().rstrip('\r\
 def query(q):
 	db.query(q)
 	r=db.store_result()
+	if r==None:
+		return []
 	#format result
 	fr=[]
 	row=(0,)
 	while True:
-		row=r.fetch_row(how=1)
+		row=r.fetch_row(how=1,maxrows=0)
 		if row!=():
 			fr.append(row[0])
 		else:

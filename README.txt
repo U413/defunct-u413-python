@@ -189,8 +189,8 @@ Access Levels:
 	30 - admin
 
 Cookies:
-	|Name|	|Value             |
-	|UID |	|current session id|
+	|Name    |	|Value             |
+	|Session |	|current session id|
 	
 Usernames to be reserved:
 	PiMaster

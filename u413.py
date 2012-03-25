@@ -1,12 +1,14 @@
 #!/usr/bin/python
 import cgi
 import cgitb
-cgitb.enable(display=0,logdir="/var/www/u413/error")
+cgitb.enable(display=1,logdir="/var/www/u413/error")
 
 import json
 import os
 from os import environ
+import Cookie
 
+import user
 import command
 
 import initialize
@@ -25,23 +27,23 @@ arg=""
 if len(cmdarg)>1:
 	arg=cmdarg[1]
 
-print "Content-type: application/javascript"
+print "Content-type: application/javascript\n\n"
 print
 
 flag = 0
 if environ.has_key('HTTP_COOKIE'):
 	for cookie in map(strip, split(environ['HTTP_COOKIE'], ';')):
 		(key, value ) = split(cookie, '=');
-		if key == "UID":
+		if key == "Session":
 			currentsession = value
 			currentuser = user.User(currentsession)
 			flag = 1
 
 if flag == 0:
-	currentuser = user.User()
-	print "Set-Cookie:UID="+currentuser.session+";\n"
-	print "Set-Cookie:Domain=www.u413.com;\n"
-	print "Set-Cookie:Path=/;\n"
+	currentuser = user.User('')
+	cookie = Cookie.SimpleCookie()
+	cookie['Session'] = str(currentuser.session)
+	print cookie
 
 callback=form.getvalue("callback")
 if callback==None:
