@@ -14,6 +14,7 @@
 	You should have received a copy of the GNU Affero General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.'''
 
+import user
 import display
 
 cmds={}
@@ -32,7 +33,7 @@ class Command(object):
 		"ScrollToBottom":True,
 		"DisplayItems":[]
 	}
-	def __init__(self,name,description,callback,level):
+	def __init__(self,name,description,callback,level=user.User.guest):
 		self.name=name.upper()
 		self.description=description
 		self.level=level
