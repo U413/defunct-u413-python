@@ -27,8 +27,7 @@ arg=""
 if len(cmdarg)>1:
 	arg=cmdarg[1]
 
-print "Content-type: application/javascript\n\n"
-print
+print "Content-type: application/javascript"
 
 flag = 0
 if environ.has_key('HTTP_COOKIE'):
@@ -44,6 +43,8 @@ if flag == 0:
 	cookie = Cookie.SimpleCookie()
 	cookie['Session'] = str(currentuser.session)
 	print cookie
+
+print "\n\n"
 
 callback=form.getvalue("callback")
 if callback==None:
