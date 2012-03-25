@@ -16,6 +16,7 @@
 
 import command
 import display
+import database as db
 
 def logout_func(args,user):
 	out=command.Command.json.copy()
@@ -23,6 +24,7 @@ def logout_func(args,user):
 		out.update({
 			"DisplayItems":[display.Item(user.logout())]
 		})
+		db.query("UPDATE sessions SET user=0,username='Guest',access=0,expire=NOW(),context='',cmd='',cmddata='' WHERE id='%s';"%user.session)
 	else:
 		out.update({
 			"DisplayItems":[display.Item("You are not logged in")]
