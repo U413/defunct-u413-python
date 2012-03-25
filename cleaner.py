@@ -14,9 +14,6 @@
 	You should have received a copy of the GNU Affero General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.'''
 
-import time
 import database as db
 
-while True:
-	db.query("DELETE FROM sessions WHERE expire<DATE_ADD(NOW(),INTERVAL 6 HOUR);");
-	time.sleep(5*60)
+db.query("DELETE FROM sessions WHERE DATE_ADD(expire,INTERVAL 6 HOUR)<NOW();")
