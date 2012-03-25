@@ -24,6 +24,10 @@ def login_func(args,user):
 		out.update({
 			"DisplayItems":[display.Item(user.login(params[0],params[1]))]
 		})
+	elif len(params)==1 and user.username!="Guest":
+		out.update({
+			"DisplayItems":[display.Item("You are logged in as "+user.username)]
+		})
 	else:
 		out.update({
 			"DisplayItems":[display.Item("Invalid Parameters")]

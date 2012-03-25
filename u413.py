@@ -31,7 +31,7 @@ import initialize
 import echo
 import ping
 import login
-import lin
+import logout
 
 print "Content-type: application/javascript"
 
@@ -43,6 +43,7 @@ if environ.has_key('HTTP_COOKIE'):
 			currentsession = value
 			currentuser = user.User(currentsession)
 			flag = 1
+			break
 
 if flag == 0:
 	currentuser = user.User('')
@@ -56,10 +57,10 @@ form=cgi.FieldStorage()
 cli=form.getvalue("cli")
 
 if cli==None:
-	cli="INITIALIZE"
-
-if flag==1:
-	cli="LIN"
+	if currentuser.username=="Guest":
+		cli="INITIALIZE"
+	else:
+		cli="LOGIN"
 	
 cmdarg=cli.split(' ',1)
 cmd=cmdarg[0].upper()

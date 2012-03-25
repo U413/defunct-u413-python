@@ -76,12 +76,12 @@ class User(object):
 	
 	def logout(self):
 		if self.session!="" and self.level!=0:
-			database.query("UPDATE sessions SET username='%s' WHERE id='Guest';")
-			database.query("UPDATE sessions SET user='%s' WHERE id='0';")
-			database.query("UPDATE sessions SET access='%s' WHERE id='0';")
-			return True
+			database.query("UPDATE sessions SET username='Guest' WHERE id='%s';"%(self.session))
+			database.query("UPDATE sessions SET user='0' WHERE id='%s';"%(self.session))
+			database.query("UPDATE sessions SET access='0' WHERE id='%s';"%(self.session))
+			return "You have been logged out"
 		else:
-			return False
+			return "Corrut login. Cannot logout. Please clear cookies."
 		
 	def create_session(self):
 			database.query("INSERT INTO sessions (id,user,expire,username,access,history,cmd,cmddata) VALUES('%s',%s,'%s','%s','%s','','','');"%(self.session,self.userid,time.strftime("%Y-%m-%d %H:%M:%S",time.localtime()),self.username,self.level))
