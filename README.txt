@@ -12,8 +12,8 @@ u413 - an open-source BBS/terminal/PI-themed forum
     GNU Affero General Public License for more details.
 
     You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.	
-	
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 Boards:
 	1/0 -- Paradox*
 	i -- Imaginary* ?
@@ -138,12 +138,13 @@ Responses returned by u413 are JSON with the following format:
 {
 	Command:"HELP",
 	ContextText:"BOARD 3",
-	CurrentUser:",
+	CurrentUser:"",
 	EditText:"This is text that goes into the CLI",
 	SessionId:"The session ID (usually something like jJJ98s3jd90Jj45ovjsjv6JDc)",
 	TerminalTitle:"Terminal - Visitor",
 	ClearScreen:false,
 	Exit:false,
+	Error:false,
 	PasswordField:false,
 	ScrollToBottom:true,
 	DisplayItems:
@@ -182,11 +183,14 @@ User: u413
 			id of the anonymous post,up to 4 letter anonymous name (like AAB or OP),the id of the real user
 
 Access Levels:
-	-1 - banned
+	-10 - banned, can't see
+	-1 - banned, still visible
 	0 - guest
 	10 - normal user
-	20 - mod
-	30 - admin
+	20 - halfmod
+	30 - mod
+	40 - admin
+	50 - owner
 
 Cookies:
 	|Name    |	|Value             |
@@ -202,4 +206,4 @@ Usernames to be reserved:
 All above files are to be kept at api.u413.com
 These are not the files which are to be kept at public_html (or www) to run the site
 They are not part of the api and hence not part of the current project. They are however , required to run u413
-To get those scripts , you can PM/email PiMaster who is the current Administartor of u413.
+To get those scripts , you can PM/email PiMaster who is the current Administartor of u413 at darknut83@gmail.com
