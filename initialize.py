@@ -25,7 +25,7 @@ def init_func(args,user):
 		"DisplayItems":[
 			display.Item("Welcome to..."),
 			display.Item(logo,donttype=True),
-			display.Item('<span style="color:#f00;">U413 is currently down for maintenance and is expected to be up by March 25.\n'+str(user.session)+'</span>',donttype=True)
+			display.Item('<span style="color:#f00;">U413 is currently down for maintenance and is expected to be up by March 25.',donttype=True)
 		],
 		"ClearScreen":True
 	})
