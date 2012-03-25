@@ -1,3 +1,4 @@
+#!/usr/bin/python
 '''u413 - an open-source BBS/terminal/PI-themed forum
 	Copyright (C) 2012 PiMaster
 
@@ -14,7 +15,6 @@
 	You should have received a copy of the GNU Affero General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.'''
 
-#!/usr/bin/python
 import cgi
 import cgitb
 cgitb.enable(display=1,logdir="/var/www/u413/error")

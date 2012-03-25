@@ -16,6 +16,7 @@
 
 import time
 import database as db
+
 while True:
 	db.query("DELETE FROM sessions WHERE expire<DATE_ADD(NOW(),INTERVAL 6 HOUR);");
 	time.sleep(5*60)
