@@ -31,18 +31,7 @@ import initialize
 import echo
 import ping
 import login
-
-form=cgi.FieldStorage()
-cli=form.getvalue("cli")
-
-if cli==None:
-	cli="INITIALIZE"
-
-cmdarg=cli.split(' ',1)
-cmd=cmdarg[0].upper()
-arg=""
-if len(cmdarg)>1:
-	arg=cmdarg[1]
+import lin
 
 print "Content-type: application/javascript"
 
@@ -62,6 +51,21 @@ if flag == 0:
 	print cookie
 
 print "\n\n"
+
+form=cgi.FieldStorage()
+cli=form.getvalue("cli")
+
+if cli==None:
+	cli="INITIALIZE"
+
+if flag==1:
+	cli="LIN"
+	
+cmdarg=cli.split(' ',1)
+cmd=cmdarg[0].upper()
+arg=""
+if len(cmdarg)>1:
+	arg=cmdarg[1]
 
 callback=form.getvalue("callback")
 if callback==None:
