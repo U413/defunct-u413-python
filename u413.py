@@ -31,8 +31,8 @@ print "Content-type: application/javascript"
 
 flag = 0
 if environ.has_key('HTTP_COOKIE'):
-	for cookie in map(strip, split(environ['HTTP_COOKIE'], ';')):
-		(key, value ) = split(cookie, '=');
+	for cookie in map(str.strip, str.split(environ['HTTP_COOKIE'], ';')):
+		(key, value ) = str.split(cookie, '=');
 		if key == "Session":
 			currentsession = value
 			currentuser = user.User(currentsession)

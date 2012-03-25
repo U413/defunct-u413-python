@@ -34,18 +34,15 @@ class User(object):
 		r=r[0]
 		self.session=session
 		self.userid=r["user"]
-		if userid==0:
+		if int(self.userid)==0:
 			self.username='Guest'
-			self.session=uuid.uuid4()
 			self.level=User.guest
-			self.userid=0
-			self.create_session()
 			return
-		r=database.query("SELECT * FROM users WHERE id='%s';"%self.userid)
-		r=r[0]
-		self.username=r["username"]
-		self.level=r["access"]
-		self.create_session()
+		else:
+			r=database.query("SELECT * FROM users WHERE id='%s';"%self.userid)
+			r=r[0]
+			self.username=r["username"]
+			self.level=r["access"]
 	
 	def login(self,username,password):
 		password=sha256(password)
