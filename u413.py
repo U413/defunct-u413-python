@@ -34,6 +34,7 @@ import login
 import logout
 import register
 import help
+import w
 
 print "Content-type: application/javascript"
 

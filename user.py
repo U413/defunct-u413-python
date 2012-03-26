@@ -18,7 +18,7 @@ import cgi
 import hashlib
 import uuid
 
-import time
+import datetime
 
 import database
 
@@ -26,11 +26,14 @@ def sha256(data):
 	return hashlib.sha256(data).hexdigest()
 
 class User(object):
+	permaban=-10
 	banned=-1
 	guest=0
 	member=10
-	mod=20
-	admin=30
+	halfmod=20
+	mod=30
+	admin=40
+	owner=50
 	def __init__(self):
 		self.username='Guest'
 		self.session=uuid.uuid4()
@@ -55,10 +58,13 @@ class User(object):
 			self.level=User.guest
 			return
 		else:
-			r=database.query("SELECT * FROM users WHERE id='%s';"%self.userid)
-			r=r[0]
 			self.username=r["username"]
-			self.level=r["access"]
+			self.access=r["access"]
+			self.expire=datetime.datetime.strptime(r["expire"],'%Y-%m-%d %H:%M:%S')
+			self.context=r["context"]
+			self.history=eval(r["history"])
+			self.cmd=r["cmd"]
+			self.cmddata=r["cmddata"]
 	
 	def login(self,username,password):
 		password=sha256(password)
@@ -81,7 +87,8 @@ class User(object):
 			database.query("UPDATE sessions SET access='0' WHERE id='%s';"%(self.session))
 			return "You have been logged out"
 		else:
-			return "Corrut login. Cannot logout. Please clear cookies."
+			#TODO: send something to the client that clears cookies
+			return "Corrupt login. Cannot logout. Please clear cookies."
 		
 	def create_session(self):
-			database.query("INSERT INTO sessions (id,user,expire,username,access,history,cmd,cmddata) VALUES('%s',%s,'%s','%s','%s','','','');"%(self.session,self.userid,time.strftime("%Y-%m-%d %H:%M:%S",time.localtime()),self.username,self.level))
+			database.query("INSERT INTO sessions (id,user,expire,username,access,history,cmd,cmddata) VALUES('%s',%s,NOW(),'%s','%s','','','');"%(self.session,self.userid,self.username,self.level))
