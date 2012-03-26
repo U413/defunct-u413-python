@@ -58,6 +58,8 @@ if environ.has_key('HTTP_COOKIE'):
 		print cookie
 		if cli==None:
 			cli="INITIALIZE"
+elif cli==None:
+	cli="INITIALIZE"
 
 print "\n\n"
 	
