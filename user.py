@@ -34,37 +34,38 @@ class User(object):
 	mod=30
 	admin=40
 	owner=50
-	def __init__(self):
-		self.username='Guest'
-		self.session=uuid.uuid4()
-		self.level=User.guest
-		self.userid=0
-		self.create_session()
 	
-	def __init__(self,session):
-		r=database.query("SELECT * FROM sessions WHERE id='%s';"%session)
-		if len(r)==0:
+	def __init__(self,session=None):
+		if session==None:
 			self.username='Guest'
 			self.session=uuid.uuid4()
 			self.level=User.guest
 			self.userid=0
 			self.create_session()
-			return
-		r=r[0]
-		self.session=session
-		self.userid=r["user"]
-		if int(self.userid)==0:
-			self.username='Guest'
-			self.level=User.guest
-			return
 		else:
-			self.username=r["username"]
-			self.access=r["access"]
-			self.expire=datetime.datetime.strptime(r["expire"],'%Y-%m-%d %H:%M:%S')
-			self.context=r["context"]
-			self.history=eval(r["history"])
-			self.cmd=r["cmd"]
-			self.cmddata=r["cmddata"]
+			r=database.query("SELECT * FROM sessions WHERE id='%s';"%session)
+			if len(r)==0:
+				self.username='Guest'
+				self.session=uuid.uuid4()
+				self.level=User.guest
+				self.userid=0
+				self.create_session()
+				return
+			r=r[0]
+			self.session=session
+			self.userid=r["user"]
+			if int(self.userid)==0:
+				self.username='Guest'
+				self.level=User.guest
+				return
+			else:
+				self.username=r["username"]
+				self.access=r["access"]
+				self.expire=datetime.datetime.strptime(r["expire"],'%Y-%m-%d %H:%M:%S')
+				self.context=r["context"]
+				self.history=eval(r["history"])
+				self.cmd=r["cmd"]
+				self.cmddata=r["cmddata"]
 	
 	def login(self,username,password):
 		password=sha256(password)

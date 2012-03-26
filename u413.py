@@ -41,6 +41,8 @@ print "Content-type: application/javascript"
 form=cgi.FieldStorage()
 cli=form.getvalue("cli")
 
+currentuser=None
+
 if environ.has_key('HTTP_COOKIE'):
 	for cookie in map(str.strip,str.split(environ['HTTP_COOKIE'],';')):
 		(key,value )=str.split(cookie,'=');
@@ -58,8 +60,11 @@ if environ.has_key('HTTP_COOKIE'):
 		print cookie
 		if cli==None:
 			cli="INITIALIZE"
-elif cli==None:
-	cli="INITIALIZE"
+		currentuser=user.User()
+else:
+	if cli==None:
+		cli="INITIALIZE"
+	currentuser=user.User()
 
 print "\n\n"
 	
