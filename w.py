@@ -22,9 +22,8 @@ def w_func(args,user):
 	out=command.Command.json.copy()
 	out["DisplayItems"]=[
 		display.Item("Username: "+user.username,donttype=True),
-		display.Item("User ID: "+user.userid,donttype=True),
-		display.Item("Session ID: "+user.session,donttype=True),
-		display.Item("Last command used: "+user.cmd+' '+str(datetime.datetime.today()-user.expire)+" ago",donttype=True)
+		display.Item("User ID: "+str(user.userid),donttype=True),
+		display.Item("Session ID: "+str(user.session),donttype=True)
 	]
 	return out
 

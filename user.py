@@ -39,11 +39,16 @@ class User(object):
 		if session==None:
 			self.username='Guest'
 			self.session=uuid.uuid4()
-			self.level=User.guest
 			self.userid=0
+			self.level=User.guest
+			self.expire=datetime.datetime.today()
+			self.context=''
+			self.history=[]
+			self.cmd=''
+			self.cmddata={}
 			self.create_session()
 		else:
-			r=database.query("SELECT * FROM sessions WHERE id='%s';"%session)
+			r=database.query("SELECT * FROM sessions WHERE id='%s';"%session.hex)
 			if len(r)==0:
 				self.username='Guest'
 				self.session=uuid.uuid4()
@@ -60,7 +65,7 @@ class User(object):
 				return
 			else:
 				self.username=r["username"]
-				self.access=r["access"]
+				self.level=r["access"]
 				self.expire=datetime.datetime.strptime(r["expire"],'%Y-%m-%d %H:%M:%S')
 				self.context=r["context"]
 				self.history=eval(r["history"])
@@ -76,20 +81,16 @@ class User(object):
 		self.username=r["username"]
 		self.level=r["access"]
 		self.userid=r["id"]
-		database.query("UPDATE sessions SET username='%s' WHERE id='%s';"%(self.username,self.session))
-		database.query("UPDATE sessions SET user='%s' WHERE id='%s';"%(self.userid,self.session))
-		database.query("UPDATE sessions SET access='%s' WHERE id='%s';"%(self.level,self.session))
+		database.query("UPDATE sessions SET username='%s',user=%i,access=%i WHERE id='%s';"%(self.username,self.userid,self.level,self.session.hex))
 		return "You are now logged in as "+self.username
 	
 	def logout(self):
 		if self.session!="" and self.level!=0:
-			database.query("UPDATE sessions SET username='Guest' WHERE id='%s';"%(self.session))
-			database.query("UPDATE sessions SET user='0' WHERE id='%s';"%(self.session))
-			database.query("UPDATE sessions SET access='0' WHERE id='%s';"%(self.session))
+			database.query("UPDATE sessions SET username='Guest',user=0,access=0 WHERE id='%s';"%(self.session))
 			return "You have been logged out"
 		else:
 			#TODO: send something to the client that clears cookies
 			return "Corrupt login. Cannot logout. Please clear cookies."
 		
 	def create_session(self):
-			database.query("INSERT INTO sessions (id,user,expire,username,access,history,cmd,cmddata) VALUES('%s',%s,NOW(),'%s','%s','','','');"%(self.session,self.userid,self.username,self.level))
+		database.query("INSERT INTO sessions (id,user,expire,username,access,history,cmd,cmddata) VALUES('%s',%i,NOW(),'%s',%i,'[]','','{}');"%(self.session,self.userid,self.username,self.level))

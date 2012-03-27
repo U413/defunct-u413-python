@@ -37,36 +37,22 @@ import help
 import w
 
 print "Content-type: application/javascript"
+print
 
 form=cgi.FieldStorage()
 cli=form.getvalue("cli")
+session=form.getvalue("session")
 
 currentuser=None
 
-if environ.has_key('HTTP_COOKIE'):
-	for cookie in map(str.strip,str.split(environ['HTTP_COOKIE'],';')):
-		(key,value )=str.split(cookie,'=');
-		if key=="Session":
-			currentsession=value
-			currentuser=user.User(currentsession)
-			if cli==None:
-				cli="LOGIN"
-			break
-	#no session
-	else:
-		currentuser=user.User('')
-		cookie=Cookie.SimpleCookie()
-		cookie['Session']=str(currentuser.session)
-		print cookie
-		if cli==None:
-			cli="INITIALIZE"
-		currentuser=user.User()
-else:
+if session==None:
+	currentuser=user.User()
 	if cli==None:
 		cli="INITIALIZE"
-	currentuser=user.User()
-
-print "\n\n"
+else:
+	currentuser=user.User(session)
+	if cli==None:
+		cli="LOGIN"
 	
 cmdarg=cli.split(' ',1)
 cmd=cmdarg[0].upper()
