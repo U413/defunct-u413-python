@@ -54,9 +54,16 @@ def respond(cmd,args,user,ashtml=True):
 		out=Command.json.copy()
 		out.update({"DisplayItems":[display.Item('<span class="error">"%s" is not a valid command or is not available in the current context.</span>'%cmd)]})
 	#later on, output tags and check ashtml to convert BBCode to HTML
+	
 	#update history and cmd
 	user.history.append(cmd)
 	user.cmd=cmd
 	database.query("UPDATE sessions SET history='%s',cmd='%s' WHERE id='%s';"%(database.escape(str(user.history)),database.escape(user.cmd),user.session))
+	
+	#change title if user is logged in
+	if user.username!="Guest":
+		out.update({
+			"TerminalTitle":"Terminal - "+user.username
+		})
 	
 	return out

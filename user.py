@@ -82,7 +82,7 @@ class User(object):
 		self.username=r["username"]
 		self.level=r["access"]
 		self.userid=r["id"]
-		database.query("UPDATE sessions SET username='%s',user='%s',access='%s' WHERE id='%s';"%(self.username,self.userid,self.level,self.session))
+		database.query("UPDATE sessions SET username='%s',user=%i,access=%i WHERE id='%s';"%(self.username,int(self.userid),int(self.level),self.session))
 		return "You are now logged in as "+self.username
 	
 	def logout(self):
@@ -94,4 +94,4 @@ class User(object):
 			return "Corrupt login. Cannot logout. Please clear cookies."
 		
 	def create_session(self):
-		database.query("INSERT INTO sessions (id,user,expire,username,access,history,cmd,cmddata) VALUES('%s',%i,NOW(),'%s',%i,'[]','','{}');"%(self.session,self.userid,self.username,self.level))
+		database.query("INSERT INTO sessions (id,user,expire,username,access,history,cmd,cmddata) VALUES('%s',%i,NOW(),'%s',%i,'[]','','{}');"%(self.session,int(self.userid),self.username,int(self.level)))
