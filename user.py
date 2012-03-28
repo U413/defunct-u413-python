@@ -48,10 +48,11 @@ class User(object):
 			self.cmddata={}
 			self.create_session()
 		else:
-			r=database.query("SELECT * FROM sessions WHERE id='%s';"%session)
+			r=database.query("SELECT * FROM sessions WHERE id='%s';"%database.escape(session))
 			if len(r)==0:
 				self.username='Guest'
-				self.session=uuid.uuid4()
+				# if new session is generated then there will never be a cookie match. Thus having disastrous bugs.
+				self.session=session #old session is created again ^
 				self.level=User.guest
 				self.userid=0
 				self.level=User.guest
