@@ -48,18 +48,21 @@ class Command(object):
 
 def respond(cmd,args,user,ashtml=True):
 	out=None
-	if cmd in cmds:
-		out=cmds[cmd].callback(args,user)
-	else:
-		out=Command.json.copy()
-		out.update({"DisplayItems":[display.Item('<span class="error">"%s" is not a valid command or is not available in the current context.</span>'%cmd)]})
-	#later on, output tags and check ashtml to convert BBCode to HTML
 	
 	#update history and cmd if context if None. Otherwise it may record sensitive information such as passwords
 	if user.context=='':
 		user.history.append(cmd)
 		user.cmd=cmd
 		database.query("UPDATE sessions SET history='%s',cmd='%s' WHERE id='%s';"%(database.escape(str(user.history)),database.escape(user.cmd),user.session))
+	
+	if user.context!='':
+		out=cmds[user.cmd].callback(cmd,user)
+	elif cmd in cmds:
+		out=cmds[cmd].callback(args,user)
+	else:
+		out=Command.json.copy()
+		out.update({"DisplayItems":[display.Item('<span class="error">"%s" is not a valid command or is not available in the current context.</span>'%cmd)]})
+	#later on, output tags and check ashtml to convert BBCode to HTML
 	
 	#change title if user is logged in
 	if user.username!="Guest":

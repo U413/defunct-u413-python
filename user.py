@@ -72,7 +72,7 @@ class User(object):
 			self.context=r["context"]
 			self.history=eval(r["history"])
 			self.cmd=r["cmd"]
-			self.cmddata=r["cmddata"]
+			self.cmddata=eval(r["cmddata"])
 	
 	def login(self,username,password):
 		password=sha256(password)

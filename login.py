@@ -16,11 +16,34 @@
 
 import command
 import display
+import database
 
 def login_func(args,user):
 	params=args.split(" ")
 	out=command.Command.json.copy()
-	if len(params)==2:
+	if args=="" and user.username=="Guest" and user.context=="":
+		user.context="USERNAME"
+		out.update({
+			"DisplayItems":[display.Item("Enter Your Username :")],
+			"ContextText":user.context
+		})
+		database.query("UPDATE sessions SET context='%s' WHERE id='%s';"%(user.context,user.session))
+	elif user.username=="Guest" and user.context=="USERNAME":
+		user.context="PASSWORD"
+		user.cmddata={'STEP1':args}
+		out.update({
+			"DisplayItems":[display.Item("Enter Your Password :")],
+			"ContextText":user.context,
+			"PasswordField":True
+		})
+		database.query("UPDATE sessions SET context='%s',cmddata='%s' WHERE id='%s';"%(user.context,database.escape(str(user.cmddata)),user.session))
+	elif user.username=="Guest" and user.context=="PASSWORD":
+		user.context=""
+		out.update({
+			"DisplayItems":[display.Item(user.login(user.cmddata['STEP1'],args))]
+		})
+		database.query("UPDATE sessions SET context='',cmddata='{}' WHERE id='%s';"%(user.session))
+	elif len(params)==2:
 		out.update({
 			"DisplayItems":[display.Item(user.login(params[0],params[1]))]
 		})

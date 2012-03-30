@@ -66,7 +66,10 @@ if flag == 0:
 print "\n\n";
 	
 cmdarg=cli.split(' ',1)
-cmd=cmdarg[0].upper()
+if currentuser.context=='':
+	cmd=cmdarg[0].upper()
+else:
+	cmd=cmdarg[0]
 arg=""
 if len(cmdarg)>1:
 	arg=cmdarg[1]
