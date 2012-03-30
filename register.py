@@ -21,34 +21,46 @@ import user as us
 
 def register_func(args,user):
 	out=command.Command.json.copy()
-	args=args.split(" ")
-	if len(args)==3:
-		r=database.query("SELECT * FROM users WHERE username='%s';"%args[0])
-		if len(r)!=0 or args[0].upper=="PIBOT" or args[0].upper=="ADMIN" or args[0].upper=="U413" or args[0].upper=="MOD" or args[0].upper=="QBOT" or args[0].upper=="EBOT":
-			out.update({
-				"DisplayItems":[display.Item("User is in use. Please register with a different username.")]
-			})
-		elif args[1]!=args[2]:
-			out.update({
-				"DisplayItems":[display.Item("Password does not match with confirmed password")]
-			})
-		elif user.username!="Guest":
-			out.update({
-				"DisplayItems":[display.Item("You need to be logged out to register")]
-			})
-		elif len(args[0])<3:
-			out.update({
-				"DisplayItems":[display.Item("Size of username has to be atleast 3 characters")]
-			})
-		elif len(args[1])<3:
-			out.update({
-				"DisplayItems":[display.Item("Size of password has to be atleast 3 characters")]
-			})
-		else:
-			database.query("INSERT INTO users(id,username,password,access) VALUES('','%s','%s','%s');"%(database.escape(args[0]),us.sha256(args[1]),"10"))
-			out.update({
-				"DisplayItems":[display.Item("Registration successful. "+user.login(args[0],args[1]))]
-			})
+	params=args.split(" ")
+	if args=="" and user.username=="Guest" and user.context=="":
+		user.context="USERNAME"
+		out.update({
+			"DisplayItems":[display.Item("Enter Desired Username :")],
+			"ContextText":user.context
+		})
+		database.query("UPDATE sessions SET context='%s' WHERE id='%s';"%(user.context,user.session))
+	elif user.username=="Guest" and user.context=="USERNAME":
+		user.context="PASSWORD"
+		user.cmddata={'STEP1':args}
+		out.update({
+			"DisplayItems":[display.Item("Enter Desired Password :")],
+			"ContextText":user.context,
+			"PasswordField":True
+		})
+		database.query("UPDATE sessions SET context='%s',cmddata='%s' WHERE id='%s';"%(user.context,database.escape(str(user.cmddata)),user.session))
+	elif user.username=="Guest" and user.context=="PASSWORD":
+		user.context="CONFIRM PASSWORD"
+		user.cmddata['STEP2']=args
+		out.update({
+			"DisplayItems":[display.Item("Please Confirm Password :")],
+			"ContextText":user.context,
+			"PasswordField":True
+		})
+		database.query("UPDATE sessions SET context='%s',cmddata='%s' WHERE id='%s';"%(user.context,database.escape(str(user.cmddata)),user.session))
+	elif user.username=="Guest" and user.context=="CONFIRM PASSWORD":
+		user.context=""
+		out.update({
+			"DisplayItems":[display.Item(user.register(user.cmddata['STEP1'],user.cmddata['STEP2'],args))]
+		})
+		database.query("UPDATE sessions SET context='',cmddata='{}' WHERE id='%s';"%(user.session))
+	elif len(params)==3:
+		out.update({
+			"DisplayItems":[display.Item(user.register(params[0],params[1],params[2]))]
+		})
+	elif args=="" and user.username!="Guest":
+		out.update({
+			"DisplayItems":[display.Item("You need to be logged out to register")]
+		})
 	else:
 		out.update({
 			"DisplayItems":[display.Item("Invalid Parameters")]

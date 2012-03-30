@@ -86,6 +86,25 @@ class User(object):
 		database.query("UPDATE sessions SET username='%s',user=%i,access=%i WHERE id='%s';"%(self.username,int(self.userid),int(self.level),self.session))
 		return "You are now logged in as "+self.username
 	
+	def register(self,username,password,confirmpassword):
+		pas=password
+		password=sha256(password)
+		confirmpassword=sha256(confirmpassword)
+		r=database.query("SELECT * FROM users WHERE username='%s';"%username)
+		if len(r)!=0 or username.upper=="PIBOT" or username.upper=="ADMIN" or username.upper=="U413" or username.upper=="MOD" or username.upper=="QBOT" or username.upper=="EBOT":
+			return "User is in use. Please register with a different username."
+		elif password!=confirmpassword:
+			return "Password does not match with confirmed password"
+		elif self.username!="Guest":
+			return "You need to be logged out to register"
+		elif len(username)<3:
+			return "Size of username has to be atleast 3 characters"
+		elif len(password)<3:
+			return "Size of password has to be atleast 3 characters"
+		else:
+			database.query("INSERT INTO users(id,username,password,access) VALUES('','%s','%s','%s');"%(database.escape(username),password,"10"))
+			return "Registration successful. "+self.login(username,pas)
+	
 	def logout(self):
 		if self.session!="" and self.level!=0:
 			database.query("UPDATE sessions SET username='Guest',user=0,access=0 WHERE id='%s';"%(self.session))
