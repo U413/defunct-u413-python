@@ -26,6 +26,7 @@ import Cookie
 
 import user
 import command
+import database
 
 import initialize
 import echo
@@ -49,6 +50,8 @@ if environ.has_key('HTTP_COOKIE'):
 		if key=="Session":
 			flag = 1
 			currentsession=value
+			if cli==None:
+				database.query("UPDATE sessions SET context='',cmddata='{}' WHERE id='%s';"%(currentsession))
 			currentuser=user.User(currentsession)
 			if cli==None:
 				cli="INITIALIZE"
