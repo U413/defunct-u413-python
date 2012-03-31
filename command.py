@@ -55,10 +55,10 @@ def respond(cmd,args,user,ashtml=True):
 		user.cmd=cmd
 		database.query("UPDATE sessions SET history='%s',cmd='%s' WHERE id='%s';"%(database.escape(str(user.history)),database.escape(user.cmd),user.session))
 	
-	if user.context!='':
+	if user.context!='' and cmd.upper()!="CANCEL":
 		out=cmds[user.cmd].callback(cmd,user)
-	elif cmd in cmds:
-		out=cmds[cmd].callback(args,user)
+	elif cmd.upper() in cmds:
+		out=cmds[cmd.upper()].callback(args,user)
 	else:
 		out=Command.json.copy()
 		out.update({"DisplayItems":[display.Item('<span class="error">"%s" is not a valid command or is not available in the current context.</span>'%cmd)]})

@@ -91,7 +91,7 @@ class User(object):
 		password=sha256(password)
 		confirmpassword=sha256(confirmpassword)
 		r=database.query("SELECT * FROM users WHERE username='%s';"%username)
-		if len(r)!=0 or username.upper=="PIBOT" or username.upper=="ADMIN" or username.upper=="U413" or username.upper=="MOD" or username.upper=="QBOT" or username.upper=="EBOT":
+		if len(r)!=0 or username.upper()=="PIBOT" or username.upper()=="ADMIN" or username.upper()=="U413" or username.upper()=="MOD" or username.upper()=="QBOT" or username.upper()=="EBOT":
 			return "User is in use. Please register with a different username."
 		elif password!=confirmpassword:
 			return "Password does not match with confirmed password"
