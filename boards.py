@@ -1,5 +1,6 @@
 '''u413 - an open-source BBS/terminal/PI-themed forum
 	Copyright (C) 2012 PiMaster
+	Copyright (C) 2012 EnKrypt
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU Affero General Public License as published by
@@ -21,10 +22,10 @@ import database
 def boards_func(args,user):
 	out=command.Command.json.copy()
 	
-	boards=database.query("SELECT * from boards WHERE hidden='0';")
+	boards=database.query("SELECT * FROM boards WHERE hidden='0';")
 	boardlist=""
 	for i in boards:
-		boardlist+="<br>| {"+i['id']+"} | "+i['name']
+		boardlist+="<br> {"+i['id']+"} | "+i['name']
 	
 	out.update({
 		"DisplayItems":[

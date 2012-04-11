@@ -1,5 +1,6 @@
 '''u413 - an open-source BBS/terminal/PI-themed forum
 	Copyright (C) 2012 PiMaster
+	Copyright (C) 2012 EnKrypt
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU Affero General Public License as published by
