@@ -22,12 +22,12 @@ def help_func(args,user):
 	if args=="":
 		helpout=''
 		for cmd in command.cmds:
-			if user.level>=command.cmds[cmd].level:
+			if int(user.level)>=int(command.cmds[cmd].level):
 				helpout+=cmd+" - "+command.cmds[cmd].description+"<br>"
 		out["DisplayItems"]=[display.Item(helpout,donttype=True),display.Item("SHIFT+ENTER to drop down to a new line.",donttype=True)]
 	else:
 		cmd=args.split()[0].upper()
-		if cmd in command.cmds and command.cmds[cmd].level<=user.level:
+		if cmd in command.cmds and int(command.cmds[cmd].level)<=int(user.level):
 			#change this to something that shows a more detailed help
 			out["DisplayItems"]=[display.Item("> "+cmd+" - "+command.cmds[cmd].description)]
 		else:

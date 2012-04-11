@@ -36,6 +36,7 @@ import logout
 import register
 import help
 import w
+import boards
 import cancel
 
 print "Content-type: application/javascript"

@@ -58,7 +58,11 @@ def respond(cmd,args,user,ashtml=True):
 	if user.context!='' and cmd.upper()!="CANCEL":
 		out=cmds[user.cmd].callback(cmd,user)
 	elif cmd.upper() in cmds:
-		out=cmds[cmd.upper()].callback(args,user)
+		if int(cmds[cmd].level)>int(user.level):
+			out=Command.json.copy()
+			out.update({"DisplayItems":[display.Item('<span class="error">"%s" is not a valid command or is not available in the current context.</span>'%cmd)]})
+		else:
+			out=cmds[cmd.upper()].callback(args,user)
 	else:
 		out=Command.json.copy()
 		out.update({"DisplayItems":[display.Item('<span class="error">"%s" is not a valid command or is not available in the current context.</span>'%cmd)]})
