@@ -28,11 +28,13 @@ def query(q):
 		return []
 	#format result
 	fr=[]
-	row=(0,)
 	while True:
 		row=r.fetch_row(how=1,maxrows=0)
 		if row!=():
-			fr.append(row[0])
+			i=0
+			while i<len(row):
+				fr.append(row[i])
+				i=i+1
 		else:
 			break
 	return fr
