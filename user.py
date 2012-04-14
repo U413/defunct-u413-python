@@ -21,7 +21,7 @@ import uuid
 
 import datetime
 
-import database
+import database as db
 
 def sha256(data):
 	return hashlib.sha256(data).hexdigest()
@@ -38,17 +38,13 @@ class User(object):
 	
 	def __init__(self,session=None):
 		if session==None:
-			self.username='Guest'
-			self.session=uuid.uuid4()
-			self.userid=0
-			self.level=User.guest
-			self.expire=datetime.datetime.today()
-			self.context=''
-			self.history=[]
-			self.cmd=''
-			self.cmddata={}
-			self.create_session()
+			self.guest_login()
 		else:
+<<<<<<< HEAD
+			r=db.query("SELECT * FROM sessions WHERE id='%s';"%db.escape(session))
+			if len(r)==0:
+				self.guest_login()
+=======
 			r=database.query("SELECT * FROM sessions WHERE id='%s';"%database.escape(session))
 			if len(r)==0:
 				self.username='Guest'
@@ -63,29 +59,54 @@ class User(object):
 				self.cmd=''
 				self.cmddata={}
 				self.create_session()
+>>>>>>> 31dd46dea58cff98b0e37e86850d4080466161e3
 				return
 			r=r[0]
 			self.session=session
 			self.userid=r["user"]
+<<<<<<< HEAD
+			self.name=r["username"]
+=======
 			self.username=r["username"]
+>>>>>>> 31dd46dea58cff98b0e37e86850d4080466161e3
 			self.level=r["access"]
 			self.expire=datetime.datetime.strptime(r["expire"],'%Y-%m-%d %H:%M:%S')
 			self.context=r["context"]
 			self.history=eval(r["history"])
 			self.cmd=r["cmd"]
 			self.cmddata=eval(r["cmddata"])
+<<<<<<< HEAD
+	
+	def guest_login(self):
+		self.name='Guest'
+		self.session=uuid.uuid4().hex
+		self.level=User.guest
+		self.userid=0
+		self.expire=datetime.datetime.today()
+		self.context=''
+		self.history=[]
+		self.cmd=''
+		self.cmddata={}
+		self.create_session()
+=======
+>>>>>>> 31dd46dea58cff98b0e37e86850d4080466161e3
 	
 	def login(self,username,password):
 		password=sha256(password)
-		r=database.query("SELECT * FROM users WHERE username='%s' AND password='%s';"%(database.escape(username),password))
+		r=db.query("SELECT * FROM users WHERE LCASE(username)='%s' AND password='%s';"%(db.escape(username.lower()),sha256(password)))
 		if len(r)==0:
 			return "Wrong username or password"
 		r=r[0]
-		self.username=r["username"]
+		self.name=r["username"]
 		self.level=r["access"]
 		self.userid=r["id"]
+<<<<<<< HEAD
+		db.query("UPDATE sessions SET username='%s',user=%i,access=%i WHERE id='%s';"%(self.name,self.userid,self.level,self.session))
+		return "You are now logged in as "+self.name
+=======
 		database.query("UPDATE sessions SET username='%s',user=%i,access=%i WHERE id='%s';"%(self.username,int(self.userid),int(self.level),self.session))
 		return "You are now logged in as "+self.username
+>>>>>>> 31dd46dea58cff98b0e37e86850d4080466161e3
 	
 	def register(self,username,password,confirmpassword):
 		pas=password
@@ -107,12 +128,19 @@ class User(object):
 			return "Registration successful. "+self.login(username,pas)
 	
 	def logout(self):
-		if self.session!="" and self.level!=0:
-			database.query("UPDATE sessions SET username='Guest',user=0,access=0 WHERE id='%s';"%(self.session))
-			return "You have been logged out"
+		if self.session!="":
+			if self.level!=0:
+				return "You're already logged out"
+			else:
+				db.query("UPDATE sessions SET user=0,username='Guest',access=0,context='',cmd='',cmddata='' WHERE id='%s';"%user.session)
+				return "You have been logged out"
 		else:
 			#TODO: send something to the client that clears cookies
 			return "Corrupt login. Cannot logout. Please clear cookies."
 		
 	def create_session(self):
+<<<<<<< HEAD
+		db.query("INSERT INTO sessions (id,user,expire,username,access,history,cmd,cmddata) VALUES('%s',%i,DATE_ADD(NOW(),INTERVAL 6 HOUR),'%s',%i,'[]','','{}');"%(self.session,self.userid,self.name,self.level))
+=======
 		database.query("INSERT INTO sessions (id,user,expire,username,access,history,cmd,cmddata) VALUES('%s',%i,NOW(),'%s',%i,'[]','','{}');"%(self.session,int(self.userid),self.username,int(self.level)))
+>>>>>>> 31dd46dea58cff98b0e37e86850d4080466161e3

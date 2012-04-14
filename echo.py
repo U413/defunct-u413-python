@@ -16,13 +16,8 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.'''
 
 import command
-import display
 
-def echo_func(args,user):
-	out=command.Command.json.copy()
-	out.update({
-		"DisplayItems":[display.Item(args)]
-	})
-	return out
+def echo_func(args,u413):
+	u413.type(args)
 
 command.Command("ECHO","Echo a string to the terminal.",echo_func,0)

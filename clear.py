@@ -16,22 +16,8 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.'''
 
 import command
-import database as db
 
-<<<<<<< HEAD
-def logout_func(args,u413):
-	if u413.user.username!="Guest":
-		u413.type(u413.user.logout())
-=======
-def logout_func(args,user):
-	out=command.Command.json.copy()
-	if user.username!="Guest":
-		out.update({
-			"DisplayItems":[display.Item(user.logout())]
-		})
->>>>>>> 31dd46dea58cff98b0e37e86850d4080466161e3
-	else:
-		u413.type("You are not logged in")
-	return out
+def clear_func(args,u413):
+	u413.clear_screen()
 
-command.Command("LOGOUT","Logs out a user who is logged into U413",logout_func,10)
+command.Command("CLEAR","Clear the screen",clear_func)

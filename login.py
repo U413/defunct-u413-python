@@ -16,11 +16,20 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.'''
 
 import command
+<<<<<<< HEAD
+=======
 import display
 import database
+>>>>>>> 31dd46dea58cff98b0e37e86850d4080466161e3
 
-def login_func(args,user):
+def login_func(args,u413):
 	params=args.split(" ")
+<<<<<<< HEAD
+	if len(params)==2:
+		u413.type(u413.user.login(params[0],params[1]))
+	elif args=="" and u413.user.name!="Guest":
+		u413.type("You are logged in as "+u413.user.name)
+=======
 	out=command.Command.json.copy()
 	if args=="" and user.username=="Guest" and user.context=="":
 		user.context="USERNAME"
@@ -52,10 +61,8 @@ def login_func(args,user):
 		out.update({
 			"DisplayItems":[display.Item("You are logged in as "+user.username)]
 		})
+>>>>>>> 31dd46dea58cff98b0e37e86850d4080466161e3
 	else:
-		out.update({
-			"DisplayItems":[display.Item("Invalid Parameters")]
-		})
-	return out
+		u413.type("Invalid parameters")
 
 command.Command("LOGIN","Logs a user onto U413",login_func,0)

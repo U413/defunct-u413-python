@@ -18,7 +18,7 @@
 
 import cgi
 import cgitb
-cgitb.enable(display=1,logdir="/var/www/u413/error")
+cgitb.enable(display=1)
 
 import json
 import os
@@ -27,7 +27,11 @@ import Cookie
 
 import user
 import command
+<<<<<<< HEAD
+import database as db
+=======
 import database
+>>>>>>> 31dd46dea58cff98b0e37e86850d4080466161e3
 
 import initialize
 import echo
@@ -35,12 +39,18 @@ import ping
 import login
 import logout
 import register
+import who
+import desu
+import clear
 import help
+<<<<<<< HEAD
+=======
 import w
 import boards
 import cancel
 
 print "Content-type: application/javascript"
+>>>>>>> 31dd46dea58cff98b0e37e86850d4080466161e3
 
 form=cgi.FieldStorage()
 cli=form.getvalue("cli")
@@ -68,6 +78,12 @@ if flag == 0:
 	print cookie
 	if cli==None:
 		cli="INITIALIZE"
+<<<<<<< HEAD
+else:
+	currentuser=user.User(session)
+	if cli==None:
+		cli="LOGIN"
+=======
 	
 print "\n\n";
 	
@@ -79,9 +95,98 @@ else:
 arg=""
 if len(cmdarg)>1:
 	arg=cmdarg[1]
+>>>>>>> 31dd46dea58cff98b0e37e86850d4080466161e3
 
 callback=form.getvalue("callback")
+
+class u413(object):
+	def __init__(self,u):
+		self.j={
+			"Command":"",
+			"ContextText":"",
+			"CurrentUser":None,
+			"EditText":None,
+			"SessionId":None,
+			"TerminalTitle":"Terminal - Visitor",
+			"ClearScreen":False,
+			"Exit":False,
+			"PasswordField":False,
+			"ScrollToBottom":True,
+			"DisplayItems":[]
+		}
+		self.cmds=command.cmds
+		self.user=u
+		self.cont=False
+		self.cookies=[]
+		self.cmddata=u.cmddata
+
+	def type(self,text,mute=False):
+		self.j["DisplayItems"].append({"Text":text,"DontType":False,"Mute":mute})
+
+	def donttype(self,text,mute=False):
+		self.j["DisplayItems"].append({"Text":text,"DontType":True,"Mute":mute})
+	
+	def set_context(self,context):
+		self.j["ContextText"]=context
+
+	def set_title(self,title):
+		self.j["TerminalTitle"]=title
+
+	def edit_text(self,text):
+		self.j["EditText"]=text
+
+	def clear_screen(self):
+		self.j["ClearScreen"]=True
+
+	def scroll_down(self):
+		self.j["ScrollToBottom"]=True
+
+	def use_password(self):
+		self.j["PasswordField"]=True
+
+	def continue_cmd(self):
+		self.cont=True
+
+	def set_cookie(self,cookie,value):
+		self.cookies.append({"name":cookie,"value":value})
+
+	def exit(self):
+		self.j["Exit"]=True
+
+u=u413(currentuser)
+
+command.respond(cli,u)
+
+u.j["CurrentUser"]=currentuser.name
+u.j["SessionId"]=currentuser.session
+if u.cont:
+	u.j["Command"]=currentuser.cmd
+
 if callback==None:
-	print json.dumps(command.respond(cmd,arg,currentuser))
+	print "Content-type: application/json"
 else:
+	print "Content-type: application/javascript"
+
+for cookie in u.cookies:
+	print "Set-Cookie: "+cookie["name"]+"="+cookie["value"]
+
+print
+
+if callback==None:
+	print json.dumps(u.j)
+else:
+	print callback+'('+json.dumps(u.j)+')'
+
+if u.cont:
+	cmd=''
+	if currentuser.cmd=='':
+		cmd=cli.split(' ',1)[0].upper()
+	else:
+		cmd=currentuser.cmd
+	db.query("UPDATE sessions SET expire=DATE_ADD(NOW(),INTERVAL 6 HOUR),cmd='%s',cmddata='%s' WHERE id='%s';"%(cmd,db.escape(repr(u.cmddata)),currentuser.session))
+else:
+<<<<<<< HEAD
+	db.query("UPDATE sessions SET expire=DATE_ADD(NOW(),INTERVAL 6 HOUR),cmd='',cmddata='{}' WHERE id='%s';"%currentuser.session)
+=======
 	print callback+'('+json.dumps(command.respond(cmd,arg,currentuser))+')'
+>>>>>>> 31dd46dea58cff98b0e37e86850d4080466161e3

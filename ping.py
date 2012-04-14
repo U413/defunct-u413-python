@@ -16,13 +16,8 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.'''
 
 import command
-import display
 
-def ping_func(args,user):
-	out=command.Command.json.copy()
-	out.update({
-		"DisplayItems":[display.Item("PONG "+args)]
-	})
-	return out
+def ping_func(args,u413):
+	u413.type("PONG "+args)
 
 command.Command("PING","Tests whether everything runs fine. In which case it will return PONG and any accompanied text.",ping_func,0)

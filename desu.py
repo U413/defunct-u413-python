@@ -1,6 +1,5 @@
 '''u413 - an open-source BBS/terminal/PI-themed forum
 	Copyright (C) 2012 PiMaster
-	Copyright (C) 2012 EnKrypt
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU Affero General Public License as published by
@@ -16,22 +15,14 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.'''
 
 import command
-import database as db
 
-<<<<<<< HEAD
-def logout_func(args,u413):
-	if u413.user.username!="Guest":
-		u413.type(u413.user.logout())
-=======
-def logout_func(args,user):
-	out=command.Command.json.copy()
-	if user.username!="Guest":
-		out.update({
-			"DisplayItems":[display.Item(user.logout())]
-		})
->>>>>>> 31dd46dea58cff98b0e37e86850d4080466161e3
-	else:
-		u413.type("You are not logged in")
-	return out
+def desu_func(args,u413):
+	if "desucount" not in u413.cmddata:
+		u413.cmddata["desucount"]=1
+	elif u413.cmddata["desucount"]<256:
+		u413.cmddata["desucount"]*=2
+	u413.donttype(("DESU "*u413.cmddata["desucount"])[:-1])
+	u413.set_context("DESU~")
+	u413.continue_cmd()
 
-command.Command("LOGOUT","Logs out a user who is logged into U413",logout_func,10)
+command.Command("DESU","Keep typing 'DESU'. Maybe if you type it enough, you will turn Japanese.",desu_func,0,True)
