@@ -20,7 +20,7 @@ import user
 import database as db
 
 def wall_func(args,u413):
-	r=db.query("SELECT * FROM wall;")
+	r=db.query("SELECT * FROM wall ORDER BY posted;")
 	if args.strip()=='':
 		if len(r)==0:
 			u413.type("There are no notes on the wall.")

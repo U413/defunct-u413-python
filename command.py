@@ -56,7 +56,10 @@ def respond(cli,u413,ashtml=True):
 	#update history and cmd if it's not a command that handles sensitive data
 	sensitive=['LOGIN','REGISTER']
 	if u413.user.cmd not in sensitive and cmd not in sensitive:
-		u413.user.history.append(cmd)
+		if args!='':
+			u413.user.history.append(cmd+' <span class="italics">'+args+'</span>')
+		else:
+			u413.user.history.append(cmd)
 		database.query("UPDATE sessions SET history='%s' WHERE id='%s';"%(database.escape(str(u413.user.history)),u413.user.session))
 
 	if u413.user.cmd=='':
