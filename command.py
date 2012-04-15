@@ -21,19 +21,6 @@ import database
 cmds={}
 
 class Command(object):
-	json={
-		"Command":"",
-		"ContextText":"",
-		"CurrentUser":None,
-		"EditText":None,
-		"SessionId":None,
-		"TerminalTitle":"Terminal - Visitor",
-		"ClearScreen":False,
-		"Exit":False,
-		"PasswordField":False,
-		"ScrollToBottom":True,
-		"DisplayItems":[]
-	}
 	def __init__(self,name,usage,args,description,callback,level=user.User.guest,hidden=False):
 		self.name=name.upper()
 		self.usage=usage
@@ -43,10 +30,6 @@ class Command(object):
 		self.callback=callback
 		self.hidden=hidden
 		cmds[self.name]=self
-
-	def callback(self,args,user):
-		out=self._callback(args,user)
-		out["Command"]=self.name
 
 def respond(cli,u413,ashtml=True):
 	cmdarg=cli.split(' ',1)

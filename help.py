@@ -17,6 +17,9 @@
 
 import command
 
+def htmlify(s):
+	return s.replace('<','&lt;').replace('>','&gt;')
+
 def help_func(args,u413):
 	if args.strip()=="":
 		helpout=''
@@ -28,7 +31,7 @@ def help_func(args,u413):
 				if c.usage=='':
 					helpout+='<span class="tab"></span>'+cmd+"<br/>\n"
 				else:
-					helpout+='<span class="tab"></span>'+cmd+' '+command.cmds[cmd].usage+"<br/>\n"
+					helpout+='<span class="tab"></span>'+cmd+' '+htmlify(command.cmds[cmd].usage)+"<br/>\n"
 		u413.donttype(helpout)
 		u413.donttype("[] - optional parameter")
 		u413.donttype("<> - required parameter")
@@ -39,7 +42,7 @@ def help_func(args,u413):
 			c=command.cmds[cmd]
 			#change this to something that shows a more detailed help
 			u413.type(cmd+' - '+c.description)
-			u413.donttype("Usage: "+cmd+" "+c.usage)
+			u413.donttype("Usage: "+cmd+" "+htmlify(c.usage))
 			for a in c.args:
 				u413.donttype('<span class="tab"></span>'+a+' - '+c.args[a])
 		else:
