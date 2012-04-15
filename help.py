@@ -21,22 +21,13 @@ def help_func(args,u413):
 	if args=="":
 		helpout=''
 		for cmd in command.cmds:
-<<<<<<< HEAD
 			if u413.user.level>=command.cmds[cmd].level and not command.cmds[cmd].hidden:
 				helpout+=cmd+" - "+command.cmds[cmd].description+"<br/>\n"
 		u413.donttype(helpout)
 		u413.donttype("SHIFT+ENTER to drop down to a new line.")
 	else:
 		cmd=args.split()[0].upper()
-		if cmd in command.cmds and command.cmds[cmd].level<u413.user.level:
-=======
-			if int(user.level)>=int(command.cmds[cmd].level):
-				helpout+=cmd+" - "+command.cmds[cmd].description+"<br>"
-		out["DisplayItems"]=[display.Item(helpout,donttype=True),display.Item("SHIFT+ENTER to drop down to a new line.",donttype=True)]
-	else:
-		cmd=args.split()[0].upper()
-		if cmd in command.cmds and int(command.cmds[cmd].level)<=int(user.level):
->>>>>>> 31dd46dea58cff98b0e37e86850d4080466161e3
+		if cmd in command.cmds and int(command.cmds[cmd].level)<=int(u413.user.level):
 			#change this to something that shows a more detailed help
 			u413.type("> "+cmd+" - "+command.cmds[cmd].description)
 		else:

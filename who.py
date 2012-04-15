@@ -18,19 +18,9 @@
 import command
 
 def w_func(args,u413):
-	out=command.Command.json.copy()
-<<<<<<< HEAD:who.py
 	u413.donttype("Username: "+u413.user.username)
 	u413.donttype("User ID: "+str(u413.user.userid))
 	u413.donttype("Session ID: "+str(u413.user.session))
-=======
-	out["DisplayItems"]=[
-		display.Item("Username: "+user.username,donttype=True),
-		display.Item("User ID: "+str(user.userid),donttype=True),
-		display.Item("User Access Level: "+str(user.level),donttype=True),
-		display.Item("Session ID: "+str(user.session),donttype=True)
-	]
 	return out
->>>>>>> 31dd46dea58cff98b0e37e86850d4080466161e3:w.py
 
 command.Command("WHO","Output statistics about the currently logged-in user.",w_func)

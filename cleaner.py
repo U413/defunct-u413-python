@@ -17,4 +17,4 @@
 
 import database as db
 
-db.query("DELETE FROM sessions WHERE DATE_ADD(expire,INTERVAL 6 HOUR)<NOW();")
+db.query("DELETE FROM sessions WHERE expire<NOW();")

@@ -15,7 +15,6 @@
 	You should have received a copy of the GNU Affero General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.'''
 
-import cgi
 import hashlib
 import uuid
 
@@ -40,12 +39,10 @@ class User(object):
 		if session==None:
 			self.guest_login()
 		else:
-<<<<<<< HEAD
 			r=db.query("SELECT * FROM sessions WHERE id='%s';"%db.escape(session))
 			if len(r)==0:
 				self.guest_login()
-=======
-			r=database.query("SELECT * FROM sessions WHERE id='%s';"%database.escape(session))
+			r=db.query("SELECT * FROM sessions WHERE id='%s';"%db.escape(session))
 			if len(r)==0:
 				self.username='Guest'
 				# if new session is generated then there will never be a cookie match. Thus having disastrous bugs.
@@ -59,23 +56,18 @@ class User(object):
 				self.cmd=''
 				self.cmddata={}
 				self.create_session()
->>>>>>> 31dd46dea58cff98b0e37e86850d4080466161e3
 				return
 			r=r[0]
 			self.session=session
 			self.userid=r["user"]
-<<<<<<< HEAD
 			self.name=r["username"]
-=======
 			self.username=r["username"]
->>>>>>> 31dd46dea58cff98b0e37e86850d4080466161e3
 			self.level=r["access"]
 			self.expire=datetime.datetime.strptime(r["expire"],'%Y-%m-%d %H:%M:%S')
 			self.context=r["context"]
 			self.history=eval(r["history"])
 			self.cmd=r["cmd"]
 			self.cmddata=eval(r["cmddata"])
-<<<<<<< HEAD
 	
 	def guest_login(self):
 		self.name='Guest'
@@ -88,8 +80,6 @@ class User(object):
 		self.cmd=''
 		self.cmddata={}
 		self.create_session()
-=======
->>>>>>> 31dd46dea58cff98b0e37e86850d4080466161e3
 	
 	def login(self,username,password):
 		password=sha256(password)
@@ -100,19 +90,14 @@ class User(object):
 		self.name=r["username"]
 		self.level=r["access"]
 		self.userid=r["id"]
-<<<<<<< HEAD
 		db.query("UPDATE sessions SET username='%s',user=%i,access=%i WHERE id='%s';"%(self.name,self.userid,self.level,self.session))
 		return "You are now logged in as "+self.name
-=======
-		database.query("UPDATE sessions SET username='%s',user=%i,access=%i WHERE id='%s';"%(self.username,int(self.userid),int(self.level),self.session))
-		return "You are now logged in as "+self.username
->>>>>>> 31dd46dea58cff98b0e37e86850d4080466161e3
 	
 	def register(self,username,password,confirmpassword):
 		pas=password
 		password=sha256(password)
 		confirmpassword=sha256(confirmpassword)
-		r=database.query("SELECT * FROM users WHERE username='%s';"%username)
+		r=db.query("SELECT * FROM users WHERE username='%s';"%username)
 		if len(r)!=0 or username.upper()=="PIBOT" or username.upper()=="ADMIN" or username.upper()=="U413" or username.upper()=="MOD" or username.upper()=="QBOT" or username.upper()=="EBOT":
 			return "User is in use. Please register with a different username."
 		elif password!=confirmpassword:
@@ -124,7 +109,7 @@ class User(object):
 		elif len(password)<3:
 			return "Size of password has to be atleast 3 characters"
 		else:
-			database.query("INSERT INTO users(id,username,password,access) VALUES('','%s','%s','%s');"%(database.escape(username),password,"10"))
+			db.query("INSERT INTO users(id,username,password,access) VALUES('','%s','%s','%s');"%(db.escape(username),password,"10"))
 			return "Registration successful. "+self.login(username,pas)
 	
 	def logout(self):
@@ -139,8 +124,4 @@ class User(object):
 			return "Corrupt login. Cannot logout. Please clear cookies."
 		
 	def create_session(self):
-<<<<<<< HEAD
 		db.query("INSERT INTO sessions (id,user,expire,username,access,history,cmd,cmddata) VALUES('%s',%i,DATE_ADD(NOW(),INTERVAL 6 HOUR),'%s',%i,'[]','','{}');"%(self.session,self.userid,self.name,self.level))
-=======
-		database.query("INSERT INTO sessions (id,user,expire,username,access,history,cmd,cmddata) VALUES('%s',%i,NOW(),'%s',%i,'[]','','{}');"%(self.session,int(self.userid),self.username,int(self.level)))
->>>>>>> 31dd46dea58cff98b0e37e86850d4080466161e3

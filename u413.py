@@ -27,11 +27,7 @@ import Cookie
 
 import user
 import command
-<<<<<<< HEAD
 import database as db
-=======
-import database
->>>>>>> 31dd46dea58cff98b0e37e86850d4080466161e3
 
 import initialize
 import echo
@@ -43,59 +39,27 @@ import who
 import desu
 import clear
 import help
-<<<<<<< HEAD
-=======
-import w
 import boards
-import cancel
-
-print "Content-type: application/javascript"
->>>>>>> 31dd46dea58cff98b0e37e86850d4080466161e3
 
 form=cgi.FieldStorage()
 cli=form.getvalue("cli")
+session=form.getvalue("session")
 
-flag = 0
-if environ.has_key('HTTP_COOKIE'):
-	for cookie in map(str.strip,str.split(environ['HTTP_COOKIE'],';')):
-		(key,value )=str.split(cookie,'=');
-		if key=="Session":
-			flag = 1
-			currentsession=value
-			if cli==None:
-				database.query("UPDATE sessions SET context='',cmddata='{}' WHERE id='%s';"%(currentsession))
-			currentuser=user.User(currentsession)
-			if cli==None:
-				cli="INITIALIZE"
-				if currentuser.username!="Guest":
-					cli="LOGIN"
-			break
 #no session
-if flag == 0:
-	currentuser = user.User()
-	cookie = Cookie.SimpleCookie()
-	cookie['Session'] = str(currentuser.session)
-	print cookie
+if session==None:
+	currentuser=user.User()
 	if cli==None:
 		cli="INITIALIZE"
-<<<<<<< HEAD
 else:
 	currentuser=user.User(session)
 	if cli==None:
 		cli="LOGIN"
-=======
-	
-print "\n\n";
 	
 cmdarg=cli.split(' ',1)
-if currentuser.context=='':
-	cmd=cmdarg[0].upper()
-else:
-	cmd=cmdarg[0]
-arg=""
+cmd=cmdarg[0]
+args=""
 if len(cmdarg)>1:
-	arg=cmdarg[1]
->>>>>>> 31dd46dea58cff98b0e37e86850d4080466161e3
+	args=cmdarg[1]
 
 callback=form.getvalue("callback")
 
@@ -128,6 +92,7 @@ class u413(object):
 	
 	def set_context(self,context):
 		self.j["ContextText"]=context
+		self.user.context=context
 
 	def set_title(self,title):
 		self.j["TerminalTitle"]=title
@@ -178,15 +143,8 @@ else:
 	print callback+'('+json.dumps(u.j)+')'
 
 if u.cont:
-	cmd=''
-	if currentuser.cmd=='':
-		cmd=cli.split(' ',1)[0].upper()
-	else:
+	if currentuser.cmd!='':
 		cmd=currentuser.cmd
 	db.query("UPDATE sessions SET expire=DATE_ADD(NOW(),INTERVAL 6 HOUR),cmd='%s',cmddata='%s' WHERE id='%s';"%(cmd,db.escape(repr(u.cmddata)),currentuser.session))
 else:
-<<<<<<< HEAD
 	db.query("UPDATE sessions SET expire=DATE_ADD(NOW(),INTERVAL 6 HOUR),cmd='',cmddata='{}' WHERE id='%s';"%currentuser.session)
-=======
-	print callback+'('+json.dumps(command.respond(cmd,arg,currentuser))+')'
->>>>>>> 31dd46dea58cff98b0e37e86850d4080466161e3

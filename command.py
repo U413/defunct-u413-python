@@ -16,11 +16,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.'''
 
 import user
-<<<<<<< HEAD
-=======
-import display
 import database
->>>>>>> 31dd46dea58cff98b0e37e86850d4080466161e3
 
 cmds={}
 
@@ -46,7 +42,6 @@ class Command(object):
 		self.hidden=hidden
 		cmds[self.name]=self
 
-<<<<<<< HEAD
 def respond(cli,u413,ashtml=True):
 	u413.donttype("Command: "+u413.user.cmd)
 	u413.donttype(str(u413.cmddata))
@@ -67,39 +62,36 @@ def respond(cli,u413,ashtml=True):
 			u413.set_context("")
 		else:
 			cmds[u413.user.cmd].callback(cli,u413)
-=======
 	def callback(self,args,user):
 		out=self._callback(args,user)
 		out["Command"]=self.name
 		return out
 
-def respond(cmd,args,user,ashtml=True):
-	out=None
-	
-	#update history and cmd if context if None. Otherwise it may record sensitive information such as passwords
-	if user.context=='':
-		user.history.append(cmd)
-		user.cmd=cmd
-		database.query("UPDATE sessions SET history='%s',cmd='%s' WHERE id='%s';"%(database.escape(str(user.history)),database.escape(user.cmd),user.session))
-	
-	if user.context!='' and cmd.upper()!="CANCEL":
-		out=cmds[user.cmd].callback(cmd,user)
-	elif cmd.upper() in cmds:
-		if int(cmds[cmd].level)>int(user.level):
-			out=Command.json.copy()
-			out.update({"DisplayItems":[display.Item('<span class="error">"%s" is not a valid command or is not available in the current context.</span>'%cmd)]})
+def respond(cli,u413,ashtml=True):
+	sensitive=['LOGIN','REGISTER']
+	parts=cli.split(' ',1)
+	cmd=parts[0].upper()
+	args=''
+	if len(parts)>1:
+		args=parts[1]
+	#update history and cmd if it's not a command that handles sensitive data
+	if u413.user.cmd not in sensitive and cmd not in sensitive:
+		u413.user.history.append(cmd)
+		database.query("UPDATE sessions SET history='%s' WHERE id='%s';"%(database.escape(str(u413.user.history)),u413.user.session))
+	u413.donttype("Command: "+u413.user.cmd)
+	if cmd.upper() in cmds:
+		if int(cmds[cmd].level)>int(u413.user.level):
+			u413.donttype('<span class="error">"%s" is not a valid command or is not available in the current context.</span>'%cmd)
 		else:
-			out=cmds[cmd.upper()].callback(args,user)
+			cmds[cmd.upper()].callback(args,u413)
 	else:
-		out=Command.json.copy()
-		out.update({"DisplayItems":[display.Item('<span class="error">"%s" is not a valid command or is not available in the current context.</span>'%cmd)]})
-	#later on, output tags and check ashtml to convert BBCode to HTML
+		if u413.user.cmd=='':
+			u413.donttype('<span class="error">"%s" is not a valid command or is not available in the current context.</span>'%cmd)
+		elif cmd.upper()=="CANCEL":
+			u413.type("Action cancelled.")
+		else:
+			cmds[u413.user.cmd.upper()].callback(args,u413)
 	
 	#change title if user is logged in
-	if user.username!="Guest":
-		out.update({
-			"TerminalTitle":"Terminal - "+user.username
-		})
-	
-	return out
->>>>>>> 31dd46dea58cff98b0e37e86850d4080466161e3
+	if u413.user.name!="Guest":
+		u413.set_title("Terminal - "+u413.user.name)

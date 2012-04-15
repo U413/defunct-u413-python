@@ -16,53 +16,58 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.'''
 
 import command
-<<<<<<< HEAD
-=======
-import display
-import database
->>>>>>> 31dd46dea58cff98b0e37e86850d4080466161e3
+import database as db
+import user
 
 def login_func(args,u413):
-	params=args.split(" ")
-<<<<<<< HEAD
-	if len(params)==2:
-		u413.type(u413.user.login(params[0],params[1]))
-	elif args=="" and u413.user.name!="Guest":
-		u413.type("You are logged in as "+u413.user.name)
-=======
-	out=command.Command.json.copy()
-	if args=="" and user.username=="Guest" and user.context=="":
-		user.context="USERNAME"
-		out.update({
-			"DisplayItems":[display.Item("Enter Your Username :")],
-			"ContextText":user.context
-		})
-		database.query("UPDATE sessions SET context='%s' WHERE id='%s';"%(user.context,user.session))
-	elif user.username=="Guest" and user.context=="USERNAME":
-		user.context="PASSWORD"
-		user.cmddata={'STEP1':args}
-		out.update({
-			"DisplayItems":[display.Item("Enter Your Password :")],
-			"ContextText":user.context,
-			"PasswordField":True
-		})
-		database.query("UPDATE sessions SET context='%s',cmddata='%s' WHERE id='%s';"%(user.context,database.escape(str(user.cmddata)),user.session))
-	elif user.username=="Guest" and user.context=="PASSWORD":
-		user.context=""
-		out.update({
-			"DisplayItems":[display.Item(user.login(user.cmddata['STEP1'],args))]
-		})
-		database.query("UPDATE sessions SET context='',cmddata='{}' WHERE id='%s';"%(user.session))
-	elif len(params)==2:
-		out.update({
-			"DisplayItems":[display.Item(user.login(params[0],params[1]))]
-		})
-	elif args=="" and user.username!="Guest":
-		out.update({
-			"DisplayItems":[display.Item("You are logged in as "+user.username)]
-		})
->>>>>>> 31dd46dea58cff98b0e37e86850d4080466161e3
+	#check for special cases
+	if u413.user.name!="Guest":
+		u413.type("You are logged in as "+u413.user.name+'.')
+		return
+	params=args.split(' ')
+	#LOGIN already requested continuation
+	if "step" in u413.cmddata:
+		if args=="":
+			u413.set_context("")
+			u413.type("Action cancelled.")
+		#USERNAME>
+		if u413.cmddata["step"]==1:
+			u413.cmddata["username"]=params[0]
+			u413.cmddata["step"]=2
+			u413.type("Enter your username:")
+			u413.set_context("USERNAME")
+			u413.continue_cmd()
+		#PASSWORD>
+		elif u413.cmddata["step"]==2:
+			r=db.query("SELECT * FROM users WHERE username='%s' AND password='%';"%(db.escape(u413.cmddata["username"]),user.sha256(params[0])))
+			if len(r)==0:
+				u413.type("Invalid username/password.")
+			else:
+				u413.user.login(u413.cmddata["username"],params[0])
+				u413.type("You are now logged in as "+u413.user.name+'.')
+		#else left out because it's impossible
+	#First use of LOGIN
 	else:
-		u413.type("Invalid parameters")
+		#LOGIN
+		if len(args)==0:
+			u413.cmddata["step"]=1
+			u413.type("Enter your username:")
+			u413.set_context("USERNAME")
+			u413.continue_cmd()
+		#LOGIN username
+		elif len(args)==1:
+			u413.cmddata["step"]=2
+			u413.cmddata["username"]=args[0]
+			u413.type("Enter your password:")
+			u413.set_context("PASSWORD")
+			u413.continue_cmd()
+		#LOGIN username password [ignored args]
+		else:
+			r=db.query("SELECT * FROM users WHERE username='%s' AND password='%';"%(db.escape(params[0]),user.sha256(params[1])))
+			if len(r)==0:
+				u413.type("Invalid username/password.")
+			else:
+				u413.user.login(u413.cmddata["username"],params[0])
+				u413.type("You are now logged in as "+u413.user.name+'.')
 
 command.Command("LOGIN","Logs a user onto U413",login_func,0)

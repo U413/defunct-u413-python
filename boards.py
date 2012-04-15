@@ -16,24 +16,16 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.'''
 
 import command
-import display
-import database
+import database as db
+import user
 
-def boards_func(args,user):
-	out=command.Command.json.copy()
+def boards_func(args,u413):
 	
-	boards=database.query("SELECT * FROM boards WHERE hidden='0';")
+	boards=database.query("SELECT * FROM boards WHERE hidden=FALSE;")
 	boardlist=""
 	for i in boards:
-		boardlist+="<br> {"+i['id']+"} | "+i['name']
-	
-	out.update({
-		"DisplayItems":[
-			display.Item("Retrieving list of discussion boards"),
-			display.Item(boardlist,donttype=True)
-		],
-		"ClearScreen":True
-	})
-	return out
+		boardlist+="<br/> {"+str(i['id'])+"} | "+i['name']
+	u413.type("Retrieving list of boards")
+	u413.clear_screen()
 
-command.Command("BOARDS","Displays list of available Discussion Boards",boards_func,10)
+command.Command("BOARDS","Displays list of available boards",boards_func,user.User.member)

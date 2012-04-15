@@ -17,21 +17,12 @@
 
 import command
 import database as db
+import user
 
-<<<<<<< HEAD
 def logout_func(args,u413):
 	if u413.user.username!="Guest":
 		u413.type(u413.user.logout())
-=======
-def logout_func(args,user):
-	out=command.Command.json.copy()
-	if user.username!="Guest":
-		out.update({
-			"DisplayItems":[display.Item(user.logout())]
-		})
->>>>>>> 31dd46dea58cff98b0e37e86850d4080466161e3
 	else:
-		u413.type("You are not logged in")
-	return out
+		u413.type("You are not logged in.")
 
-command.Command("LOGOUT","Logs out a user who is logged into U413",logout_func,10)
+command.Command("LOGOUT","Logs out a user who is logged into U413",logout_func,user.User.member)
