@@ -34,7 +34,7 @@ def login_func(args,u413):
 		if u413.cmddata["step"]==1:
 			u413.cmddata["username"]=params[0]
 			u413.cmddata["step"]=2
-			u413.type("Enter your username:")
+			u413.type("Enter your password:")
 			u413.set_context("PASSWORD")
 			u413.use_password()
 			u413.continue_cmd()

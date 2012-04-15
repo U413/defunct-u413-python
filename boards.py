@@ -21,11 +21,13 @@ import user
 
 def boards_func(args,u413):
 	
-	boards=database.query("SELECT * FROM boards WHERE hidden=FALSE;")
+	boards=db.query("SELECT * FROM boards WHERE hidden=FALSE;")
 	boardlist=""
 	for i in boards:
 		boardlist+="<br/> {"+str(i['id'])+"} | "+i['name']
 	u413.type("Retrieving list of boards")
+	u413.donttype("")
+	u413.donttype(boardlist)
 	u413.clear_screen()
 
 command.Command("BOARDS","",{},"Displays list of available boards",boards_func,user.User.member)

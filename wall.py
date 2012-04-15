@@ -36,6 +36,6 @@ def wall_func(args,u413):
 		if len(r)>=256:
 			db.query("DELETE FROM wall ORDER BY posted LIMIT 1;")
 		db.query("INSERT INTO wall(user,text) VALUES(%i,'%s');"%(u413.user.userid,db.escape(args)))
-		u413.type("Your note has been posted to the wall.")
+		wall_func('',u413)
 		
 command.Command("WALL","[note]",{"note":"A note to post to the wall"},"Access/post to the u413 wall.",wall_func,user.User.member)
