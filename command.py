@@ -34,8 +34,10 @@ class Command(object):
 		"ScrollToBottom":True,
 		"DisplayItems":[]
 	}
-	def __init__(self,name,description,callback,level=user.User.guest,hidden=False):
+	def __init__(self,name,usage,args,description,callback,level=user.User.guest,hidden=False):
 		self.name=name.upper()
+		self.usage=usage
+		self.args=args
 		self.description=description
 		self.level=level
 		self.callback=callback

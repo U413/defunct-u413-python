@@ -25,4 +25,4 @@ def desu_func(args,u413):
 	u413.set_context("DESU")
 	u413.continue_cmd()
 
-command.Command("DESU","Keep typing 'DESU'. Maybe if you type it enough, you will turn Japanese.",desu_func,0,True)
+command.Command("DESU","[anything]",{"anything":"Type anything and the DESU will continue"},"Keep typing 'DESU'. Maybe if you type it enough, you will turn Japanese.",desu_func,0,True)

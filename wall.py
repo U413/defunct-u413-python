@@ -38,4 +38,4 @@ def wall_func(args,u413):
 		db.query("INSERT INTO wall(user,text) VALUES(%i,'%s');"%(u413.user.userid,db.escape(args)))
 		u413.type("Your note has been posted to the wall.")
 		
-command.Command("WALL","Access the u413 wall",wall_func,user.User.member)
+command.Command("WALL","[note]",{"note":"A note to post to the wall"},"Access/post to the u413 wall.",wall_func,user.User.member)

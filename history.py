@@ -20,7 +20,8 @@ import user
 
 def history_func(args,u413):
 	u413.type("User command history:")
+	u413.type("")
 	for cmd in u413.user.history:
-		u413.donttype(cmd)
+		u413.donttype('<span class="tab"></span>'+cmd)
 
-command.Command("HISTORY","Lists the user's command history.",history_func,user.User.member)
+command.Command("HISTORY","",{},"Lists the user's command history.",history_func,user.User.member)

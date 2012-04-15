@@ -28,4 +28,4 @@ def boards_func(args,u413):
 	u413.type("Retrieving list of boards")
 	u413.clear_screen()
 
-command.Command("BOARDS","Displays list of available boards",boards_func,user.User.member)
+command.Command("BOARDS","",{},"Displays list of available boards",boards_func,user.User.member)

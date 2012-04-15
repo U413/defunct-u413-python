@@ -160,4 +160,4 @@ def register_func(args,u413):
 				u413.continue_cmd()
 				u413.use_password()
 	
-command.Command("REGISTER","Allows the user to create an account in U413.",register_func,0)
+command.Command("REGISTER","[username] [password]",{"username":"Your desired username","password":"Your password"},"Registers a user for u413.",register_func,0)

@@ -25,4 +25,4 @@ def who_func(args,u413):
 	u413.donttype("Session ID: "+str(u413.user.session))
 	u413.donttype("Session expires: "+str(u413.user.expire))
 
-command.Command("WHO","Output statistics about the currently logged-in user.",who_func)
+command.Command("WHO","",{},"Output statistics about the currently logged-in user.",who_func)

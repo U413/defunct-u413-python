@@ -25,4 +25,4 @@ def logout_func(args,u413):
 	else:
 		u413.type("You are not logged in.")
 
-command.Command("LOGOUT","Logs out a user who is logged into U413",logout_func,user.User.member)
+command.Command("LOGOUT","",{},"Logs out a user who is logged into U413",logout_func,user.User.member)

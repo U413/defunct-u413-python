@@ -68,4 +68,4 @@ def login_func(args,u413):
 			else:
 				u413.type("Invalid username/password.")
 
-command.Command("LOGIN","Logs a user onto U413",login_func,0)
+command.Command("LOGIN","[username] [password]",{"username":"Your username","password":"Your password"},"Logs a user onto U413",login_func,0)

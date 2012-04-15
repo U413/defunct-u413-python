@@ -22,7 +22,7 @@ logo=''' &nbsp;__ &nbsp;__ &nbsp;__ __ &nbsp; &nbsp; &nbsp; _ &nbsp; &nbsp; __<b
 def init_func(args,u413):
 	u413.type("Welcome to...")
 	u413.donttype(logo)
-	u413.donttype('<span style="color:#f00;">Coming soon to a browser near you!</span>')
+	u413.donttype('Type "HELP" to get started.')
 	u413.clear_screen()
 
-command.Command("INITIALIZE","Initialize the terminal.",init_func,0)
+command.Command("INITIALIZE","",{},"Initialize the terminal.",init_func,0)
