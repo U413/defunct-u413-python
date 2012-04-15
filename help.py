@@ -18,7 +18,7 @@
 import command
 
 def help_func(args,u413):
-	if args=="":
+	if args.strip()=="":
 		helpout=''
 		for cmd in command.cmds:
 			if u413.user.level>=command.cmds[cmd].level and not command.cmds[cmd].hidden:

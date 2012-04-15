@@ -130,7 +130,7 @@ def register_func(args,u413):
 			u413.set_context("USERNAME")
 			u413.continue_cmd()
 		#REGISTER username
-		elif len(args)==1:
+		elif len(params)==1:
 			if is_taken(params[0]):
 				u413.type("Username already in use.")
 			else:
@@ -138,13 +138,14 @@ def register_func(args,u413):
 				u413.cmddata["step"]=2
 				u413.type("Enter a password:")
 				u413.set_context("PASSWORD")
+				u413.use_password()
 				u413.continue_cmd()
 		#REGISTER username password
 		#Note: ignore anything after username/password
 		else:
 			if is_taken(params[0]):
 				u413.type("Username already in use.")
-			elif is_stupid(params[1]):
+			elif is_stupid(params[0],params[1]):
 				u413.cmddata["username"]=params[0]
 				u413.cmddata["step"]=2
 				u413.type("That's a stupid password. Pick another one.")

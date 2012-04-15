@@ -61,7 +61,7 @@ def respond(cli,u413,ashtml=True):
 
 	if u413.user.cmd=='':
 		u413.j["Command"]=cmd
-		if cmd in cmds:
+		if cmd in cmds and cmds[cmd].level<=u413.user.level:
 			cmds[cmd].callback(args,u413)
 		else:
 			u413.type('<span class="error">"%s" is not a valid command or is not available in the current context.</span>'%cmd)

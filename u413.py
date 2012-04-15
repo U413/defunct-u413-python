@@ -38,8 +38,9 @@ import register
 import who
 import desu
 import clear
-import help
 import boards
+import wall
+import help
 
 form=cgi.FieldStorage()
 cli=form.getvalue("cli")
@@ -146,6 +147,6 @@ else:
 if u.cont:
 	if currentuser.cmd!='':
 		cmd=currentuser.cmd
-	db.query("UPDATE sessions SET expire=DATE_ADD(NOW(),INTERVAL 6 HOUR),cmd='%s',cmddata='%s' WHERE id='%s';"%(cmd,db.escape(repr(u.cmddata)),currentuser.session))
+	db.query("UPDATE sessions SET expire=DATE_ADD(NOW(),INTERVAL 6 HOUR),cmd='%s',cmddata='%s',context='%s' WHERE id='%s';"%(cmd,db.escape(repr(u.cmddata)),currentuser.context,currentuser.session))
 else:
-	db.query("UPDATE sessions SET expire=DATE_ADD(NOW(),INTERVAL 6 HOUR),cmd='',cmddata='{}' WHERE id='%s';"%currentuser.session)
+	db.query("UPDATE sessions SET expire=DATE_ADD(NOW(),INTERVAL 6 HOUR),cmd='',cmddata='{}',context='%s' WHERE id='%s';"%(currentuser.context,currentuser.session))

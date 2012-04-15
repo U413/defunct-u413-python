@@ -43,19 +43,6 @@ class User(object):
 			r=db.query("SELECT * FROM sessions WHERE id='%s';"%db.escape(session))
 			if len(r)==0:
 				self.guest_login()
-			r=db.query("SELECT * FROM sessions WHERE id='%s';"%db.escape(session))
-			if len(r)==0:
-				self.username='Guest'
-				# if new session is generated then there will never be a cookie match. Thus having disastrous bugs.
-				self.session=session #old session is created again ^
-				self.level=User.guest
-				self.userid=1
-				self.expire=datetime.datetime.today()
-				self.context=''
-				self.history=[]
-				self.cmd=''
-				self.cmddata={}
-				self.create_session()
 				return
 			r=r[0]
 			self.session=session
@@ -63,7 +50,7 @@ class User(object):
 			self.name=r["username"]
 			self.username=r["username"]
 			self.level=int(r["access"])
-			self.expire=datetime.datetime.strptime(r["expire"],'%Y-%m-%d %H:%M:%S')
+			self.expire=str(r["expire"])
 			self.context=r["context"]
 			self.history=eval(r["history"])
 			self.cmd=r["cmd"]
@@ -90,6 +77,10 @@ class User(object):
 		self.name=r["username"]
 		self.level=int(r["access"])
 		self.userid=int(r["id"])
+		self.context=''
+		self.history=[]
+		self.cmd=''
+		self.cmddata={}
 		db.query("UPDATE sessions SET username='%s',user=%i,access=%i WHERE id='%s';"%(self.name,self.userid,self.level,self.session))
 		return True
 	
