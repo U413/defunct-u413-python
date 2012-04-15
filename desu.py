@@ -22,7 +22,7 @@ def desu_func(args,u413):
 	elif u413.cmddata["desucount"]<256:
 		u413.cmddata["desucount"]*=2
 	u413.donttype(("DESU "*u413.cmddata["desucount"])[:-1])
-	u413.set_context("DESU~")
+	u413.set_context("DESU")
 	u413.continue_cmd()
 
 command.Command("DESU","Keep typing 'DESU'. Maybe if you type it enough, you will turn Japanese.",desu_func,0,True)

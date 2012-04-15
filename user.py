@@ -18,6 +18,7 @@
 import hashlib
 import uuid
 
+import time
 import datetime
 
 import database as db
@@ -48,8 +49,7 @@ class User(object):
 				# if new session is generated then there will never be a cookie match. Thus having disastrous bugs.
 				self.session=session #old session is created again ^
 				self.level=User.guest
-				self.userid=0
-				self.level=User.guest
+				self.userid=1
 				self.expire=datetime.datetime.today()
 				self.context=''
 				self.history=[]
@@ -59,10 +59,10 @@ class User(object):
 				return
 			r=r[0]
 			self.session=session
-			self.userid=r["user"]
+			self.userid=int(r["user"])
 			self.name=r["username"]
 			self.username=r["username"]
-			self.level=r["access"]
+			self.level=int(r["access"])
 			self.expire=datetime.datetime.strptime(r["expire"],'%Y-%m-%d %H:%M:%S')
 			self.context=r["context"]
 			self.history=eval(r["history"])
@@ -73,8 +73,8 @@ class User(object):
 		self.name='Guest'
 		self.session=uuid.uuid4().hex
 		self.level=User.guest
-		self.userid=0
-		self.expire=datetime.datetime.today()
+		self.userid=1
+		self.expire=time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(time.time()+6*60*60))
 		self.context=''
 		self.history=[]
 		self.cmd=''
@@ -83,15 +83,15 @@ class User(object):
 	
 	def login(self,username,password):
 		password=sha256(password)
-		r=db.query("SELECT * FROM users WHERE LCASE(username)='%s' AND password='%s';"%(db.escape(username.lower()),sha256(password)))
+		r=db.query("SELECT * FROM users WHERE LCASE(username)='%s' AND password='%s';"%(db.escape(username.lower()),password))
 		if len(r)==0:
-			return "Wrong username or password"
+			return False
 		r=r[0]
 		self.name=r["username"]
-		self.level=r["access"]
-		self.userid=r["id"]
+		self.level=int(r["access"])
+		self.userid=int(r["id"])
 		db.query("UPDATE sessions SET username='%s',user=%i,access=%i WHERE id='%s';"%(self.name,self.userid,self.level,self.session))
-		return "You are now logged in as "+self.name
+		return True
 	
 	def register(self,username,password,confirmpassword):
 		pas=password
@@ -114,14 +114,34 @@ class User(object):
 	
 	def logout(self):
 		if self.session!="":
-			if self.level!=0:
-				return "You're already logged out"
+			if self.level==0:
+				return "You are already logged out."
 			else:
-				db.query("UPDATE sessions SET user=0,username='Guest',access=0,context='',cmd='',cmddata='' WHERE id='%s';"%user.session)
-				return "You have been logged out"
+				db.query("UPDATE sessions SET user=0,username='Guest',access=0,context='',cmd='',cmddata='' WHERE id='%s';"%self.session)
+				return "You have been logged out."
 		else:
 			#TODO: send something to the client that clears cookies
 			return "Corrupt login. Cannot logout. Please clear cookies."
 		
 	def create_session(self):
 		db.query("INSERT INTO sessions (id,user,expire,username,access,history,cmd,cmddata) VALUES('%s',%i,DATE_ADD(NOW(),INTERVAL 6 HOUR),'%s',%i,'[]','','{}');"%(self.session,self.userid,self.name,self.level))
+
+def userlvl(lvl):
+	if lvl==User.permaban:
+		return "Permabanned"
+	elif lvl==User.banned:
+		return "Banned"
+	elif lvl==User.guest:
+		return "Guest"
+	elif lvl==User.member:
+		return "Member"
+	elif lvl==User.halfmod:
+		return "Half-Moderator"
+	elif lvl==User.mod:
+		return "Moderator"
+	elif lvl==User.admin:
+		return "Admin"
+	elif lvl==User.owner:
+		return "Owner"
+	else:
+		return "Unknown"

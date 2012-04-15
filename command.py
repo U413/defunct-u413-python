@@ -42,56 +42,38 @@ class Command(object):
 		self.hidden=hidden
 		cmds[self.name]=self
 
+	def callback(self,args,user):
+		out=self._callback(args,user)
+		out["Command"]=self.name
+
 def respond(cli,u413,ashtml=True):
-	u413.donttype("Command: "+u413.user.cmd)
-	u413.donttype(str(u413.cmddata))
 	cmdarg=cli.split(' ',1)
 	cmd=cmdarg[0].upper()
 	args=""
 	if len(cmdarg)>1:
 		args=cmdarg[1]
+
+	#update history and cmd if it's not a command that handles sensitive data
+	sensitive=['LOGIN','REGISTER']
+	if u413.user.cmd not in sensitive and cmd not in sensitive:
+		u413.user.history.append(cmd)
+		database.query("UPDATE sessions SET history='%s' WHERE id='%s';"%(database.escape(str(u413.user.history)),u413.user.session))
+
 	if u413.user.cmd=='':
+		u413.j["Command"]=cmd
 		if cmd in cmds:
 			cmds[cmd].callback(args,u413)
 		else:
 			u413.type('<span class="error">"%s" is not a valid command or is not available in the current context.</span>'%cmd)
 	else:
-		if cmd.lower()=="cancel":
+		u413.j["Command"]=u413.user.cmd.upper()
+		if cmd=="CANCEL":
 			#Note: this works because commands must actively request continuation
 			u413.type("Action cancelled.")
 			u413.set_context("")
 		else:
-			cmds[u413.user.cmd].callback(cli,u413)
-	def callback(self,args,user):
-		out=self._callback(args,user)
-		out["Command"]=self.name
-		return out
+			cmds[u413.user.cmd.upper()].callback(cli,u413)
 
-def respond(cli,u413,ashtml=True):
-	sensitive=['LOGIN','REGISTER']
-	parts=cli.split(' ',1)
-	cmd=parts[0].upper()
-	args=''
-	if len(parts)>1:
-		args=parts[1]
-	#update history and cmd if it's not a command that handles sensitive data
-	if u413.user.cmd not in sensitive and cmd not in sensitive:
-		u413.user.history.append(cmd)
-		database.query("UPDATE sessions SET history='%s' WHERE id='%s';"%(database.escape(str(u413.user.history)),u413.user.session))
-	u413.donttype("Command: "+u413.user.cmd)
-	if cmd.upper() in cmds:
-		if int(cmds[cmd].level)>int(u413.user.level):
-			u413.donttype('<span class="error">"%s" is not a valid command or is not available in the current context.</span>'%cmd)
-		else:
-			cmds[cmd.upper()].callback(args,u413)
-	else:
-		if u413.user.cmd=='':
-			u413.donttype('<span class="error">"%s" is not a valid command or is not available in the current context.</span>'%cmd)
-		elif cmd.upper()=="CANCEL":
-			u413.type("Action cancelled.")
-		else:
-			cmds[u413.user.cmd.upper()].callback(args,u413)
-	
 	#change title if user is logged in
 	if u413.user.name!="Guest":
 		u413.set_title("Terminal - "+u413.user.name)

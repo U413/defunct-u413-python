@@ -111,6 +111,7 @@ class u413(object):
 
 	def continue_cmd(self):
 		self.cont=True
+		self.user.cmd=self.j["Command"]
 
 	def set_cookie(self,cookie,value):
 		self.cookies.append({"name":cookie,"value":value})

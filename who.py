@@ -16,11 +16,13 @@
 	along with this program.  If not,see <http://www.gnu.org/licenses/>.'''
 
 import command
+import user
 
-def w_func(args,u413):
+def who_func(args,u413):
 	u413.donttype("Username: "+u413.user.username)
 	u413.donttype("User ID: "+str(u413.user.userid))
+	u413.donttype("User access: "+user.userlvl(u413.user.level)+' ('+str(u413.user.level)+')')
 	u413.donttype("Session ID: "+str(u413.user.session))
-	return out
+	u413.donttype("Session expires: "+str(u413.user.expire))
 
-command.Command("WHO","Output statistics about the currently logged-in user.",w_func)
+command.Command("WHO","Output statistics about the currently logged-in user.",who_func)
