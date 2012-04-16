@@ -65,6 +65,7 @@ def output_board(board,page,u413):
 		else:
 			u413.set_context("BOARD %i %i"%(board,page))
 	u413.donttype(output)
+	u413.clear_screen()
 
 def board_func(args,u413):
 	args=args.split(' ')
@@ -83,12 +84,16 @@ def board_func(args,u413):
 	else:
 		if args[0].upper()=="ALL":
 			args[0]=0
-		if not isint(args[1]):
+		if args[1].upper()=='LAST':
+			args[1]=int(db.query("SELECT COUNT(*) FROM posts WHERE parent=%i AND topic=TRUE;"%int(args[0]))[0]["COUNT(*)"])
+			if args[1]==0:
+				args[1]=1
+			else:
+				args[1]=math.ceil(args[1]/10.0)
+		elif not isint(args[1]):
 			args[1]=1
-		if isint(args[0]):
-			output_board(args[0],args[1],u413)
-			u413.clear_screen()
 		else:
 			u413.donttype('<span class="error">Invalid board ID</span>')
+		output_board(int(args[0]),args[1],u413)
 
 command.Command("BOARD","<id> [page]",{"id":"The id of the board to view"},"Show the most recent topics in a board.",board_func,user.User.member)

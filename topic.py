@@ -100,9 +100,15 @@ def topic_func(args,u413):
 			page=1
 			if isint(params[1]):
 				page=int(params[1])
+			elif params[1].upper()=='LAST':
+				page=int(db.query("SELECT COUNT(*) FROM posts WHERE parent=%i;"%topic)[0]["COUNT(*)"])
+				if page==0:
+					page=1
+				else:
+					page=math.ceil(page/10.0)
 			output_page(topic,page,u413)
 	elif params[1].upper()=="REPLY":
 		db.query("INSERT INTO posts (topic,title,parent,owner,editor,post,locked,edited,posted) VALUES(FALSE,'',%i,%i,0,'%s',FALSE,NULL,NOW());"%(topic,u413.user.userid,db.escape(params[3])))
 		u413.type("Reply made successfully.")
 
-command.Command("TOPIC","<id> [page | [REPLY <message>]]",{"id":"The topic ID","page":"The topic page to load (defaults to 1)","message":"The message you wish to post"},"Loads a topic",topic_func,user.User.member)
+command.Command("TOPIC",'<id> [page | "FIRST" | "LAST" | [REPLY <message>]]',{"id":"The topic ID","page":"The topic page to load (defaults to 1)","message":"The message you wish to post"},"Loads a topic",topic_func,user.User.member)

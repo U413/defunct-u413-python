@@ -18,6 +18,7 @@
 import command
 import user
 import database as db
+import bbcode
 
 def wall_func(args,u413):
 	r=db.query("SELECT * FROM wall ORDER BY posted;")
@@ -26,11 +27,12 @@ def wall_func(args,u413):
 			u413.type("There are no notes on the wall.")
 		else:
 			u413.type("Welcome to the wall!")
-			u413.type("")
+			out='<br/><table>'
 			for entry in r:
 				u=db.query("SELECT username FROM users WHERE id=%i"%int(entry["user"]))
-				u413.donttype('{%s} - %s <span class="dim">%s</span>'%(u[0]["username"],entry["text"],str(entry["posted"])))
-				u413.set_context("WALL")
+				out+='<tr><td>{%s}</td><td style="padding-left:1em;">%s <span class="dim">%s</span></td></tr>'%(u[0]["username"],bbcode.bbcodify(bbcode.htmlify(entry["text"])),entry["posted"])
+			u413.donttype(out+'</table>')
+			u413.set_context("WALL")
 			u413.clear_screen()
 	else:
 		if len(r)>=256:

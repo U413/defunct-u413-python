@@ -47,6 +47,9 @@ import newtopic
 import board
 import edit
 
+import first
+import last
+
 import help
 
 form=cgi.FieldStorage()
