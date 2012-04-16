@@ -22,7 +22,6 @@ cgitb.enable(display=1)
 
 import json
 import os
-from os import environ
 import Cookie
 
 import user
@@ -51,13 +50,26 @@ import help
 
 form=cgi.FieldStorage()
 cli=form.getvalue("cli")
+
 session=form.getvalue("session")
 
 #no session
 if session==None:
-	currentuser=user.User()
-	if cli==None:
-		cli="INITIALIZE"
+	if "HTTP_COOKIE" in os.environ:
+		cookie=Cookie.SimpleCookie(os.environ["HTTP_COOKIE"])
+		if "session" in cookie:
+			session=cookie["session"].value
+			currentuser=user.User(session)
+			if cli==None:
+				cli="LOGIN"
+		else:
+			currentuser=user.User()
+			if cli==None:
+				cli="INITIALIZE"
+	else:
+		currentuser=user.User()
+		if cli==None:
+			cli="INITIALIZE"
 else:
 	currentuser=user.User(session)
 	if cli==None:
@@ -143,6 +155,7 @@ else:
 
 for cookie in u.cookies:
 	print "Set-Cookie: "+cookie["name"]+"="+cookie["value"]
+print 'Set-Cookie: session='+currentuser.session+'; Max-Age: 21600'
 
 print
 

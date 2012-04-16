@@ -19,13 +19,29 @@ import command
 import database as db
 import user
 
+def plural(i,s):
+	if i==1:
+		return str(i)+' '+s
+	return str(i)+' '+s+'s'
+
 def boards_func(args,u413):
 	
 	boards=db.query("SELECT * FROM boards WHERE hidden=FALSE;")
 	boardlist=""
 	for i in boards:
-		boardlist+="<br/> {"+str(i['id'])+"} | "+i['name']
-	u413.type("Retrieving list of boards")
+		topic=db.query("SELECT id,posted FROM posts WHERE parent=%i AND topic=TRUE ORDER BY posted DESC LIMIT 1;"%int(i['id']))
+		if len(topic)>0:
+			topic=topic[0]
+			count=int(db.query("SELECT COUNT(*) FROM posts WHERE parent=%i AND topic=TRUE;"%int(i['id']))[0]["COUNT(*)"])
+			posted=db.query("SELECT posted FROM posts WHERE parent=%i ORDER BY posted DESC LIMIT 1;"%int(topic['id']))
+			if len(posted)>0:
+				posted=posted[0]["posted"]
+				boardlist+="<br/> {"+str(i['id'])+"} | "+i['name']+' <span class="dim">%s, last reply on %s</span>'%(plural(count,'topic'),posted)
+			else:
+				boardlist+="<br/> {"+str(i['id'])+"} | "+i['name']+' <span class="dim">%s, last reply on %s</span>'%(plural(count,'topic'),topic["posted"])
+		else:
+			boardlist+="<br/> {"+str(i['id'])+"} | "+i['name']+' <span class="dim">no topics</span>'
+	u413.type("Retrieving list of boards...")
 	u413.donttype("")
 	u413.donttype(boardlist)
 	u413.clear_screen()

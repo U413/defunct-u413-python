@@ -16,7 +16,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.'''
 
 import user
-import database
+import database as db
 
 cmds={}
 
@@ -30,6 +30,13 @@ class Command(object):
 		self.callback=callback
 		self.hidden=hidden
 		cmds[self.name]=self
+
+def isint(i):
+	try:
+		i=int(i)
+	except:
+		return False
+	return True
 
 def respond(cli,u413,ashtml=True):
 	cmdarg=cli.split(' ',1)
@@ -45,14 +52,20 @@ def respond(cli,u413,ashtml=True):
 			u413.user.history.append(cmd+' <span class="italics">'+args+'</span>')
 		else:
 			u413.user.history.append(cmd)
-		database.query("UPDATE sessions SET history='%s' WHERE id='%s';"%(database.escape(str(u413.user.history)),u413.user.session))
+		db.query("UPDATE sessions SET history='%s' WHERE id='%s';"%(db.escape(str(u413.user.history)),u413.user.session))
 
 	if u413.user.cmd=='':
 		u413.j["Command"]=cmd
 		if cmd in cmds and cmds[cmd].level<=u413.user.level:
 			cmds[cmd].callback(args,u413)
 		else:
-			u413.type('<span class="error">"%s" is not a valid command or is not available in the current context.</span>'%cmd)
+			if isint(cmd):
+				if u413.user.context!='TOPIC' and 'TOPIC' in u413.user.context:
+					cmds["TOPIC"].callback('%i %i'%(int(u413.user.context.split(' ')[1]),int(cmd)),u413)
+				else:
+					u413.type('"%s" is not a valid command or is not available in the current context.'%cmd)
+			else:
+				u413.type('"%s" is not a valid command or is not available in the current context.'%cmd)
 	else:
 		u413.j["Command"]=u413.user.cmd.upper()
 		if cmd=="CANCEL":

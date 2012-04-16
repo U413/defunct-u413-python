@@ -35,7 +35,7 @@
 import command
 import user
 import database as db
-import topic
+import topic as modtopic
 
 def reply_func(args,u413):
 	#already used REPLY
@@ -51,7 +51,7 @@ def reply_func(args,u413):
 		#REPLY
 		if args.strip()=='':
 			if "TOPIC" in u413.user.context:
-				u413.cmddata["topic"]=int(u413.user.context[6:])
+				u413.cmddata["topic"]=int(u413.user.context.split(' ')[1])
 				u413.type("Enter your reply:")
 				u413.set_context("REPLY")
 				u413.continue_cmd()
@@ -60,9 +60,9 @@ def reply_func(args,u413):
 		#REPLY [message]
 		else:
 			if "TOPIC" in u413.user.context:
-				topic=int(u413.user.context[6:])
+				topic=int(u413.user.context.split(' ')[1])
 				db.query("INSERT INTO posts (topic,title,parent,owner,editor,post,locked,edited,posted) VALUES(FALSE,'',%i,%i,0,'%s',FALSE,NULL,NOW());"%(topic,u413.user.userid,db.escape(args)))
-				topic.topic_func('%i'%topic,u413)
+				modtopic.topic_func('%i'%topic,u413)
 			else:
 				u413.donttype('<span class="error">"REPLY" is not a valid command or is not available in the current context.</span>')
 

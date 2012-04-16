@@ -36,6 +36,7 @@ import command
 import user
 import database as db
 import math
+import bbcode
 
 def output_page(topic,page,u413):
 	t=db.query("SELECT * FROM posts WHERE id=%i;"%topic)[0]#topic
@@ -44,18 +45,27 @@ def output_page(topic,page,u413):
 		return
 	b=db.query("SELECT name FROM boards WHERE id=%i;"%int(t["parent"]))[0]["name"]#board name
 	u=db.query("SELECT username FROM users WHERE id=%i;"%int(t["owner"]))[0]["username"]#username
-	r=db.query("SELECT * FROM posts WHERE parent=%i ORDER BY id LIMIT %i,10;"%(topic,(page-1)*10))#replies
 	c=int(db.query("SELECT COUNT(*) FROM posts WHERE parent=%i;"%topic)[0]["COUNT(*)"])#number of replies
+	if page==0 and page>1 or page!=0 and page>math.ceil(c/10.0):
+		page=math.ceil(c/10.0)
+	if page<1:
+		page=1
+	r=db.query("SELECT * FROM posts WHERE parent=%i ORDER BY id LIMIT %i,10;"%(topic,(page-1)*10))#replies
+	u413.type("Retreiving topic...")
 	u413.donttype('{%i} %s {%i} <span class="inverted">%s</span><br/>\n<span class="dim">Posted by %s on %s</span><br/>\n'%(int(t["parent"]),b,topic,t["title"],u,str(t["posted"])))
 	u413.donttype(t["post"]+'<br/>\n')
-	u413.donttype('Page 1/%i<br/>\n'%math.ceil(c/10.0))
+	u413.donttype('Page %i/%i<br/>\n'%(page,math.ceil(c/10.0)))
 	if c==0:
 		u413.type("There are no replies.")
 	else:
 		for reply in r:
 			owner=db.query("SELECT username FROM users WHERE id=%i;"%int(reply["owner"]))[0]["username"]
-			u413.donttype('<table><tr><td style="text-align:center;">&gt;</td><td style="text-align:center;width:160px;border-right:solid 1px lime;">%s</td><td style="padding-left:8px;">{%i} %s<br/><span class="dim">%s</span></td></tr></table><br/>'%(owner,int(reply["id"]),reply["post"],reply["posted"]))
-		u413.donttype('Page 1/%i<br/>\n'%math.ceil(c/10.0))
+			u413.donttype('<table><tr><td style="text-align:center;">&gt;</td><td style="text-align:center;width:160px;border-right:solid 1px lime;">%s</td><td style="padding-left:8px;">{%i} %s<br/><span class="dim">%s</span></td></tr></table><br/>'%(owner,int(reply["id"]),bbcode.bbcodify(bbcode.htmlify(reply["post"])),reply["posted"]))
+		u413.donttype('Page %i/%i<br/>\n'%(page,math.ceil(c/10.0)))
+	if page==1:
+		u413.set_context("TOPIC %i"%topic)
+	else:
+		u413.set_context("TOPIC %i %i"%(topic,page))
 
 def isint(i):
 	try:
@@ -71,9 +81,9 @@ def topic_func(args,u413):
 		return
 	topic=int(params[0])
 	if len(params)==1:
+		page=1
 		output_page(topic,1,u413)
 		u413.clear_screen()
-		u413.set_context("TOPIC %i"%topic)
 	elif len(params)==2:
 		if params[1].upper()=="REPLY":
 			u413.j["Command"]="REPLY"
@@ -85,7 +95,6 @@ def topic_func(args,u413):
 				page=int(params[1])
 			output_page(topic,page,u413)
 			u413.clear_screen()
-			u413.set_context("TOPIC %i"%topic)
 	elif params[1].upper()=="REPLY":
 		db.query("INSERT INTO posts (topic,title,parent,owner,editor,post,locked,edited,posted) VALUES(FALSE,'',%i,%i,0,'%s',FALSE,NULL,NOW());"%(topic,u413.user.userid,db.escape(params[3])))
 		u413.type("Reply made successfully.")

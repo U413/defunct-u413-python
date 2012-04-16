@@ -28,15 +28,42 @@ def isint(i):
 	return True
 
 def output_board(board,page,u413):
-	b=db.query("SELECT * FROM boards WHERE id=%i;"%board)[0]
-	t=db.query("SELECT * FROM posts WHERE parent=%i LIMIT %i,10;"%(board,(page-1)*10))
-	c=int(db.query("SELECT COUNT(*) FROM posts WHERE parent=%i;"%board)[0]["COUNT(*)"])
-	u413.donttype('{%i} <span class="inverted">%s</span> Page 1/%i<br/>\n'%(board,b["name"],math.ceil(c/10.0)))
-	output='<table>'
-	for topic in t:
-		r=int(db.query("SELECT COUNT(*) FROM posts WHERE parent=%i;"%int(topic["id"]))[0]["COUNT(*)"])
-		u=db.query("SELECT username FROM users WHERE id=%i;"%int(topic["owner"]))[0]["username"]
-		output+='<tr><td style="text-align:right;width:64px;">{%i}</td><td style="padding-left:8px;"><b>%s</b> | <span class="dim">%i replies</span><br/><span class="dim">by %s on %s</td></tr>'%(int(topic["id"]),topic["title"],r,u,str(topic["posted"]))
+	output=''
+	if board==0:
+		u413.type("Retrieving all topics...")
+		t=db.query("SELECT * FROM posts WHERE topic=TRUE LIMIT %i,10;"%((page-1)*10))
+		c=int(db.query("SELECT COUNT(*) FROM posts WHERE topic=TRUE;")[0]["COUNT(*)"])
+		if c==0:
+			u413.donttype('{0} <span class="inverted">BOARD ALL</span> Page %i/1<br/>\n'%page)
+		else:
+			u413.donttype('{0} <span class="inverted">BOARD ALL</span> Page %i/%i<br/>\n'%(page,math.ceil(c/10.0)))
+		output='<table>'
+		for topic in t:
+			r=int(db.query("SELECT COUNT(*) FROM posts WHERE parent=%i AND topic=FALSE;"%int(topic["id"]))[0]["COUNT(*)"])
+			u=db.query("SELECT username FROM users WHERE id=%i;"%int(topic["owner"]))[0]["username"]
+			output+='<tr><td style="text-align:right;width:64px;">{%i}</td><td style="padding-left:8px;"><b>%s</b> | <span class="dim">%i replies</span><br/><span class="dim">by %s on %s</td></tr>'%(int(topic["id"]),topic["title"],r,u,str(topic["posted"]))
+		if page==1:
+			u413.set_context("BOARD ALL")
+		else:
+			u413.set_context("BOARD ALL %i"%page)
+	else:
+		b=db.query("SELECT * FROM boards WHERE id=%i;"%board)[0]
+		t=db.query("SELECT * FROM posts WHERE parent=%i AND topic=TRUE LIMIT %i,10;"%(board,(page-1)*10))
+		c=int(db.query("SELECT COUNT(*) FROM posts WHERE parent=%i AND topic=TRUE;"%board)[0]["COUNT(*)"])
+		u413.type("Retrieving board topics...")
+		if c==0:
+			u413.donttype('{%i} <span class="inverted">%s</span> Page %i/1<br/>\n'%(board,b["name"],page))
+		else:
+			u413.donttype('{%i} <span class="inverted">%s</span> Page %i/%i<br/>\n'%(board,b["name"],page,math.ceil(c/10.0)))
+		output='<table>'
+		for topic in t:
+			r=int(db.query("SELECT COUNT(*) FROM posts WHERE parent=%i AND topic=FALSE;"%int(topic["id"]))[0]["COUNT(*)"])
+			u=db.query("SELECT username FROM users WHERE id=%i;"%int(topic["owner"]))[0]["username"]
+			output+='<tr><td style="text-align:right;width:64px;">{%i}</td><td style="padding-left:8px;"><b>%s</b> | <span class="dim">%i replies</span><br/><span class="dim">by %s on %s</td></tr>'%(int(topic["id"]),topic["title"],r,u,str(topic["posted"]))
+		if page==1:
+			u413.set_context("BOARD %i"%board)
+		else:
+			u413.set_context("BOARD %i %i"%(board,page))
 	u413.donttype(output)
 
 def board_func(args,u413):

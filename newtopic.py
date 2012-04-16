@@ -35,14 +35,14 @@ def newtopic_func(args,u413):
 			return
 		#BOARD>
 		if u413.cmddata["step"]==1:
-			if isint(args):
+			if isint(args) and int(params[0])!=0:
 				u413.cmddata["step"]=2
 				u413.cmddata["board"]=args
 				u413.type("Enter the topic's title:")
 				u413.set_context("TITLE")
 				u413.continue_cmd()
 			else:
-				u413.donttype('<span class="error">Invalid board ID</span>')
+				u413.type('Invalid board ID.')
 		#TITLE>
 		elif u413.cmddata["step"]==2:
 			u413.cmddata["step"]=3
@@ -71,17 +71,17 @@ def newtopic_func(args,u413):
 			u413.continue_cmd()
 		#NEWTOPIC board
 		elif len(params)==1:
-			if isint(params[0]):
+			if isint(params[0]) and int(params[0])!=0:
 				u413.cmddata["step"]=2
 				u413.cmddata["board"]=int(params[0])
 				u413.type("Enter the topic's title:")
 				u413.set_context("TITLE")
 				u413.continue_cmd()
 			else:
-				u413.donttype('<span class="error">Invalid board ID</span>')
+				u413.type('Invalid board ID')
 		#NEWTOPIC board topic
 		else:
-			if isint(params[0]):
+			if isint(params[0]) and int(params[0])!=0:
 				u413.cmddata["step"]=3
 				u413.cmddata["board"]=int(params[0])
 				u413.cmddata["topic"]=params[1]
