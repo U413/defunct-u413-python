@@ -48,7 +48,6 @@ class User(object):
 			self.session=session
 			self.userid=int(r["user"])
 			self.name=r["username"]
-			self.username=r["username"]
 			self.level=int(r["access"])
 			self.expire=str(r["expire"])
 			self.context=r["context"]
@@ -77,10 +76,6 @@ class User(object):
 		self.name=r["username"]
 		self.level=int(r["access"])
 		self.userid=int(r["id"])
-		self.context=''
-		self.history=[]
-		self.cmd=''
-		self.cmddata={}
 		db.query("UPDATE sessions SET username='%s',user=%i,access=%i WHERE id='%s';"%(self.name,self.userid,self.level,self.session))
 		return True
 	

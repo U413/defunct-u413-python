@@ -4,7 +4,7 @@
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU Affero General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
+	the Free Software Foundation,either version 3 of the License,or
 	(at your option) any later version.
 
 	This program is distributed in the hope that it will be useful,
@@ -13,16 +13,15 @@
 	GNU Affero General Public License for more details.
 
 	You should have received a copy of the GNU Affero General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.'''
+	along with this program.  If not,see <http://www.gnu.org/licenses/>.'''
 
 import command
-import database as db
 import user
 
-def logout_func(args,u413):
-	if u413.user.name!="Guest":
-		u413.type(u413.user.logout())
+def refresh_func(args,u413):
+	if u413.user.context.split(' ',1)[0] in ['BOARD','TOPIC','WALL']:
+		command.respond(u413.user.context,u413)
 	else:
-		u413.type("You are not logged in.")
+		u413.clear_screen()
 
-command.Command("LOGOUT","",{},"Logs out a user who is logged into U413",logout_func,user.User.member)
+command.Command("REFRESH","",{},"Refreshes the terminal",refresh_func)

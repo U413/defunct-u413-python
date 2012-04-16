@@ -32,6 +32,7 @@ def newtopic_func(args,u413):
 	if "step" in u413.cmddata:
 		if args=='':
 			u413.type("Action cancelled.")
+			u413.set_context("")
 			return
 		#BOARD>
 		if u413.cmddata["step"]==1:
@@ -43,6 +44,7 @@ def newtopic_func(args,u413):
 				u413.continue_cmd()
 			else:
 				u413.type('Invalid board ID.')
+				u413.set_context("")
 		#TITLE>
 		elif u413.cmddata["step"]==2:
 			u413.cmddata["step"]=3
@@ -55,6 +57,7 @@ def newtopic_func(args,u413):
 			db.query("INSERT INTO posts (topic,title,parent,owner,editor,post,locked,edited,posted) VALUES(TRUE,'%s',%i,%i,0,'%s',FALSE,NULL,NOW());"%(db.escape(u413.cmddata["title"]),int(u413.cmddata["board"]),u413.user.userid,db.escape(args)))
 			topic=int(db.query("SELECT id FROM posts ORDER BY id DESC LIMIT 1;")[0]["id"])
 			u413.type("Topic %i was created successfully."%topic)
+			u413.set_context("")
 	#first use
 	else:
 		#NEWTOPIC

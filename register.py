@@ -96,6 +96,7 @@ def register_func(args,u413):
 		if u413.cmddata["step"]==1:
 			if is_taken(params[0]):
 				u413.type("Username already in use.")
+				u413.set_context("")
 			else:
 				u413.cmddata["username"]=params[0]
 				u413.cmddata["step"]=2
@@ -121,6 +122,7 @@ def register_func(args,u413):
 				u413.type("You are now registered.")
 			else:
 				u413.type("Passwords do not match.")
+			u413.set_context("")
 	#initial use of command
 	else:
 		#REGISTER

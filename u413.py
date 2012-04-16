@@ -49,6 +49,7 @@ import edit
 
 import first
 import last
+import refresh
 
 import help
 
@@ -91,11 +92,11 @@ class u413(object):
 	def __init__(self,u):
 		self.j={
 			"Command":"",
-			"ContextText":"",
-			"CurrentUser":None,
+			"ContextText":u.context,
+			"CurrentUser":u.name,
 			"EditText":None,
-			"SessionId":None,
-			"TerminalTitle":"Terminal - Visitor",
+			"SessionId":u.session,
+			"TerminalTitle":"Terminal - "+u.name,
 			"ClearScreen":False,
 			"Exit":False,
 			"PasswordField":False,
@@ -107,6 +108,7 @@ class u413(object):
 		self.cont=False
 		self.cookies=[]
 		self.cmddata=u.cmddata
+		self.setcontext=False
 
 	def type(self,text,mute=False):
 		self.j["DisplayItems"].append({"Text":text,"DontType":False,"Mute":mute})
@@ -117,6 +119,7 @@ class u413(object):
 	def set_context(self,context):
 		self.j["ContextText"]=context
 		self.user.context=context
+		self.setcontext=True
 
 	def set_title(self,title):
 		self.j["TerminalTitle"]=title
@@ -147,8 +150,6 @@ u=u413(currentuser)
 
 command.respond(cli,u)
 
-u.j["CurrentUser"]=currentuser.name
-u.j["SessionId"]=currentuser.session
 if u.cont:
 	u.j["Command"]=currentuser.cmd
 

@@ -41,6 +41,7 @@ def edit_func(args,u413):
 				u413.continue_cmd()
 			else:
 				u413.type("Invalid post ID.")
+				u413.set_context("")
 		#NEW BODY>
 		elif u413.cmddata["step"]==2:
 			post=int(db.query("SELECT owner FROM posts WHERE id=%i;"%u413.cmddata["id"])[0]["owner"])
@@ -51,6 +52,7 @@ def edit_func(args,u413):
 					return
 			db.query("UPDATE posts SET post='%s',editor=%i,edited=NOW() WHERE id=%i;"%(db.escape(args),u413.user.userid,u413.cmddata["id"]))
 			u413.type("Post edited successfully.")
+			u413.set_context("")
 	#EDIT used for the first time
 	else:
 		params=args.split(' ',1)
@@ -82,5 +84,8 @@ def edit_func(args,u413):
 						return
 				db.query("UPDATE posts SET post='%s',editor=%i,edited=NOW() WHERE id=%i;"%(db.escape(params[1]),u413.user.userid,int(params[0])))
 				u413.type("Post edited successfully.")
+				u413.set_context("")
+			else:
+				u413.type("Invalid post ID.")
 
 command.Command("EDIT","[id [newtext]]",{"id":"The post ID that you wish to edit","newtext":"The new text for the post"},"Edits a post (reply/topic).",edit_func,user.User.member)

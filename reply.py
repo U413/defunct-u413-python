@@ -42,6 +42,7 @@ def reply_func(args,u413):
 	if "topic" in u413.cmddata:
 		if args.strip()=='':
 			u413.type("Action cancelled.")
+			u413.set_context("")
 		else:
 			topic=u413.cmddata["topic"]
 			db.query("INSERT INTO posts (topic,title,parent,owner,editor,post,locked,edited,posted) VALUES(FALSE,'',%i,%i,0,'%s',FALSE,NULL,NOW());"%(topic,u413.user.userid,db.escape(args)))
@@ -57,6 +58,7 @@ def reply_func(args,u413):
 				u413.continue_cmd()
 			else:
 				u413.donttype('<span class="error">"REPLY" is not a valid command or is not available in the current context.</span>')
+				u413.set_context("")
 		#REPLY [message]
 		else:
 			if "TOPIC" in u413.user.context:
