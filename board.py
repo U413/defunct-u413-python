@@ -31,7 +31,7 @@ def output_board(board,page,u413):
 	output=''
 	if board==0:
 		u413.type("Retrieving all topics...")
-		t=db.query("SELECT * FROM posts WHERE topic=TRUE LIMIT %i,10;"%((page-1)*10))
+		t=db.query("SELECT *,id as t FROM posts WHERE topic=TRUE ORDER BY (SELECT MAX(posted) FROM posts WHERE topic=FALSE AND parent=t) ASC LIMIT %i,10;"%((page-1)*10))
 		c=int(db.query("SELECT COUNT(*) FROM posts WHERE topic=TRUE;")[0]["COUNT(*)"])
 		if c==0:
 			u413.donttype('{0} <span class="inverted">BOARD ALL</span> Page %i/1<br/>\n'%page)
@@ -48,7 +48,7 @@ def output_board(board,page,u413):
 			u413.set_context("BOARD ALL %i"%page)
 	else:
 		b=db.query("SELECT * FROM boards WHERE id=%i;"%board)[0]
-		t=db.query("SELECT * FROM posts WHERE parent=%i AND topic=TRUE LIMIT %i,10;"%(board,(page-1)*10))
+		t=db.query("SELECT *,id as t FROM posts WHERE topic=TRUE AND parent=%i ORDER BY (SELECT MAX(posted) FROM posts WHERE topic=FALSE AND parent=t) ASC LIMIT %i,10;"%(board,(page-1)*10))
 		c=int(db.query("SELECT COUNT(*) FROM posts WHERE parent=%i AND topic=TRUE;"%board)[0]["COUNT(*)"])
 		u413.type("Retrieving board topics...")
 		if c==0:

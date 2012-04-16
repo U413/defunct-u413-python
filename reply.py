@@ -45,7 +45,7 @@ def reply_func(args,u413):
 		else:
 			topic=u413.cmddata["topic"]
 			db.query("INSERT INTO posts (topic,title,parent,owner,editor,post,locked,edited,posted) VALUES(FALSE,'',%i,%i,0,'%s',FALSE,NULL,NOW());"%(topic,u413.user.userid,db.escape(args)))
-			topic.topic_func('%i'%topic,u413)
+			modtopic.topic_func('%i'%topic,u413)
 	#first use of REPLY
 	else:
 		#REPLY

@@ -25,17 +25,13 @@ def help_func(args,u413):
 		helpout=''
 		u413.type("The following commands are available:")
 		u413.donttype("")
+		helpout='<table>'
 		for cmd in command.cmds:
-			if u413.user.level>=command.cmds[cmd].level and not command.cmds[cmd].hidden:
-				c=command.cmds[cmd]
-				if c.usage=='':
-					helpout+='<span class="tab"></span>'+cmd+"<br/>\n"
-				else:
-					helpout+='<span class="tab"></span>'+cmd+' '+htmlify(command.cmds[cmd].usage)+"<br/>\n"
+			if u413.user.level>=u413.cmds[cmd].level and not u413.cmds[cmd].hidden:
+				c=u413.cmds[cmd]
+				helpout+='<tr><td style="width:2em;"></td><td>'+cmd+'</td><td style="padding-left:1em;">'+command.cmds[cmd].description+"</td></tr>"
+		helpout+='</table><br/>[] - optional parameter<br/>&lt;&gt; - required parameter<br/>SHIFT+ENTER to drop down to a new line.'
 		u413.donttype(helpout)
-		u413.donttype("[] - optional parameter")
-		u413.donttype("<> - required parameter")
-		u413.donttype("SHIFT+ENTER to drop down to a new line.")
 	else:
 		cmd=args.split()[0].upper()
 		if cmd in command.cmds and int(command.cmds[cmd].level)<=int(u413.user.level):

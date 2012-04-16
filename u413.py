@@ -45,6 +45,7 @@ import topic
 import reply
 import newtopic
 import board
+import edit
 
 import help
 
