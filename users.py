@@ -27,7 +27,7 @@ def user_func(args,u413):
 	u413.type("User statistics:")
 	out='<br/>Registered users: %i<br/><br/>Active users:<table>'%users
 	for u in sessions:
-		out+='<tr><td style="width:2em;"></td><td>%s %s</td></tr>'%(u["username"],util.ago(int(time.mktime(time.strptime(u["expire"],'%Y-%m-%d %H:%M:%S')))))
+		out+='<tr><td style="width:2em;"></td><td>%s %s</td></tr>'%(util.htmlify(u["username"]),util.ago(int(time.mktime(time.strptime(u["expire"],'%Y-%m-%d %H:%M:%S')))-6*60*60))
 	u413.donttype(out+'</table>')
 	u413.clear_screen()
 	u413.set_context("")

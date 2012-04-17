@@ -49,9 +49,9 @@ def output_board(board,page,u413):
 			if r!=0:
 				last=db.query("SELECT owner,posted FROM posts WHERE parent=%i AND topic=FALSE ORDER BY posted DESC LIMIT 1;"%int(topic["id"]))[0]
 				lastu=db.query("SELECT username FROM users WHERE id=%i;"%int(last["owner"]))[0]["username"]
-				last=' | last reply by %s %s'%(lastu,util.ago(last["posted"]))
+				last=' | last reply by %s %s'%(util.htmlify(lastu),util.ago(last["posted"]))
 			u=db.query("SELECT username FROM users WHERE id=%i;"%int(topic["owner"]))[0]["username"]
-			output+='<tr><td style="text-align:right;width:64px;">{%i}</td><td style="padding-left:8px;"><b>%s</b> <span class="dim">by %s %s</span><br/><span class="dim">%i replies%s</span><br/></td></tr>'%(int(topic["id"]),topic["title"],u,util.ago(topic["posted"]),r,last)
+			output+='<tr><td style="text-align:right;width:64px;">{%i}</td><td style="padding-left:8px;"><b>%s</b> <span class="dim">by %s %s</span><br/><span class="dim">%i replies%s</span><br/></td></tr>'%(int(topic["id"]),util.htmlify(topic["title"]),util.htmlify(u),util.ago(topic["posted"]),r,last)
 		if page==1:
 			u413.set_context("BOARD ALL")
 		else:
@@ -81,9 +81,9 @@ def output_board(board,page,u413):
 			if r!=0:
 				last=db.query("SELECT owner,posted FROM posts WHERE parent=%i AND topic=FALSE ORDER BY posted DESC LIMIT 1;"%int(topic["id"]))[0]
 				lastu=db.query("SELECT username FROM users WHERE id=%i;"%int(last["owner"]))[0]["username"]
-				last=' | last reply by %s %s'%(lastu,util.ago(last["posted"]))
+				last=' | last reply by %s %s'%(util.htmlify(lastu),util.ago(last["posted"]))
 			u=db.query("SELECT username FROM users WHERE id=%i;"%int(topic["owner"]))[0]["username"]
-			output+='<tr><td style="text-align:right;width:64px;">{%i}</td><td style="padding-left:8px;"><b>%s</b> <span class="dim">by %s %s</span><br/><span class="dim">%i replies%s</span><br/></td></tr>'%(int(topic["id"]),topic["title"],u,util.ago(topic["posted"]),r,last)
+			output+='<tr><td style="text-align:right;width:64px;">{%i}</td><td style="padding-left:8px;"><b>%s</b> <span class="dim">by %s %s</span><br/><span class="dim">%i replies%s</span><br/></td></tr>'%(int(topic["id"]),util.htmlify(topic["title"]),util.htmlify(u),util.ago(topic["posted"]),r,last)
 		if page==1:
 			u413.set_context("BOARD %i"%board)
 		else:

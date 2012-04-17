@@ -56,24 +56,24 @@ def bbcodify(bbcode,exclude=None):
 		bbcode=re.sub(bbcodes[x],html[x],bbcode)
 	return bbcode
 
-def wall_func(args,u413):
-	r=db.query("SELECT * FROM wall ORDER BY posted;")
+def nsfwall_func(args,u413):
+	r=db.query("SELECT * FROM nsfwall ORDER BY posted;")
 	if args.strip()=='':
 		if len(r)==0:
-			u413.type("There are no notes on the wall.")
+			u413.type("There are no notes on the nsfwall.")
 		else:
-			u413.type("Welcome to the wall!")
+			u413.type("The wall for all your NSFW needs.")
 			out='<br/><table style="padding-right:8px;">'
 			for entry in r:
 				u=db.query("SELECT username FROM users WHERE id=%i"%int(entry["user"]))
-				out+='<tr><td>{%s}</td><td style="padding-left:1em;">%s <span class="dim">%s</span></td></tr>'%(util.htmlify(u[0]["username"]),bbcodify(bbcode.htmlify(entry["text"])),util.ago(entry["posted"]))
+				out+='<tr><td>{%s}</td><td style="padding-left:1em;">%s <span class="dim">%s</span></td></tr>'%(u[0]["username"],bbcodify(bbcode.htmlify(entry["text"])),util.ago(entry["posted"]))
 			u413.donttype(out+'</table>')
-			u413.set_context("WALL")
+			u413.set_context("nsfwall")
 			u413.clear_screen()
 	else:
 		if len(r)>=256:
-			db.query("DELETE FROM wall ORDER BY posted LIMIT 1;")
-		db.query("INSERT INTO wall(user,text) VALUES(%i,'%s');"%(u413.user.userid,db.escape(args)))
-		wall_func('',u413)
+			db.query("DELETE FROM nsfwall ORDER BY posted LIMIT 1;")
+		db.query("INSERT INTO nsfwall(user,text) VALUES(%i,'%s');"%(u413.user.userid,db.escape(args)))
+		nsfwall_func('',u413)
 		
-command.Command("WALL","[note]",{"note":"A note to post to the wall"},"Access/post to the u413 wall.",wall_func,user.User.member)
+command.Command("nsfwall","[note]",{"note":"A note to post to the nsfwall"},"Access/post to the u413 nsfwall.",nsfwall_func,user.User.member)

@@ -135,6 +135,7 @@ try:
 	import clear
 	import boards
 	import wall
+	import nsfwall
 	import history
 	import whois
 	import users

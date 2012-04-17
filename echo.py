@@ -18,6 +18,6 @@
 import command
 
 def echo_func(args,u413):
-	u413.type(args)
+	u413.type(util.htmlify(args))
 
 command.Command("ECHO","[message]",{"message":"Any message to echo back"},"Echo a string to the terminal.",echo_func,0)

@@ -26,15 +26,15 @@ def whois_func(args,u413):
 	else:
 		u=db.query("SELECT * FROM users WHERE UCASE(username)='%s';"%db.escape(args.upper()))
 		if len(u)==0:
-			u413.type('"%s" is not a u413 member.')
+			u413.type('"%s" is not a u413 member.'%util.htmlify(args.upper()))
 		else:
 			u=u[0]
-			s=db.query("SELECT user FROM sessions WHERE user='%s';"%u["id"])
+			s=db.query("SELECT user FROM sessions WHERE user='%s';"%db.escape(u["id"]))
 			if len(s)==0:
 				s=False
 			else:
 				s=True
-			u413.donttype('Username: '+u["username"])
+			u413.donttype('Username: '+util.htmlify(u["username"]))
 			u413.donttype('User ID: '+u["id"])
 			u413.donttype('User access: '+user.userlvl(int(u["access"]))+' ('+u["access"]+')')
 			u413.donttype('Logged in: '+str(s))

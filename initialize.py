@@ -25,7 +25,7 @@ def init_func(args,u413):
 		u413.donttype(logo)
 		u413.donttype('Type "HELP" to get started.')
 	else:
-		u413.type("You are logged in as "+u413.user.name+'.')
+		u413.type("You are logged in as "+util.htmlify(u413.user.name)+'.')
 	u413.clear_screen()
 	u413.set_context('')
 
