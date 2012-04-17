@@ -19,6 +19,7 @@ import command
 import user
 import database as db
 import math
+import util
 
 def isint(i):
 	try:
@@ -31,35 +32,58 @@ def output_board(board,page,u413):
 	output=''
 	if board==0:
 		u413.type("Retrieving all topics...")
-		t=db.query("SELECT *,id as t FROM posts WHERE topic=TRUE ORDER BY (SELECT MAX(posted) FROM posts WHERE topic=FALSE AND parent=t) ASC LIMIT %i,10;"%((page-1)*10))
-		c=int(db.query("SELECT COUNT(*) FROM posts WHERE topic=TRUE;")[0]["COUNT(*)"])
+		c=int(db.query("SELECT COUNT(*) FROM posts WHERE topic=TRUE AND parent IN (SELECT id FROM boards WHERE onall=TRUE);")[0]["COUNT(*)"])
+		if c==0 or page<1:
+			page=1
+		elif page>math.ceil(c/10.0):
+			page=math.ceil(c/10.0)
+		t=db.query("SELECT *,id AS t FROM posts WHERE topic=TRUE AND parent IN (SELECT id FROM boards WHERE onall=TRUE) ORDER BY (SELECT MAX(posted) FROM posts WHERE topic=FALSE AND parent=t) DESC LIMIT %i,10;"%((page-1)*10))[::-1]
 		if c==0:
-			u413.donttype('{0} <span class="inverted">BOARD ALL</span> Page %i/1<br/>\n'%page)
+			output+='{0} <span class="inverted">BOARD ALL</span> Page %i/1<br/>'%page
 		else:
-			u413.donttype('{0} <span class="inverted">BOARD ALL</span> Page %i/%i<br/>\n'%(page,math.ceil(c/10.0)))
-		output='<table>'
+			output+='{0} <span class="inverted">BOARD ALL</span> Page %i/%i<br/>'%(page,math.ceil(c/10.0))
+		output+='<table>'
 		for topic in t:
 			r=int(db.query("SELECT COUNT(*) FROM posts WHERE parent=%i AND topic=FALSE;"%int(topic["id"]))[0]["COUNT(*)"])
+			last=''
+			if r!=0:
+				last=db.query("SELECT owner,posted FROM posts WHERE parent=%i AND topic=FALSE ORDER BY posted DESC LIMIT 1;"%int(topic["id"]))[0]
+				lastu=db.query("SELECT username FROM users WHERE id=%i;"%int(last["owner"]))[0]["username"]
+				last=' | last reply by %s %s'%(lastu,util.ago(last["posted"]))
 			u=db.query("SELECT username FROM users WHERE id=%i;"%int(topic["owner"]))[0]["username"]
-			output+='<tr><td style="text-align:right;width:64px;">{%i}</td><td style="padding-left:8px;"><b>%s</b> | <span class="dim">%i replies</span><br/><span class="dim">by %s on %s</td></tr>'%(int(topic["id"]),topic["title"],r,u,str(topic["posted"]))
+			output+='<tr><td style="text-align:right;width:64px;">{%i}</td><td style="padding-left:8px;"><b>%s</b> <span class="dim">by %s %s</span><br/><span class="dim">%i replies%s</span><br/></td></tr>'%(int(topic["id"]),topic["title"],u,util.ago(topic["posted"]),r,last)
 		if page==1:
 			u413.set_context("BOARD ALL")
 		else:
 			u413.set_context("BOARD ALL %i"%page)
 	else:
-		b=db.query("SELECT * FROM boards WHERE id=%i;"%board)[0]
-		t=db.query("SELECT *,id as t FROM posts WHERE topic=TRUE AND parent=%i ORDER BY (SELECT MAX(posted) FROM posts WHERE topic=FALSE AND parent=t) ASC LIMIT %i,10;"%(board,(page-1)*10))
+		b=db.query("SELECT * FROM boards WHERE id=%i;"%board)
+		if len(b)==0:
+			u413.type("Board %i does not exist."%board)
+			return
+		else:
+			b=b[0]
 		c=int(db.query("SELECT COUNT(*) FROM posts WHERE parent=%i AND topic=TRUE;"%board)[0]["COUNT(*)"])
+		if c==0 or page<1:
+			page=1
+		elif page>math.ceil(c/10.0):
+			page=math.ceil(c/10.0)
+		t=db.query("SELECT *,id as t FROM posts WHERE topic=TRUE AND parent=%i ORDER BY (SELECT MAX(posted) FROM posts WHERE topic=FALSE AND parent=t) ASC LIMIT %i,10;"%(board,(page-1)*10))
 		u413.type("Retrieving board topics...")
 		if c==0:
-			u413.donttype('{%i} <span class="inverted">%s</span> Page %i/1<br/>\n'%(board,b["name"],page))
+			output+='{%i} <span class="inverted">%s</span> Page %i/1<br/>'%(board,b["name"],page)
 		else:
-			u413.donttype('{%i} <span class="inverted">%s</span> Page %i/%i<br/>\n'%(board,b["name"],page,math.ceil(c/10.0)))
-		output='<table>'
+			output+='{%i} <span class="inverted">%s</span> Page %i/%i<br/>'%(board,b["name"],page,math.ceil(c/10.0))
+		output+='<table>'
 		for topic in t:
 			r=int(db.query("SELECT COUNT(*) FROM posts WHERE parent=%i AND topic=FALSE;"%int(topic["id"]))[0]["COUNT(*)"])
+			last=''
+			if r!=0:
+				last=db.query("SELECT owner,posted FROM posts WHERE parent=%i AND topic=FALSE ORDER BY posted DESC LIMIT 1;"%int(topic["id"]))[0]
+				lastu=db.query("SELECT username FROM users WHERE id=%i;"%int(last["owner"]))[0]["username"]
+				last=' | last reply by %s %s'%(lastu,util.ago(last["posted"]))
 			u=db.query("SELECT username FROM users WHERE id=%i;"%int(topic["owner"]))[0]["username"]
-			output+='<tr><td style="text-align:right;width:64px;">{%i}</td><td style="padding-left:8px;"><b>%s</b> | <span class="dim">%i replies</span><br/><span class="dim">by %s on %s</td></tr>'%(int(topic["id"]),topic["title"],r,u,str(topic["posted"]))
+			output+='<tr><td style="text-align:right;width:64px;">{%i}</td><td style="padding-left:8px;"><b>%s</b> <span class="dim">by %s %s</span><br/><span class="dim">%i replies%s</span><br/></td></tr>'%(int(topic["id"]),topic["title"],u,util.ago(topic["posted"]),r,last)
 		if page==1:
 			u413.set_context("BOARD %i"%board)
 		else:
@@ -93,7 +117,7 @@ def board_func(args,u413):
 		elif not isint(args[1]):
 			args[1]=1
 		else:
-			u413.donttype('<span class="error">Invalid board ID</span>')
+			args[1]=int(args[1])
 		output_board(int(args[0]),args[1],u413)
 
 command.Command("BOARD","<id> [page]",{"id":"The id of the board to view"},"Show the most recent topics in a board.",board_func,user.User.member)

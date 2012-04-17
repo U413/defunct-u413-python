@@ -17,12 +17,11 @@
 
 import command
 import user
+import database as db
 
-def who_func(args,u413):
-	u413.donttype("Username: "+u413.user.name)
-	u413.donttype("User ID: "+str(u413.user.userid))
-	u413.donttype("User access: "+user.userlvl(u413.user.level)+' ('+str(u413.user.level)+')')
-	u413.donttype("Session ID: "+str(u413.user.session))
-	u413.donttype("Session expires: "+str(u413.user.expire))
+def delete_func(args,u413):
+	#continuation
+	if "cont" in u413.cmddata:
+		
 
-command.Command("WHO","",{},"Output statistics about the currently logged-in user.",who_func)
+command.Command("DELETE","[id]",{"id":"The ID of the post you wish to delete"},"Delete a post.",delete_func,user.User.member)

@@ -23,35 +23,10 @@ cgitb.enable(display=1)
 import json
 import os
 import Cookie
+import sys
 
 import user
 import command
-import database as db
-
-import initialize
-import echo
-import ping
-import login
-import logout
-import register
-import who
-import desu
-import clear
-import boards
-import wall
-import history
-
-import topic
-import reply
-import newtopic
-import board
-import edit
-
-import first
-import last
-import refresh
-
-import help
 
 form=cgi.FieldStorage()
 cli=form.getvalue("cli")
@@ -79,7 +54,7 @@ else:
 	currentuser=user.User(session)
 	if cli==None:
 		cli="LOGIN"
-	
+
 cmdarg=cli.split(' ',1)
 cmd=cmdarg[0]
 args=""
@@ -108,18 +83,16 @@ class u413(object):
 		self.cont=False
 		self.cookies=[]
 		self.cmddata=u.cmddata
-		self.setcontext=False
 
 	def type(self,text,mute=False):
 		self.j["DisplayItems"].append({"Text":text,"DontType":False,"Mute":mute})
 
 	def donttype(self,text,mute=False):
 		self.j["DisplayItems"].append({"Text":text,"DontType":True,"Mute":mute})
-	
+
 	def set_context(self,context):
 		self.j["ContextText"]=context
 		self.user.context=context
-		self.setcontext=True
 
 	def set_title(self,title):
 		self.j["TerminalTitle"]=title
@@ -148,30 +121,73 @@ class u413(object):
 
 u=u413(currentuser)
 
-command.respond(cli,u)
+try:
+	import database as db
 
-if u.cont:
-	u.j["Command"]=currentuser.cmd
+	import initialize
+	import echo
+	import ping
+	import login
+	import logout
+	import register
+	import who
+	import desu
+	import clear
+	import boards
+	import wall
+	import history
+	import whois
 
-if callback==None:
+	import topic
+	import reply
+	import newtopic
+	import board
+	import edit
+
+	import first
+	import last
+	import prev
+	import next
+	import refresh
+
+	import help
+
+	command.respond(cli,u)
+
+	if u.cont:
+		u.j["Command"]=currentuser.cmd
+
+	if callback==None:
+		print "Content-type: application/json"
+	else:
+		print "Content-type: application/javascript"
+
+	for cookie in u.cookies:
+		print "Set-Cookie: "+cookie["name"]+"="+cookie["value"]
+	print 'Set-Cookie: session='+currentuser.session+'; Max-Age: 21600'
+
+	print
+
+	if callback==None:
+		print json.dumps(u.j)
+	else:
+		print callback+'('+json.dumps(u.j)+')'
+
+	if u.cont:
+		if currentuser.cmd!='':
+			cmd=currentuser.cmd
+		db.query("UPDATE sessions SET expire=DATE_ADD(NOW(),INTERVAL 6 HOUR),cmd='%s',cmddata='%s',context='%s' WHERE id='%s';"%(cmd,db.escape(repr(u.cmddata)),currentuser.context,currentuser.session))
+	else:
+		db.query("UPDATE sessions SET expire=DATE_ADD(NOW(),INTERVAL 6 HOUR),cmd='',cmddata='{}',context='%s' WHERE id='%s';"%(currentuser.context,currentuser.session))
+except Exception as e:
+	import traceback
+	u.donttype('<span class="error">'+traceback.format_exc().replace('&','&amp;').replace('<','&lt;').replace('>','&gt;').replace('\n','<br/>').replace(' '*4,'<span class="tab"></tab>')+'</span>')
+
 	print "Content-type: application/json"
-else:
-	print "Content-type: application/javascript"
-
-for cookie in u.cookies:
-	print "Set-Cookie: "+cookie["name"]+"="+cookie["value"]
-print 'Set-Cookie: session='+currentuser.session+'; Max-Age: 21600'
-
-print
-
-if callback==None:
-	print json.dumps(u.j)
-else:
-	print callback+'('+json.dumps(u.j)+')'
-
-if u.cont:
-	if currentuser.cmd!='':
-		cmd=currentuser.cmd
-	db.query("UPDATE sessions SET expire=DATE_ADD(NOW(),INTERVAL 6 HOUR),cmd='%s',cmddata='%s',context='%s' WHERE id='%s';"%(cmd,db.escape(repr(u.cmddata)),currentuser.context,currentuser.session))
-else:
-	db.query("UPDATE sessions SET expire=DATE_ADD(NOW(),INTERVAL 6 HOUR),cmd='',cmddata='{}',context='%s' WHERE id='%s';"%(currentuser.context,currentuser.session))
+	print "Set-Cookie: session="+currentuser.session+'; Max-Age: 21600'
+	print
+	
+	if callback==None:
+		print json.dumps(u.j)
+	else:
+		print callback+'('+json.dumps(u.j)+')'

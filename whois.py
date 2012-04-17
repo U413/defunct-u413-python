@@ -17,12 +17,26 @@
 
 import command
 import user
+import database as db
 
-def who_func(args,u413):
-	u413.donttype("Username: "+u413.user.name)
-	u413.donttype("User ID: "+str(u413.user.userid))
-	u413.donttype("User access: "+user.userlvl(u413.user.level)+' ('+str(u413.user.level)+')')
-	u413.donttype("Session ID: "+str(u413.user.session))
-	u413.donttype("Session expires: "+str(u413.user.expire))
+def whois_func(args,u413):
+	args=args.split(' ')[0]
+	if len(args)==0:
+		u413.cmds["WHO"].callback('',u413)
+	else:
+		u=db.query("SELECT * FROM users WHERE UCASE(username)='%s';"%db.escape(args.upper()))
+		if len(u)==0:
+			u413.type('"%s" is not a u413 member.')
+		else:
+			u=u[0]
+			s=db.query("SELECT user FROM sessions WHERE user='%s';"%u["id"])
+			if len(s)==0:
+				s=False
+			else:
+				s=True
+			u413.donttype('Username: '+u["username"])
+			u413.donttype('User ID: '+u["id"])
+			u413.donttype('User access: '+user.userlvl(int(u["access"]))+' ('+u["access"]+')')
+			u413.donttype('Logged in: '+str(s))
 
-command.Command("WHO","",{},"Output statistics about the currently logged-in user.",who_func)
+command.Command("WHOIS","[user]",{"user":"The user whose data you wish to view (defaults to you)"},"List data about a user",whois_func,user.User.member)

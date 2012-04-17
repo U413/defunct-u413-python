@@ -61,8 +61,8 @@ html=[
 	r'<u>\1</u>',
 	r'<del>\1</del>',
 	r'<span class="transmit">\1</span>',
-	r'<a href="http://\3">\3</a>',
-	r'<a href="http://\3">\6</a>',
+	r'<a href="http://\3" target="_blank">\3</a>',
+	r'<a href="http://\3" target="_blank">\6</a>',
 	r'<img src="//\3"/>',
 	r'<audio controls="controls" src="http://\3">Your browser does not suuport HTML5.(We recommend Google Chrome) You can <a href="http://\3">download</a> the audio instead</audio>',
 	r'<audio controls="controls" src="http://\3">Your browser does not suuport HTML5.(We recommend Google Chrome) You can <a href="http://\3">download</a> the audio instead</audio>',
@@ -76,7 +76,7 @@ html=[
 	r'<span class="tab"></span>'
 ]
 
-def bbcodify(bbcode):
+def bbcodify(bbcode,exclude=None):
 	for x in range(len(bbcodes)):
 		bbcode=re.sub(bbcodes[x],html[x],bbcode)
 	return bbcode

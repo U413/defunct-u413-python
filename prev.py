@@ -16,17 +16,21 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.'''
 
 import command
+import user
 
-logo=''' &nbsp;__ &nbsp;__ &nbsp;__ __ &nbsp; &nbsp; &nbsp; _ &nbsp; &nbsp; __<br/> /\ \/\ \/\ \\\\ \ &nbsp; &nbsp;/&#39; \ &nbsp;/&#39;__`\<br/> \ \ \ \ \ \ \\\\ \ &nbsp;/\_, \/\_\L\ \<br/> &nbsp;\ \ \ \ \ \ \\\\ \_\/_/\ \/_/_\_&lt;_<br/> &nbsp; \ \ \_\ \ \__ ,__\ \ \ \/\ \L\ \<br/> &nbsp; &nbsp;\ \_____\/_/\_\_/ &nbsp;\ \_\ \____/<br/> &nbsp; &nbsp; \/_____/ &nbsp;\/_/ &nbsp; &nbsp; \/_/\/___/<br/><br/>'''
-
-def init_func(args,u413):
-	if u413.user.name=="Guest":
-		u413.type("Welcome to...")
-		u413.donttype(logo)
-		u413.donttype('Type "HELP" to get started.')
+def prev_func(args,u413):
+	context=u413.user.context.split(' ')
+	if context[0]=='BOARD':
+		if context[1]=='ALL':
+			context[1]=0
+	if context[0] in ['BOARD','TOPIC']:
+		page=1
+		if len(context)>2:
+			page=int(context[2])
+			if page>1:
+				page-=1
+		command.respond(context[0]+' '+context[1]+' '+str(page),u413)
 	else:
-		u413.type("You are logged in as "+u413.user.name+'.')
-	u413.clear_screen()
-	u413.set_context('')
+		u413.type('"PREV" is not a valid command or is not available in the current context.')
 
-command.Command("INITIALIZE","",{},"Initialize the terminal.",init_func,0)
+command.Command("PREV","",{},"Goes to the previous page",prev_func,user.User.member)

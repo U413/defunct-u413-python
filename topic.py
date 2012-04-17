@@ -64,7 +64,12 @@ def output_page(topic,page,u413):
 	else:
 		for reply in r:
 			owner=db.query("SELECT username FROM users WHERE id=%i;"%int(reply["owner"]))[0]["username"]
-			u413.donttype('<table><tr><td>&gt;</td><td style="text-align:center;width:160px;border-right:solid 1px lime;">%s</td><td style="padding-left:8px;padding-right:8px;">{%i} %s<br/><span class="dim">%s</span></td></tr></table><br/>'%(owner,int(reply["id"]),bbcode.bbcodify(bbcode.htmlify(reply["post"])),reply["posted"]))
+			editor=db.query("SELECT username FROM users WHERE id=%i;"%int(reply["editor"]))
+			if len(editor)==0:
+				u413.donttype('<table><tr><td>&gt;</td><td style="text-align:center;width:160px;border-right:solid 1px lime;">%s</td><td style="padding-left:8px;padding-right:8px;">{%i} %s<br/><span class="dim">%s</span></td></tr></table><br/>'%(owner,int(reply["id"]),bbcode.bbcodify(bbcode.htmlify(reply["post"])),reply["posted"]))
+			else:
+				editor=editor[0]["username"]
+				u413.donttype('<table><tr><td>&gt;</td><td style="text-align:center;width:160px;border-right:solid 1px lime;">%s</td><td style="padding-left:8px;padding-right:8px;">{%i} %s<br/><br/><i>Edited by %s on %s</i><br/><span class="dim">%s</span></td></tr></table><br/>'%(owner,int(reply["id"]),bbcode.bbcodify(bbcode.htmlify(reply["post"])),editor,reply["edited"],reply["posted"]))
 		if c==0:
 			u413.donttype('Page 1/1<br/>\n')
 		else:

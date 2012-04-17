@@ -35,37 +35,80 @@
 import command
 import user
 import database as db
+import util
+
 import topic as modtopic
+
+def reload_topic(t,p,u413):
+	modtopic.output_page(t,p,u413)
 
 def reply_func(args,u413):
 	#already used REPLY
-	if "topic" in u413.cmddata:
+	if "step" in u413.cmddata:
 		if args.strip()=='':
 			u413.type("Action cancelled.")
 			u413.set_context("")
-		else:
-			topic=u413.cmddata["topic"]
-			db.query("INSERT INTO posts (topic,title,parent,owner,editor,post,locked,edited,posted) VALUES(FALSE,'',%i,%i,0,'%s',FALSE,NULL,NOW());"%(topic,u413.user.userid,db.escape(args)))
-			modtopic.topic_func('%i'%topic,u413)
+		#ID>
+		elif u413.cmddata["step"]==1:
+			if util.isint(args):
+				u413.cmddata["step"]=2
+				u413.cmddata["topic"]=int(args)
+				u413.type("Enter your reply:")
+				u413.set_context("REPLY")
+				u413.continue_cmd()
+			else:
+				u413.type("Invalid topic ID.")
+				u413.set_context("")
+		#REPLY>
+		elif u413.cmddata["step"]==2:
+			db.query("INSERT INTO posts (topic,title,parent,owner,editor,post,locked,edited,posted) VALUES(FALSE,'',%i,%i,0,'%s',FALSE,NULL,NOW());"%(u413.cmddata["topic"],u413.user.userid,db.escape(args)))
+			reload_topic(u413.cmddata["topic"],u413.cmddata["page"],u413)
 	#first use of REPLY
 	else:
+		params=args.split(' ')
+		context=u413.user.context.split(' ')
 		#REPLY
 		if args.strip()=='':
 			if "TOPIC" in u413.user.context:
+				u413.cmddata["step"]=2
 				u413.cmddata["topic"]=int(u413.user.context.split(' ')[1])
 				u413.type("Enter your reply:")
 				u413.set_context("REPLY")
 				u413.continue_cmd()
 			else:
-				u413.donttype('<span class="error">"REPLY" is not a valid command or is not available in the current context.</span>')
-				u413.set_context("")
-		#REPLY [message]
-		else:
-			if "TOPIC" in u413.user.context:
+				u413.cmddata["step"]=1
+				u413.type("Enter the topic ID:")
+				u413.set_context("TOPIC ID")
+				u413.continue_cmd()
+		#REPLY [id]
+		elif len(parms)==1:
+			if util.isint(params[0]):
+				u413.cmddata["step"]=2
+				u413.cmddata["topic"]=int(params[0])
+				u413.type("Enter your reply:")
+				u413.continue_cmd()
+			elif "TOPIC" in u413.user.context:
 				topic=int(u413.user.context.split(' ')[1])
 				db.query("INSERT INTO posts (topic,title,parent,owner,editor,post,locked,edited,posted) VALUES(FALSE,'',%i,%i,0,'%s',FALSE,NULL,NOW());"%(topic,u413.user.userid,db.escape(args)))
-				modtopic.topic_func('%i'%topic,u413)
+				reload_topic(u413.cmddata["topic"],u413.cmddata["page"],u413)
 			else:
-				u413.donttype('<span class="error">"REPLY" is not a valid command or is not available in the current context.</span>')
+				u413.type("Invalid topic ID.")
+		#REPLY [[id] message]
+		else:
+			if util.isint(params[0]):
+				u413.cmddata["step"]=2
+				u413.cmddata["topic"]=int(params[0])
+				u413.type("Enter your reply:")
+				u413.set_context("REPLY")
+				u413.continue_cmd()
+			elif "TOPIC" in u413.user.context:
+				topic=int(u413.user.context.split(' ')[1])
+				db.query("INSERT INTO posts (topic,title,parent,owner,editor,post,locked,edited,posted) VALUES(FALSE,'',%i,%i,0,'%s',FALSE,NULL,NOW());"%(topic,u413.user.userid,db.escape(args)))
+				reload_topic(u413.cmddata["topic"],u413.cmddata["page"],u413)
+			else:
+				u413.type("Topic ID required.")
+		u413.cmddata["page"]=1
+		if len(context)>2:
+			u413.cmddata["page"]=int(context[2])
 
-command.Command("REPLY","[message]",{"message":"The message you wish to post"},"Replies to a topic.",reply_func,user.User.member)
+command.Command("REPLY","[[id] message]",{"id":"The topic ID to reply to","message":"The message you wish to post"},"Replies to a topic.",reply_func,user.User.member)
