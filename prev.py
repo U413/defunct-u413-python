@@ -29,7 +29,7 @@ def prev_func(args,u413):
 			page=int(context[2])
 			if page>1:
 				page-=1
-		command.respond(context[0]+' '+context[1]+' '+str(page),u413)
+		command.respond(context[0]+' '+str(context[1])+' '+str(page),u413)
 	else:
 		u413.type('"PREV" is not a valid command or is not available in the current context.')
 

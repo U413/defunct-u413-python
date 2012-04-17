@@ -137,12 +137,14 @@ try:
 	import wall
 	import history
 	import whois
+	import users
 
 	import topic
 	import reply
 	import newtopic
 	import board
 	import edit
+	import delete
 
 	import first
 	import last

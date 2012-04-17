@@ -63,7 +63,7 @@ def wall_func(args,u413):
 			u413.type("There are no notes on the wall.")
 		else:
 			u413.type("Welcome to the wall!")
-			out='<br/><table>'
+			out='<br/><table style="padding-right:8px;">'
 			for entry in r:
 				u=db.query("SELECT username FROM users WHERE id=%i"%int(entry["user"]))
 				out+='<tr><td>{%s}</td><td style="padding-left:1em;">%s <span class="dim">%s</span></td></tr>'%(u[0]["username"],bbcodify(bbcode.htmlify(entry["text"])),util.ago(entry["posted"]))

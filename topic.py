@@ -37,6 +37,7 @@ import user
 import database as db
 import math
 import bbcode
+import util
 
 def output_page(topic,page,u413):
 	t=db.query("SELECT * FROM posts WHERE id=%i AND topic=TRUE;"%topic)
@@ -53,12 +54,16 @@ def output_page(topic,page,u413):
 		page=1
 	r=db.query("SELECT * FROM posts WHERE parent=%i ORDER BY id LIMIT %i,10;"%(topic,(page-1)*10))#replies
 	u413.type("Retreiving topic...")
-	u413.donttype('{%i} %s {%i} <span class="inverted">%s</span><br/>\n<span class="dim">Posted by %s on %s</span><br/>\n'%(int(t["parent"]),b,topic,t["title"],u,str(t["posted"])))
-	u413.donttype(t["post"]+'<br/>\n')
-	if c==0:
-		u413.donttype('Page 1/1<br/>\n')
+	u413.donttype('{%i} %s {%i} <span class="inverted">%s</span><br/><span class="dim">Posted by %s %s</span><br/>'%(int(t["parent"]),b,topic,t["title"],u,util.ago(t["posted"])))
+	e=db.query("SELECT username FROM users WHERE id=%i;"%int(t["editor"]))
+	if len(e)==0:
+		u413.donttype(util.htmlify(t["post"])+'<br/>')
 	else:
-		u413.donttype('Page %i/%i<br/>\n'%(page,math.ceil(c/10.0)))
+		u413.donttype(util.htmlify(t["post"])+'<br/><br/><i>Edited by %s %s</i><br/>'%(e[0]["username"],util.ago(t["posted"])))
+	if c==0:
+		u413.donttype('Page 1/1<br/>')
+	else:
+		u413.donttype('Page %i/%i<br/>'%(page,math.ceil(c/10.0)))
 	if c==0:
 		u413.type("There are no replies.")
 	else:
@@ -66,14 +71,14 @@ def output_page(topic,page,u413):
 			owner=db.query("SELECT username FROM users WHERE id=%i;"%int(reply["owner"]))[0]["username"]
 			editor=db.query("SELECT username FROM users WHERE id=%i;"%int(reply["editor"]))
 			if len(editor)==0:
-				u413.donttype('<table><tr><td>&gt;</td><td style="text-align:center;width:160px;border-right:solid 1px lime;">%s</td><td style="padding-left:8px;padding-right:8px;">{%i} %s<br/><span class="dim">%s</span></td></tr></table><br/>'%(owner,int(reply["id"]),bbcode.bbcodify(bbcode.htmlify(reply["post"])),reply["posted"]))
+				u413.donttype('<table><tr><td>&gt;</td><td style="text-align:center;width:160px;border-right:solid 1px lime;">%s</td><td style="padding-left:8px;padding-right:8px;">{%i} %s<br/><br/><span class="dim">Posted %s</span></td></tr></table><br/>'%(owner,int(reply["id"]),bbcode.bbcodify(bbcode.htmlify(reply["post"])),util.ago(reply["posted"])))
 			else:
 				editor=editor[0]["username"]
-				u413.donttype('<table><tr><td>&gt;</td><td style="text-align:center;width:160px;border-right:solid 1px lime;">%s</td><td style="padding-left:8px;padding-right:8px;">{%i} %s<br/><br/><i>Edited by %s on %s</i><br/><span class="dim">%s</span></td></tr></table><br/>'%(owner,int(reply["id"]),bbcode.bbcodify(bbcode.htmlify(reply["post"])),editor,reply["edited"],reply["posted"]))
+				u413.donttype('<table><tr><td>&gt;</td><td style="text-align:center;width:160px;border-right:solid 1px lime;">%s</td><td style="padding-left:8px;padding-right:8px;">{%i} %s<br/><br/><i>Edited by %s %s</i><br/><span class="dim">Posted %s</span></td></tr></table><br/>'%(owner,int(reply["id"]),bbcode.bbcodify(bbcode.htmlify(reply["post"])),editor,util.ago(reply["edited"]),util.ago(reply["posted"])))
 		if c==0:
-			u413.donttype('Page 1/1<br/>\n')
+			u413.donttype('Page 1/1<br/>')
 		else:
-			u413.donttype('Page %i/%i<br/>\n'%(page,math.ceil(c/10.0)))
+			u413.donttype('Page %i/%i<br/>'%(page,math.ceil(c/10.0)))
 	if page==1:
 		u413.set_context("TOPIC %i"%topic)
 	else:

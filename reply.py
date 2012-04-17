@@ -65,7 +65,7 @@ def reply_func(args,u413):
 			reload_topic(u413.cmddata["topic"],u413.cmddata["page"],u413)
 	#first use of REPLY
 	else:
-		params=args.split(' ')
+		params=args.split(' ',1)
 		context=u413.user.context.split(' ')
 		#REPLY
 		if args.strip()=='':
@@ -81,7 +81,7 @@ def reply_func(args,u413):
 				u413.set_context("TOPIC ID")
 				u413.continue_cmd()
 		#REPLY [id]
-		elif len(parms)==1:
+		elif len(params)==1:
 			if util.isint(params[0]):
 				u413.cmddata["step"]=2
 				u413.cmddata["topic"]=int(params[0])
@@ -90,21 +90,34 @@ def reply_func(args,u413):
 			elif "TOPIC" in u413.user.context:
 				topic=int(u413.user.context.split(' ')[1])
 				db.query("INSERT INTO posts (topic,title,parent,owner,editor,post,locked,edited,posted) VALUES(FALSE,'',%i,%i,0,'%s',FALSE,NULL,NOW());"%(topic,u413.user.userid,db.escape(args)))
-				reload_topic(u413.cmddata["topic"],u413.cmddata["page"],u413)
+				page=1
+				if len(context)>2:
+					page=int(context[2])
+				reload_topic(int(context[1]),page,u413)
 			else:
 				u413.type("Invalid topic ID.")
 		#REPLY [[id] message]
 		else:
 			if util.isint(params[0]):
-				u413.cmddata["step"]=2
-				u413.cmddata["topic"]=int(params[0])
-				u413.type("Enter your reply:")
-				u413.set_context("REPLY")
-				u413.continue_cmd()
+				if len(params)==2:
+					db.query("INSERT INTO posts (topic,title,parent,owner,editor,post,locked,edited,posted) VALUES(FALSE,'',%i,%i,0,'%s',FALSE,NULL,NOW());"%(int(params[0]),u413.user.userid,db.escape(params[1])))
+					page=1
+					if len(context)>2:
+						page=int(context[2])
+					u413.type("Reply added successfully.")
+				else:
+					u413.cmddata["step"]=2
+					u413.cmddata["topic"]=int(params[0])
+					u413.type("Enter your reply:")
+					u413.set_context("REPLY")
+					u413.continue_cmd()
 			elif "TOPIC" in u413.user.context:
 				topic=int(u413.user.context.split(' ')[1])
 				db.query("INSERT INTO posts (topic,title,parent,owner,editor,post,locked,edited,posted) VALUES(FALSE,'',%i,%i,0,'%s',FALSE,NULL,NOW());"%(topic,u413.user.userid,db.escape(args)))
-				reload_topic(u413.cmddata["topic"],u413.cmddata["page"],u413)
+				page=1
+				if len(context)>2:
+					page=int(context[2])
+				reload_topic(topic,page,u413)
 			else:
 				u413.type("Topic ID required.")
 		u413.cmddata["page"]=1

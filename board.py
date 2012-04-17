@@ -37,7 +37,7 @@ def output_board(board,page,u413):
 			page=1
 		elif page>math.ceil(c/10.0):
 			page=math.ceil(c/10.0)
-		t=db.query("SELECT *,id AS t FROM posts WHERE topic=TRUE AND parent IN (SELECT id FROM boards WHERE onall=TRUE) ORDER BY (SELECT MAX(posted) FROM posts WHERE topic=FALSE AND parent=t) DESC LIMIT %i,10;"%((page-1)*10))[::-1]
+		t=db.query("SELECT *,id AS t FROM posts WHERE topic=TRUE AND parent IN (SELECT id FROM boards WHERE onall=TRUE) ORDER BY (SELECT MAX(posted) FROM posts WHERE topic=FALSE AND parent=t OR topic=TRUE AND id=t) DESC LIMIT %i,10;"%((page-1)*10))[::-1]
 		if c==0:
 			output+='{0} <span class="inverted">BOARD ALL</span> Page %i/1<br/>'%page
 		else:
@@ -68,7 +68,7 @@ def output_board(board,page,u413):
 			page=1
 		elif page>math.ceil(c/10.0):
 			page=math.ceil(c/10.0)
-		t=db.query("SELECT *,id as t FROM posts WHERE topic=TRUE AND parent=%i ORDER BY (SELECT MAX(posted) FROM posts WHERE topic=FALSE AND parent=t) ASC LIMIT %i,10;"%(board,(page-1)*10))
+		t=db.query("SELECT *,id as t FROM posts WHERE topic=TRUE AND parent=%i ORDER BY (SELECT MAX(posted) FROM posts WHERE topic=FALSE AND parent=t OR topic=TRUE AND id=t) ASC LIMIT %i,10;"%(board,(page-1)*10))
 		u413.type("Retrieving board topics...")
 		if c==0:
 			output+='{%i} <span class="inverted">%s</span> Page %i/1<br/>'%(board,b["name"],page)
@@ -94,7 +94,7 @@ def output_board(board,page,u413):
 def board_func(args,u413):
 	args=args.split(' ')
 	if len(args)==0:
-		u413.donttype('<span class="error">Invalid board ID.</span>')
+		u413.donttype('Invalid board ID.')
 	#BOARD id
 	elif len(args)==1:
 		if args[0].upper()=="ALL":

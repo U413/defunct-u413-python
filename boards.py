@@ -18,6 +18,7 @@
 import command
 import database as db
 import user
+import util
 
 def plural(i,s):
 	if i==1:
@@ -36,9 +37,9 @@ def boards_func(args,u413):
 			posted=db.query("SELECT posted FROM posts WHERE parent=%i ORDER BY posted DESC LIMIT 1;"%int(topic['id']))
 			if len(posted)>0:
 				posted=posted[0]["posted"]
-				boardlist+="<td>{"+str(i['id'])+'}</td><td>'+i['name']+' <span class="dim">%s, last reply on %s</span></td>'%(plural(count,'topic'),posted)
+				boardlist+="<td>{"+str(i['id'])+'}</td><td>'+i['name']+' <span class="dim">%s, last reply %s</span></td>'%(plural(count,'topic'),util.ago(posted))
 			else:
-				boardlist+="<td>{"+str(i['id'])+'}</td><td>'+i['name']+' <span class="dim">%s, last reply on %s</span></td>'%(plural(count,'topic'),topic["posted"])
+				boardlist+="<td>{"+str(i['id'])+'}</td><td>'+i['name']+' <span class="dim">%s, last reply %s</span></td>'%(plural(count,'topic'),util.ago(topic["posted"]))
 		else:
 			boardlist+="<td>{"+str(i['id'])+'}</td><td>'+i['name']+' <span class="dim">no topics</span></td>'
 		boardlist+="</tr>"
