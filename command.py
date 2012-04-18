@@ -35,14 +35,14 @@ class Command(object):
 
 def aliasin(s,user):
 	for a in user.alias:
-		if re.search(a["from"],s)!=None:
+		if re.match(a["from"],s)!=None:
 			return True
 	return False
 
 def execalias(cli,u413):
 	commands=[]
 	for a in u413.user.alias:
-		cli=re.sub(a["from"],a["to"],cli)
+		cli=re.sub(a["from"],a["to"],cli,1)
 	cmd=cli.split(' ')[0]
 	if cmd.upper() not in cmds:
 		u413.type('"%s" is not a valid command or is not available in the current context.'%cmd.upper())
