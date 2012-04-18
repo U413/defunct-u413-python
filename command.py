@@ -33,19 +33,19 @@ class Command(object):
 		self.hidden=hidden
 		cmds[self.name]=self
 
-def aliasin(s,user):
+def getalias(s,user):
 	for a in user.alias:
-		if re.match(a["from"],s)!=None:
-			return True
-	return False
+		m=re.match(a["from"],s)
+		if m!=None:
+			return a
+	return None
 
-def execalias(cli,u413):
-	commands=[]
-	for a in u413.user.alias:
-		cli=re.sub(a["from"],a["to"],cli,1)
-	cmd=cli.split(' ')[0]
-	if cmd.upper() not in cmds:
-		u413.type('"%s" is not a valid command or is not available in the current context.'%cmd.upper())
+def execalias(cli,a,u413):
+	cli=re.sub(a["from"],a["to"],cli,1)
+	cmd=cli.split(' ')[0].upper()
+	#prevent recursion
+	if cmd not in cmds:
+		u413.type('"%s" is not a valid command or is not available in the current context.'%cmd)
 		return
 	respond(cli,u413)
 
@@ -69,8 +69,9 @@ def respond(cli,u413,ashtml=True):
 		if cmd in cmds and cmds[cmd].level<=u413.user.level:
 			cmds[cmd].callback(args,u413)
 		else:
-			if aliasin(cli,u413.user):
-				execalias(cli,u413)
+			a=getalias(cli,u413.user)
+			if a!=None:
+				execalias(cli,a,u413)
 			elif util.isint(cmd):
 				if u413.user.context!='TOPIC' and 'TOPIC' in u413.user.context:
 					cmds["TOPIC"].callback('%i %i'%(int(u413.user.context.split(' ')[1]),int(cmd)),u413)
