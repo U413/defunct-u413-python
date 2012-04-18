@@ -18,6 +18,7 @@
 import database as db
 import command
 import user
+import util
 
 def is_stupid(u,p):
 	if len(p)<=4:
@@ -118,7 +119,7 @@ def register_func(args,u413):
 		#CONFIRM PASSWORD>
 		elif u413.cmddata["step"]==3:
 			if u413.cmddata["password"]==params[0]:
-				db.query("INSERT INTO users(username,password,access) VALUES('%s','%s',%i);"%(db.escape(u413.cmddata["username"]),user.sha256(params[0]),user.User.member))
+				db.query("INSERT INTO users(username,password,access,alias) VALUES('%s','%s',%i,'[]');"%(db.escape(util.htmlify(util.stripctrl(u413.cmddata["username"]))),user.sha256(params[0]),user.User.member))
 				u413.type("You are now registered.")
 			else:
 				u413.type("Passwords do not match.")

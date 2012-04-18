@@ -61,7 +61,7 @@ def reply_func(args,u413):
 				u413.set_context("")
 		#REPLY>
 		elif u413.cmddata["step"]==2:
-			db.query("INSERT INTO posts (topic,title,parent,owner,editor,post,locked,edited,posted) VALUES(FALSE,'',%i,%i,0,'%s',FALSE,NULL,NOW());"%(u413.cmddata["topic"],u413.user.userid,db.escape(args)))
+			db.query("INSERT INTO posts (topic,title,parent,owner,editor,post,locked,edited,posted) VALUES(FALSE,'',%i,%i,0,'%s',FALSE,NULL,NOW());"%(u413.cmddata["topic"],u413.user.userid,db.escape(util.htmlify(args))))
 			reload_topic(u413.cmddata["topic"],u413.cmddata["page"],u413)
 	#first use of REPLY
 	else:
@@ -89,7 +89,7 @@ def reply_func(args,u413):
 				u413.continue_cmd()
 			elif "TOPIC" in u413.user.context:
 				topic=int(u413.user.context.split(' ')[1])
-				db.query("INSERT INTO posts (topic,title,parent,owner,editor,post,locked,edited,posted) VALUES(FALSE,'',%i,%i,0,'%s',FALSE,NULL,NOW());"%(topic,u413.user.userid,db.escape(args)))
+				db.query("INSERT INTO posts (topic,title,parent,owner,editor,post,locked,edited,posted) VALUES(FALSE,'',%i,%i,0,'%s',FALSE,NULL,NOW());"%(topic,u413.user.userid,db.escape(util.htmlify(args))))
 				page=1
 				if len(context)>2:
 					page=int(context[2])
@@ -100,7 +100,7 @@ def reply_func(args,u413):
 		else:
 			if util.isint(params[0]):
 				if len(params)==2:
-					db.query("INSERT INTO posts (topic,title,parent,owner,editor,post,locked,edited,posted) VALUES(FALSE,'',%i,%i,0,'%s',FALSE,NULL,NOW());"%(int(params[0]),u413.user.userid,db.escape(params[1])))
+					db.query("INSERT INTO posts (topic,title,parent,owner,editor,post,locked,edited,posted) VALUES(FALSE,'',%i,%i,0,'%s',FALSE,NULL,NOW());"%(int(params[0]),u413.user.userid,db.escape(util.htmlify(params[1]))))
 					page=1
 					if len(context)>2:
 						page=int(context[2])
@@ -113,7 +113,7 @@ def reply_func(args,u413):
 					u413.continue_cmd()
 			elif "TOPIC" in u413.user.context:
 				topic=int(u413.user.context.split(' ')[1])
-				db.query("INSERT INTO posts (topic,title,parent,owner,editor,post,locked,edited,posted) VALUES(FALSE,'',%i,%i,0,'%s',FALSE,NULL,NOW());"%(topic,u413.user.userid,db.escape(args)))
+				db.query("INSERT INTO posts (topic,title,parent,owner,editor,post,locked,edited,posted) VALUES(FALSE,'',%i,%i,0,'%s',FALSE,NULL,NOW());"%(topic,u413.user.userid,db.escape(util.htmlify(args))))
 				page=1
 				if len(context)>2:
 					page=int(context[2])

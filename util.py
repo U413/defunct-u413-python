@@ -16,6 +16,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.'''
 
 import time
+import re
 
 def ago(t):
 	if type(t)==float:
@@ -61,4 +62,16 @@ def isint(i):
 	return True
 
 def htmlify(s):
-	return s.replace('<','&lt;').replace('>','&gt;').replace('\n','<br/>').replace('\n','<span class="tab"></tab>')
+	return s.replace('<','&lt;').replace('>','&gt;').replace('\n','<br/>').replace('\t','<span class="tab"></tab>')
+
+def dehtmlify(s):
+	return s.replace('&lt;','<').replace('&gt;','>').replace('<br/>','\n').replace('<span class="tab"></tab>','\t')
+
+def stripctrl(i):
+	if i:
+		# unicode invalid characters
+		RE_XML_ILLEGAL=u'([\u0000-\u0008\u000b-\u000c\u000e-\u001f\ufffe-\uffff])'+u'|'+u'([%s-%s][^%s-%s])|([^%s-%s][%s-%s])|([%s-%s]$)|(^[%s-%s])'%(unichr(0xd800),unichr(0xdbff),unichr(0xdc00),unichr(0xdfff),unichr(0xd800),unichr(0xdbff),unichr(0xdc00),unichr(0xdfff),unichr(0xd800),unichr(0xdbff),unichr(0xdc00),unichr(0xdfff))
+		i=re.sub(RE_XML_ILLEGAL,"",i)
+		# ascii control characters
+		i=re.sub(r"[\x01-\x1F\x7F]","",i)
+	return i

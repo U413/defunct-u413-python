@@ -83,11 +83,16 @@ class u413(object):
 		self.cont=False
 		self.cookies=[]
 		self.cmddata=u.cmddata
+		self.mute=u.mute
 
-	def type(self,text,mute=False):
+	def type(self,text,mute=None):
+		if mute==None:
+			mute=self.mute
 		self.j["DisplayItems"].append({"Text":text,"DontType":False,"Mute":mute})
 
-	def donttype(self,text,mute=False):
+	def donttype(self,text,mute=None):
+		if mute==None:
+			mute=self.mute
 		self.j["DisplayItems"].append({"Text":text,"DontType":True,"Mute":mute})
 
 	def set_context(self,context):
@@ -123,6 +128,7 @@ u=u413(currentuser)
 
 try:
 	import database as db
+	import time
 
 	import initialize
 	import echo
@@ -139,6 +145,8 @@ try:
 	import history
 	import whois
 	import users
+	import mute
+	import alias
 
 	import topic
 	import reply
@@ -156,6 +164,10 @@ try:
 	import help
 
 	command.respond(cli,u)
+
+	if time.strftime('%A')=='Friday':
+		for x in range(len(u.j["DisplayItems"])):
+			u.j["DisplayItems"][x]=u.j["DisplayItems"][x].upper()
 
 	if u.cont:
 		u.j["Command"]=currentuser.cmd

@@ -19,5 +19,6 @@ import command
 
 def clear_func(args,u413):
 	u413.clear_screen()
+	u413.set_context('')
 
 command.Command("CLEAR","",[],"Clear the screen",clear_func)

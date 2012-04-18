@@ -18,13 +18,7 @@
 import command
 import database as db
 import user
-
-def isint(i):
-	try:
-		i=int(i)
-	except:
-		return False
-	return True
+import util
 
 def edit_func(args,u413):
 	#EDIT already requested continuation
@@ -32,12 +26,12 @@ def edit_func(args,u413):
 		#ID>
 		if u413.cmddata["step"]==1:
 			u413.donttype('"'+args+'"')
-			if isint(args):
+			if util.isint(args):
 				u413.cmddata["id"]=int(args)
 				u413.cmddata["step"]=2
 				u413.set_context("NEW BODY")
 				u413.type("Enter the new post body:")
-				u413.edit_text(db.query("SELECT post FROM posts WHERE id=%i;"%int(args))[0]["post"])
+				u413.edit_text(util.dehtmlify(db.query("SELECT post FROM posts WHERE id=%i;"%int(args))[0]["post"]))
 				u413.continue_cmd()
 			else:
 				u413.type("Invalid post ID.")
@@ -50,39 +44,41 @@ def edit_func(args,u413):
 				if u413.user.level<user.User.halfmod or u413.user.level<=owner:
 					u413.type("You do not have permission to edit other user's posts.")
 					return
-			db.query("UPDATE posts SET post='%s',editor=%i,edited=NOW() WHERE id=%i;"%(db.escape(args),u413.user.userid,u413.cmddata["id"]))
+			db.query("UPDATE posts SET post='%s',editor=%i,edited=NOW() WHERE id=%i;"%(db.escape(util.htmlify(args)),u413.user.userid,u413.cmddata["id"]))
 			u413.type("Post edited successfully.")
-			u413.set_context("")
+			u413.set_context(u413.cmddata["context"])
 	#EDIT used for the first time
 	else:
 		params=args.split(' ',1)
 		#EDIT
 		if len(args)==0:
 			u413.cmddata["step"]=1
+			u413.cmddata["context"]=u413.user.context
 			u413.type("Enter the post's ID:")
 			u413.set_context("Post ID")
 			u413.continue_cmd()
 		#EDIT id
 		elif len(params)==1:
-			if isint(args):
+			if util.isint(args):
 				u413.cmddata["step"]=2
+				u413.cmddata["context"]=u413.user.context
 				u413.cmddata["id"]=int(args)
 				u413.type("Enter the new post body:")
 				u413.set_context("NEW BODY")
-				u413.edit_text(db.query("SELECT post FROM posts WHERE id=%i;"%int(args))[0]["post"])
+				u413.edit_text(util.dehtmlify(db.query("SELECT post FROM posts WHERE id=%i;"%int(args))[0]["post"]))
 				u413.continue_cmd()
 			else:
 				u413.type("Invalid post ID.")
 		#EDIT id body
 		else:
-			if isint(params[0]):
+			if util.isint(params[0]):
 				post=int(db.query("SELECT owner FROM posts WHERE id=%i;"%int(params[0]))[0]["owner"])
 				owner=int(db.query("SELECT access FROM users WHERE id=%i;"%post)[0]["access"])
 				if post!=u413.user.userid:
 					if u413.user.level<user.User.halfmod or u413.user.level<=owner:
 						u413.type("You do not have permission to edit other user's posts.")
 						return
-				db.query("UPDATE posts SET post='%s',editor=%i,edited=NOW() WHERE id=%i;"%(db.escape(params[1]),u413.user.userid,int(params[0])))
+				db.query("UPDATE posts SET post='%s',editor=%i,edited=NOW() WHERE id=%i;"%(db.escape(util.htmlify(params[1])),u413.user.userid,int(params[0])))
 				u413.type("Post edited successfully.")
 				u413.set_context("")
 			else:

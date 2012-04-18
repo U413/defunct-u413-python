@@ -45,7 +45,6 @@ html=[
 	r'<a href="http://\3" target="_blank">\3</a>',
 	r'<a href="http://\3" target="_blank">\3</a>',
 	r'<a href="http://\3" target="_blank">\6</a>',
-	r'<img src="//\3"/>',
 	lambda(match):'<span style="color:%s;">%s</span>'%(colorify(match.group(1)),match.group(2)),
 	r'<center>\1</center>',
 	lambda(match):'<span style="%s">%s</span>'%(cssify(match.group(1)),match.group(2))
@@ -53,7 +52,7 @@ html=[
 
 def bbcodify(bbcode,exclude=None):
 	for x in range(len(bbcodes)):
-		bbcode=re.sub(bbcodes[x],html[x],bbcode)
+		bbcode=re.sub(re.compile(bbcodes[x],re.IGNORECASE),html[x],bbcode)
 	return bbcode
 
 def nsfwall_func(args,u413):
@@ -66,14 +65,14 @@ def nsfwall_func(args,u413):
 			out='<br/><table style="padding-right:8px;">'
 			for entry in r:
 				u=db.query("SELECT username FROM users WHERE id=%i"%int(entry["user"]))
-				out+='<tr><td>{%s}</td><td style="padding-left:1em;">%s <span class="dim">%s</span></td></tr>'%(u[0]["username"],bbcodify(bbcode.htmlify(entry["text"])),util.ago(entry["posted"]))
+				out+='<tr><td>{%s}</td><td style="padding-left:1em;">%s <span class="dim">%s</span></td></tr>'%(u[0]["username"],bbcodify(entry["text"]),util.ago(entry["posted"]))
 			u413.donttype(out+'</table>')
-			u413.set_context("nsfwall")
+			u413.set_context("NSFWALL")
 			u413.clear_screen()
 	else:
 		if len(r)>=256:
 			db.query("DELETE FROM nsfwall ORDER BY posted LIMIT 1;")
-		db.query("INSERT INTO nsfwall(user,text) VALUES(%i,'%s');"%(u413.user.userid,db.escape(args)))
+		db.query("INSERT INTO nsfwall(user,text) VALUES(%i,'%s');"%(u413.user.userid,db.escape(util.htmlify(args))))
 		nsfwall_func('',u413)
 		
-command.Command("nsfwall","[note]",{"note":"A note to post to the nsfwall"},"Access/post to the u413 nsfwall.",nsfwall_func,user.User.member)
+command.Command("NSFWALL","[note]",{"note":"A note to post to the nsfwall"},"Access/post to the u413 nsfwall.",nsfwall_func,user.User.member)

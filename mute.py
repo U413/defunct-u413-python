@@ -17,13 +17,16 @@
 
 import command
 import user
+import database as db
 import util
 
-def who_func(args,u413):
-	u413.donttype("Username: "+u413.user.name)
-	u413.donttype("User ID: "+str(u413.user.userid))
-	u413.donttype("User access: "+user.userlvl(u413.user.level)+' ('+str(u413.user.level)+')')
-	u413.donttype("Session ID: "+str(u413.user.session))
-	u413.donttype("Session expires: "+str(u413.user.expire))
+def mute_func(args,u413):
+	muted=bool(ord(db.query("SELECT muted FROM users WHERE id='%s';"%u413.user.userid)[0]["muted"]))
+	db.query("UPDATE users SET muted=%r;"%(not muted))
+	u413.mute=not muted
+	if muted:
+		u413.type("Terminal unmuted.")
+	else:
+		u413.type("Terminal muted.")
 
-command.Command("WHO","",{},"Output statistics about the currently logged-in user.",who_func)
+command.Command("MUTE","",{},"Stops the terminal from making the typing sound.",mute_func,user.User.member)

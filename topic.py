@@ -54,12 +54,12 @@ def output_page(topic,page,u413):
 		page=1
 	r=db.query("SELECT * FROM posts WHERE parent=%i ORDER BY id LIMIT %i,10;"%(topic,(page-1)*10))#replies
 	u413.type("Retreiving topic...")
-	u413.donttype('{%i} %s {%i} <span class="inverted">%s</span><br/><span class="dim">Posted by %s %s</span><br/>'%(int(t["parent"]),b,topic,util.htmlify(t["title"]),util.htmlify(u),util.ago(t["posted"])))
+	u413.donttype('{%i} %s {%i} <span class="inverted">%s</span><br/><span class="dim">Posted by %s %s</span><br/>'%(int(t["parent"]),b,topic,t["title"],u,util.ago(t["posted"])))
 	e=db.query("SELECT username FROM users WHERE id=%i;"%int(t["editor"]))
 	if len(e)==0:
-		u413.donttype(util.htmlify(t["post"])+'<br/>')
+		u413.donttype(bbcode.bbcodify(t["post"])+'<br/>')
 	else:
-		u413.donttype(util.htmlify(t["post"])+'<br/><br/><i>Edited by %s %s</i><br/>'%(util.htmlify(e[0]["username"]),util.ago(t["posted"])))
+		u413.donttype(bbcode.bbcodify(t["post"])+'<br/><br/><i>Edited by %s %s</i><br/>'%(e[0]["username"],util.ago(t["posted"])))
 	if c==0:
 		u413.donttype('Page 1/1<br/>')
 	else:
@@ -71,10 +71,10 @@ def output_page(topic,page,u413):
 			owner=db.query("SELECT username FROM users WHERE id=%i;"%int(reply["owner"]))[0]["username"]
 			editor=db.query("SELECT username FROM users WHERE id=%i;"%int(reply["editor"]))
 			if len(editor)==0:
-				u413.donttype('<table><tr><td>&gt;</td><td style="text-align:center;width:160px;border-right:solid 1px lime;">%s</td><td style="padding-left:8px;padding-right:8px;">{%i} %s<br/><br/><span class="dim">Posted %s</span></td></tr></table><br/>'%(util.htmlify(owner),int(reply["id"]),bbcode.bbcodify(util.htmlify(reply["post"])),util.ago(reply["posted"])))
+				u413.donttype('<table><tr><td>&gt;</td><td style="text-align:center;width:160px;border-right:solid 1px lime;">%s</td><td style="padding-left:8px;padding-right:8px;">{%i} %s<br/><br/><span class="dim">Posted %s</span></td></tr></table><br/>'%(owner,int(reply["id"]),bbcode.bbcodify(reply["post"]),util.ago(reply["posted"])))
 			else:
 				editor=editor[0]["username"]
-				u413.donttype('<table><tr><td>&gt;</td><td style="text-align:center;width:160px;border-right:solid 1px lime;">%s</td><td style="padding-left:8px;padding-right:8px;">{%i} %s<br/><br/><i>Edited by %s %s</i><br/><span class="dim">Posted %s</span></td></tr></table><br/>'%(util.htmlify(owner),int(reply["id"]),bbcode.bbcodify(util.htmlify(reply["post"])),util.htmlify(editor),util.ago(reply["edited"]),util.ago(reply["posted"])))
+				u413.donttype('<table><tr><td>&gt;</td><td style="text-align:center;width:160px;border-right:solid 1px lime;">%s</td><td style="padding-left:8px;padding-right:8px;">{%i} %s<br/><br/><i>Edited by %s %s</i><br/><span class="dim">Posted %s</span></td></tr></table><br/>'%(owner,int(reply["id"]),bbcode.bbcodify(reply["post"]),editor,util.ago(reply["edited"]),util.ago(reply["posted"])))
 		if c==0:
 			u413.donttype('Page 1/1<br/>')
 		else:
@@ -85,16 +85,9 @@ def output_page(topic,page,u413):
 		u413.set_context("TOPIC %i %i"%(topic,page))
 	u413.clear_screen()
 
-def isint(i):
-	try:
-		i=int(i)
-	except:
-		return False
-	return True
-
 def topic_func(args,u413):
 	params=args.split(' ',2)
-	if len(params)==0 or not isint(params[0]):
+	if len(params)==0 or not util.isint(params[0]):
 		u413.type("Invalid topic ID.")
 		return
 	topic=int(params[0])
@@ -108,7 +101,7 @@ def topic_func(args,u413):
 			u413.continue_cmd()
 		else:
 			page=1
-			if isint(params[1]):
+			if util.isint(params[1]):
 				page=int(params[1])
 			elif params[1].upper()=='LAST':
 				page=int(db.query("SELECT COUNT(*) FROM posts WHERE parent=%i;"%topic)[0]["COUNT(*)"])
@@ -118,7 +111,7 @@ def topic_func(args,u413):
 					page=math.ceil(page/10.0)
 			output_page(topic,page,u413)
 	elif params[1].upper()=="REPLY":
-		db.query("INSERT INTO posts (topic,title,parent,owner,editor,post,locked,edited,posted) VALUES(FALSE,'',%i,%i,0,'%s',FALSE,NULL,NOW());"%(topic,u413.user.userid,db.escape(params[3])))
+		db.query("INSERT INTO posts (topic,title,parent,owner,editor,post,locked,edited,posted) VALUES(FALSE,'',%i,%i,0,'%s',FALSE,NULL,NOW());"%(topic,u413.user.userid,db.escape(util.htmlify(params[3]))))
 		u413.type("Reply made successfully.")
 
 command.Command("TOPIC",'<id> [page | "FIRST" | "LAST" | [REPLY <message>]]',{"id":"The topic ID","page":"The topic page to load (defaults to 1)","message":"The message you wish to post"},"Loads a topic",topic_func,user.User.member)

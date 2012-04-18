@@ -16,6 +16,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.'''
 
 import command
+import util
 
 def echo_func(args,u413):
 	u413.type(util.htmlify(args))

@@ -18,12 +18,11 @@
 import command
 import database as db
 import user
-import util
 
 def login_func(args,u413):
 	#check for special cases
 	if u413.user.name!="Guest":
-		u413.type("You are logged in as "+util.htmlify(u413.user.name)+'.')
+		u413.type("You are logged in as "+u413.user.name+'.')
 		return
 	params=args.split(' ')
 	#LOGIN already requested continuation
@@ -42,7 +41,7 @@ def login_func(args,u413):
 		#PASSWORD>
 		elif u413.cmddata["step"]==2:
 			if u413.user.login(u413.cmddata["username"],params[0]):
-				u413.type("You are now logged in as "+util.htmlify(u413.user.name)+'.')
+				u413.type("You are now logged in as "+u413.user.name+'.')
 			else:
 				u413.type("Invalid username/password.")
 			u413.set_context("")
@@ -66,7 +65,7 @@ def login_func(args,u413):
 		#LOGIN username password [ignored args]
 		else:
 			if u413.user.login(params[0],params[1]):
-				u413.type("You are now logged in as "+util.htmlify(u413.user.name)+'.')
+				u413.type("You are now logged in as "+u413.user.name+'.')
 			else:
 				u413.type("Invalid username/password.")
 

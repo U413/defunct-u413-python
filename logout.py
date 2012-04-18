@@ -22,6 +22,8 @@ import user
 def logout_func(args,u413):
 	if u413.user.name!="Guest":
 		u413.type(u413.user.logout())
+		u413.set_context('')
+		u413.clear_screen()
 	else:
 		u413.type("You are not logged in.")
 

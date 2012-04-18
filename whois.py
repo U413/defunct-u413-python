@@ -18,6 +18,7 @@
 import command
 import user
 import database as db
+import util
 
 def whois_func(args,u413):
 	args=args.split(' ')[0]
@@ -34,7 +35,7 @@ def whois_func(args,u413):
 				s=False
 			else:
 				s=True
-			u413.donttype('Username: '+util.htmlify(u["username"]))
+			u413.donttype('Username: '+u["username"])
 			u413.donttype('User ID: '+u["id"])
 			u413.donttype('User access: '+user.userlvl(int(u["access"]))+' ('+u["access"]+')')
 			u413.donttype('Logged in: '+str(s))

@@ -47,7 +47,7 @@ def delete_func(args,u413):
 		post=int(db.query("SELECT owner FROM posts WHERE id=%i;"%int(args))[0]["owner"])
 		owner=int(db.query("SELECT access FROM users WHERE id=%i;"%post)[0]["access"])
 		if post!=u413.user.userid:
-			if u413.user.level<user.User.halfmod or u413.user.level<=owner:
+			if u413.user.level<user.User.mod or u413.user.level<=owner:
 				u413.type("You do not have permission to edit other user's posts.")
 				return
 		db.query("DELETE FROM posts WHERE id=%i;"%int(args))

@@ -1,4 +1,23 @@
+'''u413 - an open-source BBS/terminal/PI-themed forum
+	Copyright (C) 2012 PiMaster
+	Copyright (C) 2012 EnKrypt
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Affero General Public License as published by
+	the Free Software Foundation,either version 3 of the License,or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
+
+	You should have received a copy of the GNU Affero General Public License
+	along with this program.  If not,see <http://www.gnu.org/licenses/>.'''
+
 import re
+import database as db
+import util
 
 url=r'((http|ftp|https)://)?([\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)'
 
@@ -9,18 +28,20 @@ bbcodes=[
 	r'\[s\](.*)\[/s\]',
 	r'\[transmit\](.*)\[/transmit\]',
 	r'\[url\]%s\[/url\]'%url,
-	r'\[url=%s\](.*)\[/url\]'%url,
+	r'\[url=(%s)\](.*)\[/url\]'%url,
 	r'\[img\]%s\[/img\]'%url,
 	r'\[sound\]%s\[/sound\]'%url,
 	r'\[audio\]%s\[/audio\]'%url,
 	r'\[video\]%s\[/video\]'%url,
+	r'\[quote\](\d+)\[/quote\]',
 	r'\[quote\](.*)\[/quote\]',
 	r'\[color=(.*)\](.*)\[/color\]',
 	r'\[center](.*)\[/center\]',
 	r'\[css=(.*)\](.*)\[/css\]',
 	r'\[br\]',
 	r'\[hr\]',
-	r'\[tab\]'
+	r'\[tab\]',
+	r'\[flash\]%s\[/flash\]'%url
 ]
 
 def embed_video(match):
@@ -55,6 +76,14 @@ def cssify(s):
 def htmlify(s):
 	return s.replace('<','&lt;').replace('>','&gt;').replace('\n','<br/>')
 
+def quote(match):
+	post=db.query("SELECT owner,post,posted FROM posts WHERE id=%i;"%int(match.group(1)));
+	if len(post)==0:
+		return '<br/><div class="quote">%s</div>'%match.group(1)
+	post=post[0]
+	poster=db.query("SELECT username FROM users WHERE id=%i;"%int(post["owner"]))[0]["username"]
+	return '<br/><div class="quote"><span class="dim">Posted by %s %s</span><br/><br/>%s</div>'%(poster,util.ago(post["posted"]),post["post"])
+
 html=[
 	r'<b>\1</b>',
 	r'<i>\1</i>',
@@ -63,20 +92,29 @@ html=[
 	r'<span class="transmit">\1</span>',
 	r'<a href="http://\3" target="_blank">\3</a>',
 	r'<a href="http://\3" target="_blank">\6</a>',
-	r'<img src="//\3"/>',
-	r'<audio controls="controls" src="http://\3">Your browser does not suuport HTML5.(We recommend Google Chrome) You can <a href="http://\3">download</a> the audio instead</audio>',
-	r'<audio controls="controls" src="http://\3">Your browser does not suuport HTML5.(We recommend Google Chrome) You can <a href="http://\3">download</a> the audio instead</audio>',
+	r'<img src="http://\3"/>',
+	r'<audio controls="controls" src="http://\3">Your browser does not suuport HTML5. (We recommend Google Chrome) You can <a href="http://\3">download</a> the audio instead</audio>',
+	r'<audio controls="controls" src="http://\3">Your browser does not suuport HTML5. (We recommend Google Chrome) You can <a href="http://\3">download</a> the audio instead</audio>',
 	embed_video,
-	r'<div class="quote">\1</div>',
+	quote,
+	r'<br/><div class="quote">\1</div>',
 	lambda(match):'<span style="color:%s;">%s</span>'%(colorify(match.group(1)),match.group(2)),
 	r'<center>\1</center>',
 	lambda(match):'<span style="%s">%s</span>'%(cssify(match.group(1)),match.group(2)),
 	r'<br/>',
 	r'<hr/>',
-	r'<span class="tab"></span>'
+	r'<span class="tab"></span>',
+	r'<div class="flash"><object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="640" height="390"><param name="movie" value="http://\3"><param name="allowfullscreen" value="true"><param name="allowscriptaccess" value="always"><embed src="http://\3" width="640" height="390" allowscriptaccess="always" allowfullscreen="false"/></object></div>'
 ]
+
+for x in range(len(bbcodes)):
+	bbcodes[x]=re.compile(bbcodes[x],re.IGNORECASE)
 
 def bbcodify(bbcode,exclude=None):
 	for x in range(len(bbcodes)):
-		bbcode=re.sub(bbcodes[x],html[x],bbcode)
+		while True:
+			b=bbcode
+			bbcode=re.sub(bbcodes[x],html[x],bbcode)
+			if b==bbcode:
+				break
 	return bbcode

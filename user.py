@@ -17,11 +17,12 @@
 
 import hashlib
 import uuid
-
 import time
 import datetime
+import re
 
 import database as db
+import util
 
 def sha256(data):
 	return hashlib.sha256(data).hexdigest()
@@ -54,6 +55,9 @@ class User(object):
 			self.history=eval(r["history"])
 			self.cmd=r["cmd"]
 			self.cmddata=eval(r["cmddata"])
+			user=db.query("SELECT muted,alias FROM users WHERE id='%s';"%self.userid)[0]
+			self.mute=bool(ord(user["muted"]))
+			self.alias=eval(user["alias"])
 	
 	def guest_login(self):
 		self.name='Guest'
@@ -65,38 +69,22 @@ class User(object):
 		self.history=[]
 		self.cmd=''
 		self.cmddata={}
+		self.mute=False
+		self.alias=[]
 		self.create_session()
 	
 	def login(self,username,password):
 		password=sha256(password)
-		r=db.query("SELECT * FROM users WHERE LCASE(username)='%s' AND password='%s';"%(db.escape(username.lower()),password))
+		r=db.query("SELECT * FROM users WHERE LCASE(username)='%s' AND password='%s';"%(db.escape(util.htmlify(username.lower())),password))
 		if len(r)==0:
 			return False
 		r=r[0]
 		self.name=r["username"]
 		self.level=int(r["access"])
 		self.userid=int(r["id"])
+		self.mute=bool(ord(r["muted"]))
 		db.query("UPDATE sessions SET username='%s',user=%i,access=%i WHERE id='%s';"%(self.name,self.userid,self.level,self.session))
 		return True
-	
-	def register(self,username,password,confirmpassword):
-		pas=password
-		password=sha256(password)
-		confirmpassword=sha256(confirmpassword)
-		r=db.query("SELECT * FROM users WHERE username='%s';"%username)
-		if len(r)!=0 or username.upper()=="PIBOT" or username.upper()=="ADMIN" or username.upper()=="U413" or username.upper()=="MOD" or username.upper()=="QBOT" or username.upper()=="EBOT":
-			return "User is in use. Please register with a different username."
-		elif password!=confirmpassword:
-			return "Password does not match with confirmed password"
-		elif self.username!="Guest":
-			return "You need to be logged out to register"
-		elif len(username)<3:
-			return "Size of username has to be atleast 3 characters"
-		elif len(password)<3:
-			return "Size of password has to be atleast 3 characters"
-		else:
-			db.query("INSERT INTO users(id,username,password,access) VALUES('','%s','%s','%s');"%(db.escape(username),password,"10"))
-			return "Registration successful. "+self.login(username,pas)
 	
 	def logout(self):
 		if self.session!="":

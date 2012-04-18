@@ -45,15 +45,14 @@ html=[
 	r'<a href="http://\3" target="_blank">\3</a>',
 	r'<a href="http://\3" target="_blank">\3</a>',
 	r'<a href="http://\3" target="_blank">\6</a>',
-	r'<img src="//\3"/>',
-	lambda(match):'<span style="color:%s;">%s</span>'%(colorify(match.group(1)),match.group(2)),
+	lambda(match):'<span style="color:%s;">%s</span>'%(bbcode.colorify(match.group(1)),match.group(2)),
 	r'<center>\1</center>',
-	lambda(match):'<span style="%s">%s</span>'%(cssify(match.group(1)),match.group(2))
+	lambda(match):'<span style="%s">%s</span>'%(bbcode.cssify(match.group(1)),match.group(2))
 ]
 
 def bbcodify(bbcode,exclude=None):
 	for x in range(len(bbcodes)):
-		bbcode=re.sub(bbcodes[x],html[x],bbcode)
+		bbcode=re.sub(re.compile(bbcodes[x],re.IGNORECASE),html[x],bbcode)
 	return bbcode
 
 def wall_func(args,u413):
@@ -66,14 +65,14 @@ def wall_func(args,u413):
 			out='<br/><table style="padding-right:8px;">'
 			for entry in r:
 				u=db.query("SELECT username FROM users WHERE id=%i"%int(entry["user"]))
-				out+='<tr><td>{%s}</td><td style="padding-left:1em;">%s <span class="dim">%s</span></td></tr>'%(util.htmlify(u[0]["username"]),bbcodify(bbcode.htmlify(entry["text"])),util.ago(entry["posted"]))
+				out+='<tr><td>{%s}</td><td style="padding-left:1em;">%s <span class="dim">%s</span></td></tr>'%(u[0]["username"],bbcodify(entry["text"]),util.ago(entry["posted"]))
 			u413.donttype(out+'</table>')
 			u413.set_context("WALL")
 			u413.clear_screen()
 	else:
 		if len(r)>=256:
 			db.query("DELETE FROM wall ORDER BY posted LIMIT 1;")
-		db.query("INSERT INTO wall(user,text) VALUES(%i,'%s');"%(u413.user.userid,db.escape(args)))
+		db.query("INSERT INTO wall(user,text) VALUES(%i,'%s');"%(u413.user.userid,db.escape(util.htmlify(args))))
 		wall_func('',u413)
 		
 command.Command("WALL","[note]",{"note":"A note to post to the wall"},"Access/post to the u413 wall.",wall_func,user.User.member)

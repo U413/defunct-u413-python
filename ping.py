@@ -16,8 +16,9 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.'''
 
 import command
+import util
 
 def ping_func(args,u413):
-	u413.type("PONG "+args)
+	u413.type("PONG "+util.htmlify(args))
 
-command.Command("PING","[message]",{"message":"A message for the server to return"},"Ping's the server for a response.",ping_func,0)
+command.Command("PING","[message]",{"message":"A message for the server to return"},"Pings the server for a response.",ping_func,0)

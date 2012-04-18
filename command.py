@@ -17,6 +17,8 @@
 
 import user
 import database as db
+import util
+import re
 
 cmds={}
 
@@ -31,12 +33,21 @@ class Command(object):
 		self.hidden=hidden
 		cmds[self.name]=self
 
-def isint(i):
-	try:
-		i=int(i)
-	except:
-		return False
-	return True
+def aliasin(s,user):
+	for a in user.alias:
+		if re.search(a["from"],s)!=None:
+			return True
+	return False
+
+def execalias(cli,u413):
+	commands=[]
+	for a in u413.user.alias:
+		cli=re.sub(a["from"],a["to"],cli)
+	cmd=cli.split(' ')[0]
+	if cmd.upper() not in cmds:
+		u413.type('"%s" is not a valid command or is not available in the current context.'%cmd.upper())
+		return
+	respond(cli,u413)
 
 def respond(cli,u413,ashtml=True):
 	cmdarg=cli.split(' ',1)
@@ -49,19 +60,22 @@ def respond(cli,u413,ashtml=True):
 	sensitive=['LOGIN','REGISTER']
 	if u413.user.cmd not in sensitive and cmd not in sensitive:
 		if args!='':
-			u413.user.history.append(cmd+' <span class="italics">'+args+'</span>')
+			u413.user.history.append(cmd+' '+args)
 		else:
 			u413.user.history.append(cmd)
-		db.query("UPDATE sessions SET history='%s' WHERE id='%s';"%(db.escape(str(u413.user.history)),u413.user.session))
 
 	if u413.user.cmd=='':
 		u413.j["Command"]=cmd
 		if cmd in cmds and cmds[cmd].level<=u413.user.level:
 			cmds[cmd].callback(args,u413)
 		else:
-			if isint(cmd):
+			if aliasin(cli,u413.user):
+				execalias(cli,u413)
+			elif util.isint(cmd):
 				if u413.user.context!='TOPIC' and 'TOPIC' in u413.user.context:
 					cmds["TOPIC"].callback('%i %i'%(int(u413.user.context.split(' ')[1]),int(cmd)),u413)
+				elif u413.user.context!='BOARD' and 'BOARD' in u413.user.context:
+					cmds["BOARD"].callback('%s %i'%(u413.user.context.split(' ')[1],int(cmd)),u413)
 				else:
 					u413.type('"%s" is not a valid command or is not available in the current context.'%cmd)
 			else:
@@ -74,6 +88,8 @@ def respond(cli,u413,ashtml=True):
 			u413.set_context("")
 		else:
 			cmds[u413.user.cmd.upper()].callback(cli,u413)
+	
+	db.query("UPDATE sessions SET history='%s' WHERE id='%s';"%(db.escape(str(u413.user.history)),u413.user.session))
 
 	#change title if user is logged in
 	if u413.user.name!="Guest":

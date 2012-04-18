@@ -23,7 +23,12 @@ import math
 def last_func(args,u413):
 	context=u413.user.context.split(' ')
 	if context[0]=='BOARD':
-		page=int(db.query("SELECT COUNT(*) FROM posts WHERE parent=%i AND topic=TRUE;"%int(context[1]))[0]["COUNT(*)"])
+		page=0
+		if context[1]=='ALL':
+			context[1]=0
+			page=int(db.query("SELECT COUNT(*) FROM posts WHERE topic=TRUE AND parent IN (SELECT id FROM boards WHERE onall=TRUE);")[0]["COUNT(*)"])
+		else:
+			page=int(db.query("SELECT COUNT(*) FROM posts WHERE parent=%i AND topic=TRUE;"%int(context[1]))[0]["COUNT(*)"])
 		if page==0:
 			page=1
 		else:
