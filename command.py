@@ -19,6 +19,7 @@ import user
 import database as db
 import util
 import re
+import threading
 
 cmds={}
 
@@ -33,21 +34,64 @@ class Command(object):
 		self.hidden=hidden
 		cmds[self.name]=self
 
-def getalias(s,user):
-	for a in user.alias:
-		m=re.match(a["from"],s)
-		if m!=None:
-			return a
+class TimedThread(threading.Thread):
+	class OvertimeError(Exception):
+		pass
+
+	def __init__(self,callback,args,limit=4):
+		self.bomb=threading.Thread(target=callback,args=args)
+		self.limit=limit
+		threading.Thread.__init__(self)
+	
+	def run(self):
+		self.bomb.start()
+		self.bomb.join(self.limit)
+		if self.bomb.is_alive():
+			raise OvertimeError()
+
+aliasout=None
+
+def getaliashelper(a,s,u):
+	global aliasout
+	m=re.match(a["from"],s)
+	if m!=None:
+		aliasout=a
+
+def getalias(s,u413):
+	for a in u413.user.alias:
+		try:
+			t=TimedThread(getaliashelper,(a,s,u413))
+			t.start()
+			t.join()
+		except TimedThread.OvertimeError:
+			u413.type('Non-terminating regex detected, terminating.')
+			break
+		if aliasout!=None:
+			return aliasout
 	return None
 
+c=''
+
+def execaliashelper(a,u):
+	global c
+	c=re.sub(a["from"],a["to"],c,1)
+
 def execalias(cli,a,u413):
-	cli=re.sub(a["from"],a["to"],cli,1)
-	cmd=cli.split(' ')[0].upper()
+	global c
+	c=cli
+	try:
+		t=TimedThread(execaliashelper,(a,u413))
+		t.start()
+		t.join()
+	except TimedThread.OvertimeError:
+		u413.type('None-terminating regex detected, terminating.')
+		return
+	cmd=c.split(' ')[0].upper()
 	#prevent recursion
 	if cmd not in cmds:
 		u413.type('"%s" is not a valid command or is not available in the current context.'%cmd)
 		return
-	respond(cli,u413)
+	respond(c,u413)
 
 def respond(cli,u413,ashtml=True):
 	cmdarg=cli.split(' ',1)
@@ -69,7 +113,7 @@ def respond(cli,u413,ashtml=True):
 		if cmd in cmds and cmds[cmd].level<=u413.user.level:
 			cmds[cmd].callback(args,u413)
 		else:
-			a=getalias(cli,u413.user)
+			a=getalias(cli,u413)
 			if a!=None:
 				execalias(cli,a,u413)
 			elif util.isint(cmd):

@@ -22,13 +22,19 @@ import util
 import time
 
 def user_func(args,u413):
-	sessions=db.query("SELECT username,expire FROM sessions WHERE DATE_SUB(DATE_SUB(expire,INTERVAL 5 HOUR),INTERVAL 55 MINUTE)>NOW();")
+	db.query("DELETE FROM sessions WHERE expire<NOW();")
+	sessions=db.query("SELECT username,expire FROM sessions WHERE DATE_SUB(DATE_SUB(expire,INTERVAL 5 HOUR),INTERVAL 50 MINUTE)>NOW() AND username!='Guest';")
 	users=int(db.query("SELECT COUNT(*) FROM users;")[0]["COUNT(*)"])
-	u413.type("User statistics:")
-	out='<br/>Registered users: %i<br/><br/>Active users:<table>'%users
+	u413.type('User statistics:')
+	out='<br/><div style="padding-left:2em;">Registered users: %i<br/><br/>Active users:<div style="padding-left:2em;">'%users
 	for u in sessions:
-		out+='<tr><td style="width:2em;"></td><td>%s %s</td></tr>'%(util.htmlify(u["username"]),util.ago(int(time.mktime(time.strptime(u["expire"],'%Y-%m-%d %H:%M:%S')))-6*60*60))
-	u413.donttype(out+'</table>')
+		out+='%s %s<br/>'%(u["username"],util.ago(int(time.mktime(time.strptime(u["expire"],'%Y-%m-%d %H:%M:%S')))-6*60*60))
+	out+='</div><br/>Users logged in:<br/><div style="padding-left:2em;">'
+	for u in sessions:
+		out+='%s<br/>'%(u["username"])
+	out+='</div></div>'
+	sessions=db.query("SELECT DISTINCT username FROM sessions WHERE username!='Guest';")
+	u413.donttype(out)
 	u413.clear_screen()
 	u413.set_context("")
 

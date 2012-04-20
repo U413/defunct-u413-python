@@ -90,7 +90,6 @@ def alias_func(args,u413):
 					u413.type('"%s" is not an alias.'%params[1])
 				else:
 					del u413.user.alias[x]
-					u413.donttype(u413.user.alias)
 					db.query("UPDATE users SET alias='%s' WHERE id=%i;"%(db.escape(repr(u413.user.alias)),u413.user.userid))
 					u413.type("Alias deleted.")
 			else:

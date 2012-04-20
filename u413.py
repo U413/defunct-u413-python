@@ -162,12 +162,14 @@ try:
 	import refresh
 
 	import help
+	
+	import pi
 
 	command.respond(cli,u)
 
 	if time.strftime('%A')=='Friday':
 		for x in range(len(u.j["DisplayItems"])):
-			u.j["DisplayItems"][x]=u.j["DisplayItems"][x].upper()
+			u.j["DisplayItems"][x]["Text"]=u.j["DisplayItems"][x]["Text"].upper()
 
 	if u.cont:
 		u.j["Command"]=currentuser.cmd

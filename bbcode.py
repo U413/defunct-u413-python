@@ -19,29 +19,30 @@ import re
 import database as db
 import util
 
-url=r'((http|ftp|https)://)?([\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)'
+url=r'((https?|ftp)://)?([\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#!()]*[\w\-\@?^=%&amp;/~\+#!()])?)'
 
 bbcodes=[
-	r'\[b\](.*)\[/b\]',
-	r'\[i\](.*)\[/i\]',
-	r'\[u\](.*)\[/u\]',
-	r'\[s\](.*)\[/s\]',
-	r'\[transmit\](.*)\[/transmit\]',
+	r'\[b\](.*?)\[/b\]',
+	r'\[i\](.*?)\[/i\]',
+	r'\[u\](.*?)\[/u\]',
+	r'\[s\](.*?)\[/s\]',
+	r'\[transmit\](.*?)\[/transmit\]',
+	r'\[url=%s\](.*?)\[/url\]'%url,
 	r'\[url\]%s\[/url\]'%url,
-	r'\[url=(%s)\](.*)\[/url\]'%url,
 	r'\[img\]%s\[/img\]'%url,
 	r'\[sound\]%s\[/sound\]'%url,
 	r'\[audio\]%s\[/audio\]'%url,
 	r'\[video\]%s\[/video\]'%url,
 	r'\[quote\](\d+)\[/quote\]',
-	r'\[quote\](.*)\[/quote\]',
-	r'\[color=(.*)\](.*)\[/color\]',
-	r'\[center](.*)\[/center\]',
-	r'\[css=(.*)\](.*)\[/css\]',
+	r'\[quote\](.*?)\[/quote\]',
+	r'\[color=(.*?)\](.*?)\[/color\]',
+	r'\[center](.*?)\[/center\]',
+	r'\[css=(.*?)\](.*?)\[/css\]',
 	r'\[br\]',
 	r'\[hr\]',
 	r'\[tab\]',
-	r'\[flash\]%s\[/flash\]'%url
+	r'\[flash\]%s\[/flash\]'%url,
+	r'\[code\](.*?)\[/code\]'
 ]
 
 def embed_video(match):
@@ -90,11 +91,11 @@ html=[
 	r'<u>\1</u>',
 	r'<del>\1</del>',
 	r'<span class="transmit">\1</span>',
-	r'<a href="http://\3" target="_blank">\3</a>',
 	r'<a href="http://\3" target="_blank">\6</a>',
+	r'<a href="http://\3" target="_blank">\3</a>',
 	r'<img src="http://\3"/>',
-	r'<audio controls="controls" src="http://\3">Your browser does not suuport HTML5. (We recommend Google Chrome) You can <a href="http://\3">download</a> the audio instead</audio>',
-	r'<audio controls="controls" src="http://\3">Your browser does not suuport HTML5. (We recommend Google Chrome) You can <a href="http://\3">download</a> the audio instead</audio>',
+	r'<audio controls="controls" src="http://\3">Your browser does not support HTML5. (We recommend Google Chrome) You can <a href="http://\3">download</a> the audio instead</audio>',
+	r'<audio controls="controls" src="http://\3">Your browser does not suport HTML5. (We recommend Google Chrome) You can <a href="http://\3">download</a> the audio instead</audio>',
 	embed_video,
 	quote,
 	r'<br/><div class="quote">\1</div>',
@@ -104,13 +105,15 @@ html=[
 	r'<br/>',
 	r'<hr/>',
 	r'<span class="tab"></span>',
-	r'<div class="flash"><object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="640" height="390"><param name="movie" value="http://\3"><param name="allowfullscreen" value="true"><param name="allowscriptaccess" value="always"><embed src="http://\3" width="640" height="390" allowscriptaccess="always" allowfullscreen="false"/></object></div>'
+	r'<div class="flash"><object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="640" height="390"><param name="movie" value="http://\3"><param name="allowfullscreen" value="true"><param name="allowscriptaccess" value="always"><embed src="http://\3" width="640" height="390" allowscriptaccess="always" allowfullscreen="false"/></object></div>',
+	r'<code>\1</code>'
 ]
 
 for x in range(len(bbcodes)):
 	bbcodes[x]=re.compile(bbcodes[x],re.IGNORECASE)
 
-def bbcodify(bbcode,exclude=None):
+def bbcodify(bbcode,minimal=False):
+	bbc=bbcodes
 	for x in range(len(bbcodes)):
 		while True:
 			b=bbcode
