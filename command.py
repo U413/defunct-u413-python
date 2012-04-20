@@ -19,7 +19,7 @@ import user
 import database as db
 import util
 import re
-import threading
+import signal
 
 cmds={}
 
@@ -34,20 +34,19 @@ class Command(object):
 		self.hidden=hidden
 		cmds[self.name]=self
 
-class TimedThread(threading.Thread):
-	class OvertimeError(Exception):
-		pass
+class OvertimeException(Exception): pass
 
-	def __init__(self,callback,args,limit=4):
-		self.bomb=threading.Thread(target=callback,args=args)
-		self.limit=limit
-		threading.Thread.__init__(self)
-	
-	def run(self):
-		self.bomb.start()
-		self.bomb.join(self.limit)
-		if self.bomb.is_alive():
-			raise OvertimeError()
+def execlimit(function, seconds=4):
+	old_handler = signal.getsignal(signal.SIGALRM)
+	def new_handler(signum, frame):
+		raise OvertimeException(Exception)
+	signal.signal(signal.SIGALRM, new_handler)
+	signal.alarm(seconds)
+	try:
+		return function()
+	finally:
+		signal.alarm(0)
+		signal.signal(signal.SIGALRM, old_handler)
 
 aliasout=None
 
@@ -60,10 +59,8 @@ def getaliashelper(a,s,u):
 def getalias(s,u413):
 	for a in u413.user.alias:
 		try:
-			t=TimedThread(getaliashelper,(a,s,u413))
-			t.start()
-			t.join()
-		except TimedThread.OvertimeError:
+			execlimit(lambda: getaliashelper(a,s,u413))
+		except OvertimeException:
 			u413.type('Non-terminating regex detected, terminating.')
 			break
 		if aliasout!=None:
@@ -80,10 +77,8 @@ def execalias(cli,a,u413):
 	global c
 	c=cli
 	try:
-		t=TimedThread(execaliashelper,(a,u413))
-		t.start()
-		t.join()
-	except TimedThread.OvertimeError:
+		execlimit(lambda: execaliashelper(a,u413))
+	except OvertimeException:
 		u413.type('None-terminating regex detected, terminating.')
 		return
 	cmd=c.split(' ')[0].upper()
