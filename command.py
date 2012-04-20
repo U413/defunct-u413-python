@@ -35,19 +35,17 @@ class Command(object):
 		cmds[self.name]=self
 
 class TimedThread(threading.Thread):
-	class OvertimeError(Exception):
-		pass
-
 	def __init__(self,callback,args,limit=4):
 		self.bomb=threading.Thread(target=callback,args=args)
 		self.limit=limit
+		self.overtime=False
 		threading.Thread.__init__(self)
 	
 	def run(self):
 		self.bomb.start()
 		self.bomb.join(self.limit)
 		if self.bomb.is_alive():
-			raise OvertimeError()
+			self.overtime=True
 
 aliasout=None
 
@@ -59,11 +57,10 @@ def getaliashelper(a,s,u):
 
 def getalias(s,u413):
 	for a in u413.user.alias:
-		try:
-			t=TimedThread(getaliashelper,(a,s,u413))
-			t.start()
-			t.join()
-		except TimedThread.OvertimeError:
+		t=TimedThread(getaliashelper,(a,s,u413))
+		t.start()
+		t.join()
+		if t.overtime:
 			u413.type('Non-terminating regex detected, terminating.')
 			break
 		if aliasout!=None:
@@ -79,11 +76,10 @@ def execaliashelper(a,u):
 def execalias(cli,a,u413):
 	global c
 	c=cli
-	try:
-		t=TimedThread(execaliashelper,(a,u413))
-		t.start()
-		t.join()
-	except TimedThread.OvertimeError:
+	t=TimedThread(execaliashelper,(a,u413))
+	t.start()
+	t.join()
+	if t.overtime:
 		u413.type('None-terminating regex detected, terminating.')
 		return
 	cmd=c.split(' ')[0].upper()
