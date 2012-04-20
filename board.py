@@ -62,8 +62,6 @@ def output_board(board,page,u413):
 		elif page>math.ceil(c/10.0):
 			page=math.ceil(c/10.0)
 		t=db.query("SELECT *,id as t FROM posts WHERE topic=TRUE AND parent=%i ORDER BY (SELECT MAX(posted) FROM posts WHERE topic=FALSE AND parent=t OR topic=TRUE AND id=t) ASC LIMIT %i,10;"%(board,(page-1)*10))
-		if board==666:
-			u413.donttype('<div id="mark"></div><script type="text/javascript" id="mark">$("#frame").addClass("hell");$(".backgroundImage").attr("src","content/hellbg.png").css("opacity",0.9);$("#mark").data("cleanup",function(){$("#frame").removeClass("hell");$(".backgroundImage").attr("src","content/background.jpg").css("opacity",0.1);});</script>')
 		u413.type("Retrieving board topics...")
 		if c==0:
 			output+='{%i} <span class="inverted">%s</span> Page %i/1<br/>'%(board,b["name"],page)
@@ -84,6 +82,8 @@ def output_board(board,page,u413):
 		else:
 			u413.set_context("BOARD %i %i"%(board,page))
 	u413.donttype(output)
+	if board==666:
+		u413.exec_js('$("#frame").addClass("hell");$(".backgroundImage").attr("src","content/hellbg.png").css("opacity",0.9);','$("#frame").removeClass("hell");$(".backgroundImage").attr("src","content/background.jpg").css("opacity",0.1);')
 	u413.clear_screen()
 
 def board_func(args,u413):
@@ -96,7 +96,6 @@ def board_func(args,u413):
 			args[0]=0
 		if util.isint(args[0]):
 			output_board(int(args[0]),1,u413)
-			u413.clear_screen()
 		else:
 			u413.donttype('<span class="error">Invalid board ID</span>')
 	#BOARD id page

@@ -123,6 +123,16 @@ class u413(object):
 
 	def exit(self):
 		self.j["Exit"]=True
+	
+	def exec_js(self,start,cleanup=''):
+		out=''
+		if cleanup!='':
+			out+='<div id="mark"></div>'
+		out+='<script type="text/javascript">'+start
+		if cleanup!='':
+			out+='$("#mark").data("cleanup",function(){%s});'%cleanup
+		out+='</script>'
+		self.donttype(out)
 
 u=u413(currentuser)
 
@@ -168,8 +178,7 @@ try:
 	command.respond(cli,u)
 
 	if time.strftime('%A')=='Friday':
-		for x in range(len(u.j["DisplayItems"])):
-			u.j["DisplayItems"][x]["Text"]=u.j["DisplayItems"][x]["Text"].upper()
+		u.exec_js('$("#frame").addClass("capslock");')
 
 	if u.cont:
 		u.j["Command"]=currentuser.cmd
