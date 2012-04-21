@@ -174,6 +174,7 @@ try:
 	import help
 	
 	import pi
+	import pirates
 
 	command.respond(cli,u)
 
