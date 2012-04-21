@@ -175,6 +175,8 @@ try:
 	
 	import pi
 	import pirates
+	import b
+	import turkey
 
 	command.respond(cli,u)
 
