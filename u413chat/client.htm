@@ -1,0 +1,19 @@
+<html>
+	<head>
+		<title>Javascript Telnet - EnKrypt</title>
+		<script src="/Plugins/JQuery.js"></script>
+		<script>
+			socket= new WebSocket('ws://localhost:'+prompt("PORT")+'/chat');
+			socket.onopen= function() {
+				socket.send('test');
+			};
+			socket.onmessage= function(s) {
+				document.getElementById("text").innerHTML=document.getElementById("text").innerHTML+"<br>"+s.data;
+			};
+		</script>
+	</head>
+	<body>
+		<div id="text"></div>
+		<input type="text" id="fest"><button onclick="socket.send(document.getElementById('fest').value)">
+	</body>
+</html>
