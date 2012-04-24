@@ -52,7 +52,7 @@ aliasout=None
 
 def getaliashelper(a,s,u):
 	global aliasout
-	m=re.match(a["from"]+'$',s)
+	m=re.match(a["from"],s)
 	if m!=None:
 		aliasout=a
 
@@ -71,7 +71,7 @@ c=''
 
 def execaliashelper(a,u):
 	global c
-	c=re.sub(a["from"]+'$',a["to"],c,1)
+	c=re.sub(a["from"],a["to"],c,1)
 
 def execalias(cli,a,u413):
 	global c

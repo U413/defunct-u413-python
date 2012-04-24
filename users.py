@@ -30,10 +30,10 @@ def user_func(args,u413):
 	for u in sessions:
 		out+='%s %s<br/>'%(u["username"],util.ago(int(time.mktime(time.strptime(u["expire"],'%Y-%m-%d %H:%M:%S')))-6*60*60))
 	out+='</div><br/>Users logged in:<br/><div style="padding-left:2em;">'
+	sessions=db.query("SELECT DISTINCT username FROM sessions WHERE username!='Guest';")
 	for u in sessions:
 		out+='%s<br/>'%(u["username"])
 	out+='</div></div>'
-	sessions=db.query("SELECT DISTINCT username FROM sessions WHERE username!='Guest';")
 	u413.donttype(out)
 	u413.clear_screen()
 	u413.set_context("")

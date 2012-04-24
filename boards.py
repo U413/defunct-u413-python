@@ -37,11 +37,11 @@ def boards_func(args,u413):
 			posted=db.query("SELECT posted FROM posts WHERE parent=%i ORDER BY posted DESC LIMIT 1;"%int(topic['id']))
 			if len(posted)>0:
 				posted=posted[0]["posted"]
-				boardlist+="<td>{"+str(i['id'])+'}</td><td>'+i['name']+' <span class="dim">%s, last reply %s</span></td>'%(plural(count,'topic'),util.ago(posted))
+				boardlist+='<td>{{<span class="transmit" data-transmit="BOARD {0}">{0}</span>}}'.format(str(i['id']))+'</td><td>'+i['name']+' <span class="dim">%s, last reply %s</span></td>'%(plural(count,'topic'),util.ago(posted))
 			else:
-				boardlist+="<td>{"+str(i['id'])+'}</td><td>'+i['name']+' <span class="dim">%s, last reply %s</span></td>'%(plural(count,'topic'),util.ago(topic["posted"]))
+				boardlist+='<td>{{<span class="transmit" data-transmit="BOARD {0}">{0}</span>}}'.format(str(i['id']))+'</td><td>'+i['name']+' <span class="dim">%s, last reply %s</span></td>'%(plural(count,'topic'),util.ago(topic["posted"]))
 		else:
-			boardlist+="<td>{"+str(i['id'])+'}</td><td>'+i['name']+' <span class="dim">no topics</span></td>'
+			boardlist+='<td>{{<span class="transmit" data-transmit="BOARD {0}">{0}</span>}}'.format(str(i['id']))+'</td><td>'+i['name']+' <span class="dim">no topics</span></td>'
 		boardlist+="</tr>"
 	u413.type("Retrieving list of boards...")
 	u413.donttype(boardlist+'</table>')

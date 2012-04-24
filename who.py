@@ -24,6 +24,6 @@ def who_func(args,u413):
 	u413.donttype("User ID: "+str(u413.user.userid))
 	u413.donttype("User access: "+user.userlvl(u413.user.level)+' ('+str(u413.user.level)+')')
 	u413.donttype("Session ID: "+str(u413.user.session))
-	u413.donttype("Session expires: "+str(u413.user.expire))
+	u413.donttype("Session expires: "+util.until(u413.user.expire))
 
 command.Command("WHO","",{},"Output statistics about the currently logged-in user.",who_func)

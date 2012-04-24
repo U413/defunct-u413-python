@@ -21,8 +21,8 @@ import database as db
 import util
 
 def mute_func(args,u413):
-	muted=bool(ord(db.query("SELECT muted FROM users WHERE id='%s';"%u413.user.userid)[0]["muted"]))
-	db.query("UPDATE users SET muted=%r;"%(not muted))
+	muted=bool(ord(db.query("SELECT muted FROM users WHERE id=%s;"%u413.user.userid)[0]["muted"]))
+	db.query("UPDATE users SET muted=%s;"%str(not muted).upper())
 	u413.mute=not muted
 	if muted:
 		u413.type("Terminal unmuted.")

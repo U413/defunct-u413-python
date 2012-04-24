@@ -65,7 +65,7 @@ def wall_func(args,u413):
 			out='<br/><table style="padding-right:8px;">'
 			for entry in r:
 				u=db.query("SELECT username FROM users WHERE id=%i"%int(entry["user"]))
-				out+='<tr><td>{%s}</td><td style="padding-left:1em;">%s <span class="dim">%s</span></td></tr>'%(u[0]["username"],bbcodify(entry["text"]),util.ago(entry["posted"]))
+				out+='<tr><td>{{<span class="transmit" data-transmit="WHOIS {0}">{0}</span>}}</td><td style="padding-left:1em;">{1} <span class="dim">{2}</span></td></tr>'.format(u[0]["username"],bbcodify(entry["text"]),util.ago(entry["posted"]))
 			u413.donttype(out+'</table>')
 			u413.set_context("WALL")
 			u413.clear_screen()

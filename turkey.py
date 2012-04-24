@@ -22,4 +22,4 @@ def turkey_func(args,u413):
 	u413.donttype('<center><iframe width="560" height="315" src="http://youtube.com/v/ZBJFmRKjCq4&autoplay=1" frameborder="0" allowfullscreen></iframe></center>')
 	u413.clear_screen()
 
-command.Command("turkey","",{},"View the magnificance of turkey.",turkey_func,user.User.guest)
+command.Command("turkey","",{},"View the magnificance of turkey.",turkey_func,user.User.guest,True)

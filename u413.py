@@ -180,8 +180,9 @@ try:
 
 	command.respond(cli,u)
 
-	if time.strftime('%A')=='Friday':
-		u.exec_js('$("#frame").addClass("capslock");')
+	day=time.strftime('%A')
+	if day=='Thursday' or day=='Friday' or day=='Saturday':
+		u.exec_js('if((new Date()).getDay()==5){$("#frame").addClass("capslock");}')
 
 	if u.cont:
 		u.j["Command"]=currentuser.cmd

@@ -18,6 +18,7 @@
 import re
 import database as db
 import util
+import uuid
 
 url=r'((https?|ftp)://)?([\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#!()]*[\w\-\@?^=%&amp;/~\+#!()])?)'
 
@@ -27,6 +28,7 @@ bbcodes=[
 	r'\[u\](.*?)\[/u\]',
 	r'\[s\](.*?)\[/s\]',
 	r'\[transmit\](.*?)\[/transmit\]',
+	r'\[transmit=(.*?)\](.*?)\[/transmit\]',
 	r'\[url=%s\](.*?)\[/url\]'%url,
 	r'\[url\]%s\[/url\]'%url,
 	r'\[img\]%s\[/img\]'%url,
@@ -64,6 +66,10 @@ def embed_video(match):
 				if parts[0].lower()=='docid':
 					return '<iframe width="560" height="315" src="http://video.google.com/googleplayer.swf?docid=%s" frameborder="0" allowfullscreen></iframe>'%parts[1]
 		return '<embed style="width:400px; height:326px;" id="VideoPlayback" type="application/x-shockwave-flash" src="http://video.google.com/googleplayer.swf"></embed>'
+	elif site=="ebaumsworld.com" or site=="www.ebaumsworld.com":
+		if len(match.groups())>3 and "/video/watch/" in match.group(5):
+			return '<object type="application/x-shockwave-flash" data="http://www.ebaumsworld.com/player.swf" width="560" height="315" style="visibility: visible;"><param name="allowfullscreen" value="true"><param name="allowScriptAccess" value="always"><param name="wmode" value="opaque"><param name="flashvars" value="id0=%s"></object>'%match.group(5)[len('/video/watch/'):]
+		return '<object type="application/x-shockwave-flash" data="http://www.ebaumsworld.com/player.swf" width="560" height="315" style="visibility: visible;"><param name="allowfullscreen" value="true"><param name="allowScriptAccess" value="always"><param name="wmode" value="opaque"></object>'
 	u='//'+match.group(1)
 	return '<video controls="controls" src="%s">Your browser does not support HTML5.(We recommend <a href="//google.com/chrome">Google Chrome</a>). You can also <a href="%s">download</a> the video instead</video> '%(u,u)
 
@@ -80,10 +86,10 @@ def htmlify(s):
 def quote(match):
 	post=db.query("SELECT owner,post,posted FROM posts WHERE id=%i;"%int(match.group(1)));
 	if len(post)==0:
-		return '<br/><div class="quote">%s</div>'%match.group(1)
+		return '<div class="quote">%s</div>'%match.group(1)
 	post=post[0]
 	poster=db.query("SELECT username FROM users WHERE id=%i;"%int(post["owner"]))[0]["username"]
-	return '<br/><div class="quote"><span class="dim">Posted by %s %s</span><br/><br/>%s</div>'%(poster,util.ago(post["posted"]),post["post"])
+	return '<div class="quote"><span class="dim">Posted by %s %s</span><br/><br/>%s</div>'%(poster,util.ago(post["posted"]),post["post"])
 
 html=[
 	r'<b>\1</b>',
@@ -91,6 +97,7 @@ html=[
 	r'<u>\1</u>',
 	r'<del>\1</del>',
 	r'<span class="transmit">\1</span>',
+	r'<span class="transmit" data-transmit="\1">\2</span>',
 	r'<a href="http://\3" target="_blank">\6</a>',
 	r'<a href="http://\3" target="_blank">\3</a>',
 	r'<img src="http://\3"/>',

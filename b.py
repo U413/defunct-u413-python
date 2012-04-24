@@ -19,7 +19,7 @@ import command
 import user
 
 def troll_func(args,u413):
-	u413.donttype('<center><iframe width="560" height="315" src="http://youtube.com/v/x9LnnRYm6OQ&autoplay=1" frameborder="0" allowfullscreen></iframe></center>')
+	u413.donttype('<center><iframe width="560" height="315" src="http://youtube.com/v/VpLLq6WEDNo&autoplay=1" frameborder="0" allowfullscreen></iframe></center>')
 	u413.clear_screen()
 
-command.Command("/B/","",{},"The ultimate troll.",troll_func,user.User.guest)
+command.Command("/B/","",{},"The ultimate troll.",troll_func,user.User.guest,True)

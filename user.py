@@ -55,7 +55,7 @@ class User(object):
 			self.history=eval(r["history"])
 			self.cmd=r["cmd"]
 			self.cmddata=eval(r["cmddata"])
-			user=db.query("SELECT muted,alias FROM users WHERE id='%s';"%self.userid)[0]
+			user=db.query("SELECT muted,alias FROM users WHERE id=%i;"%self.userid)[0]
 			self.mute=bool(ord(user["muted"]))
 			self.alias=eval(user["alias"])
 	
@@ -91,7 +91,7 @@ class User(object):
 			if self.level==0:
 				return "You are already logged out."
 			else:
-				db.query("UPDATE sessions SET user=0,username='Guest',access=0,context='',cmd='',cmddata='' WHERE id='%s';"%self.session)
+				db.query("UPDATE sessions SET user=1,username='Guest',access=0,context='',cmd='',cmddata='' WHERE id='%s';"%self.session)
 				return "You have been logged out."
 		else:
 			#TODO: send something to the client that clears cookies

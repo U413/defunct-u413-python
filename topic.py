@@ -1,4 +1,4 @@
-'''u413 - an open-source BBS/terminal/PI-themed forum
+'''u413 - an open-source BBS/transmit/PI-themed forum
 	Copyright (C) 2012 PiMaster
 	Copyright (C) 2012 EnKrypt
 
@@ -54,12 +54,12 @@ def output_page(topic,page,u413):
 		page=1
 	r=db.query("SELECT * FROM posts WHERE parent=%i ORDER BY id LIMIT %i,10;"%(topic,(page-1)*10))#replies
 	u413.type("Retreiving topic...")
-	u413.donttype('{%i} %s {%i} <span class="inverted">%s</span><br/><span class="dim">Posted by %s %s</span><br/>'%(int(t["parent"]),b,topic,t["title"],u,util.ago(t["posted"])))
+	u413.donttype('{{<span class="transmit" data-transmit="BOARD {0}">{0}</span>}} {1} {{<span class="transmit" data-transmit="TOPIC {2}">{2}</span>}} <span class="inverted">{3}</span><br/><span class="dim">Posted by <span class="transmit" data-transmit="WHOIS {4}">{4}</span> {5}<br/>'.format(int(t["parent"]),b,topic,t["title"],u,util.ago(t["posted"])))
 	e=db.query("SELECT username FROM users WHERE id=%i;"%int(t["editor"]))
 	if len(e)==0:
 		u413.donttype(bbcode.bbcodify(t["post"])+'<br/>')
 	else:
-		u413.donttype(bbcode.bbcodify(t["post"])+'<br/><br/><i>Edited by %s %s</i><br/>'%(e[0]["username"],util.ago(t["posted"])))
+		u413.donttype(bbcode.bbcodify(t["post"])+'<br/><br/><i>Edited by <span class="transmit" data-transmit="WHOIS {0}>{0}</span> {1}</i><br/>'.format(e[0]["username"],util.ago(t["posted"])))
 	if c==0:
 		u413.donttype('Page 1/1<br/>')
 	else:
@@ -71,10 +71,10 @@ def output_page(topic,page,u413):
 			owner=db.query("SELECT username FROM users WHERE id=%i;"%int(reply["owner"]))[0]["username"]
 			editor=db.query("SELECT username FROM users WHERE id=%i;"%int(reply["editor"]))
 			if len(editor)==0:
-				u413.donttype('<table><tr><td>&gt;</td><td style="text-align:center;width:160px;border-right:solid 1px lime;">%s</td><td style="padding-left:8px;padding-right:8px;">{%i} %s<br/><br/><span class="dim">Posted %s</span></td></tr></table><br/>'%(owner,int(reply["id"]),bbcode.bbcodify(reply["post"]),util.ago(reply["posted"])))
+				u413.donttype('<table><tr><td>&gt;</td><td style="text-align:center;width:160px;border-right:solid 1px lime;"><span class="transmit" data-transmit="WHOIS {0}">{0}</span></td><td style="padding-left:8px;padding-right:8px;">{{<span class="transmit" data-transmit="[quote]{1}[/quote]">{1}</span>}}<br/>{2}<br/><br/><span class="dim">Posted {3}</span></td></tr></table><br/>'.format(owner,int(reply["id"]),bbcode.bbcodify(reply["post"]),util.ago(reply["posted"])))
 			else:
 				editor=editor[0]["username"]
-				u413.donttype('<table><tr><td>&gt;</td><td style="text-align:center;width:160px;border-right:solid 1px lime;">%s</td><td style="padding-left:8px;padding-right:8px;">{%i} %s<br/><br/><i>Edited by %s %s</i><br/><span class="dim">Posted %s</span></td></tr></table><br/>'%(owner,int(reply["id"]),bbcode.bbcodify(reply["post"]),editor,util.ago(reply["edited"]),util.ago(reply["posted"])))
+				u413.donttype('<table><tr><td>&gt;</td><td style="text-align:center;width:160px;border-right:solid 1px lime;"><span class="transmit" data-transmit="WHOIS {0}">{0}</span></td><td style="padding-left:8px;padding-right:8px;">{{<span class="transmit" data-transmit="[quote]{1}[/quote]">{1}</span>}}<br/>{2}<br/><br/><i>Edited by <span class="transmit" data-transmit="WHOIS {3}">{3}</span> {4}</i><br/><span class="dim">Posted {5}</span></td></tr></table><br/>'.format(owner,int(reply["id"]),bbcode.bbcodify(reply["post"]),editor,util.ago(reply["edited"]),util.ago(reply["posted"])))
 		if c==0:
 			u413.donttype('Page 1/1<br/>')
 		else:
