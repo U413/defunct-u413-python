@@ -18,10 +18,8 @@
 import command
 import user
 
-html='''<object style="height: 390px; width: 640px"><param name="movie" value="http://www.youtube.com/v/VpLLq6WEDNo?version=3&feature=player_detailpage"><param name="allowFullScreen" value="true"><param name="allowScriptAccess" value="always"><embed src="http://www.youtube.com/v/VpLLq6WEDNo?version=3&feature=player_detailpage&autoplay=true" type="application/x-shockwave-flash" allowfullscreen="true" allowScriptAccess="always" width="640" height="360"></object>'''
-
-def troll_func(args,u413):
-	u413.donttype('<center>'+html+'</center>')
+def cosmos_func(args,u413):
+	u413.donttype('<center><iframe width="560" height="315" src="http://youtube.com/v/zSgiXGELjbc&autoplay=1" frameborder="0" allowfullscreen></iframe></center>')
 	u413.clear_screen()
 
-command.Command("/B/","",{},"The ultimate troll.",troll_func,user.User.guest,True)
+command.Command("COSMOS","",{},"A still more glorious dawn awaits.",cosmos_func,user.User.guest,True)

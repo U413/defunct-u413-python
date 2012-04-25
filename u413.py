@@ -177,6 +177,7 @@ try:
 	import pirates
 	import b
 	import turkey
+	import cosmos
 
 	command.respond(cli,u)
 
