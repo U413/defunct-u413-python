@@ -111,3 +111,23 @@ def stripctrl(i):
 		# ascii control characters
 		i=re.sub(r"[\x01-\x1F\x7F]","",i)
 	return i
+
+def anoncode(anons,owner,op):
+	owner=int(owner)
+	op=int(op)
+	if owner==op:
+		return 'OP'
+	offset=0
+	for i in range(len(anons)):
+		if int(anons[i]["owner"])==owner:
+			offset=i
+			break
+	if offset==0:
+		return 'A'
+	if offset==379:#OP magic number, skip and go to OQ
+		offset+=1
+	name=''
+	while offset>0:
+		name+=chr(ord('A')+offset%26)
+		offset/=26
+	return name

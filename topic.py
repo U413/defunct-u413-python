@@ -39,24 +39,6 @@ import math
 import bbcode
 import util
 
-def anoncode(anons,owner,op):
-	if owner==op:
-		return 'OP'
-	offset=0
-	for i in range(len(anons)):
-		if anons[i]["owner"]==owner:
-			offset=i
-			break
-	if offset==0:
-		return 'A'
-	if offset==379:#OP magic number, skip and go to OQ
-		offset+=1
-	name=''
-	while offset>0:
-		name+=chr(ord('A')+offset%26)
-		offset/=26
-	return name
-
 def output_page(topic,page,u413):
 	t=db.query("SELECT * FROM posts WHERE id=%i AND topic=TRUE;"%topic)
 	if len(t)==0:
@@ -94,9 +76,9 @@ def output_page(topic,page,u413):
 		u413.type("There are no replies.")
 	else:
 		if t['parent']=='4':
-			anons=db.query("SELECT DISTINCT owner FROM (SELECT owner FROM posts WHERE topic=FALSE AND parent=%i ORDER BY posted ASC LIMIT 0,%i) AS p;"%(topic,page*10))
+			anons=db.query("SELECT DISTINCT owner FROM (SELECT owner,posted FROM (SELECT owner,posted FROM posts WHERE topic=FALSE AND parent=%i) AS t1 GROUP BY owner ORDER BY posted) AS t2;"%topic)
 			for reply in r:
-				owner=anoncode(anons,reply["owner"],t["owner"])
+				owner=util.anoncode(anons,reply["owner"],t["owner"])
 				editor=db.query("SELECT username FROM users WHERE id=%i;"%int(reply["editor"]))
 				if len(editor)==0:
 					u413.donttype('<table><tr><td>&gt;</td><td style="text-align:center;width:160px;border-right:solid 1px lime;"><span class="transmit" data-transmit="WHOIS {0}">{0}</span></td><td style="padding-left:8px;padding-right:8px;">{{<span class="transmit" data-transmit="[quote]{1}[/quote]">{1}</span>}}<br/>{2}<br/><br/><span class="dim">Posted {3}</span></td></tr></table><br/>'.format(owner,int(reply["id"]),bbcode.bbcodify(reply["post"]),util.ago(reply["posted"])))

@@ -84,11 +84,17 @@ def htmlify(s):
 	return s.replace('<','&lt;').replace('>','&gt;').replace('\n','<br/>')
 
 def quote(match):
-	post=db.query("SELECT owner,post,posted FROM posts WHERE id=%i;"%int(match.group(1)));
+	post=db.query("SELECT owner,post,posted,parent FROM posts WHERE id=%i;"%int(match.group(1)));
 	if len(post)==0:
 		return '<div class="quote">%s</div>'%match.group(1)
 	post=post[0]
-	poster=db.query("SELECT username FROM users WHERE id=%i;"%int(post["owner"]))[0]["username"]
+	poster=None
+	op=db.query("SELECT id,owner,parent FROM posts WHERE topic=TRUE and id=%i;"%int(post["parent"]))[0]
+	if op["parent"]=='4':
+		anons=db.query("SELECT DISTINCT owner FROM (SELECT owner,posted FROM posts WHERE parent=%i ORDER BY posted ASC);"%int(op["id"]))
+		poster=util.anoncode(anons,int(post["owner"]),int(op["owner"]))
+	else:
+		poster=db.query("SELECT username FROM users WHERE id=%i;"%int(post["owner"]))[0]["username"]
 	return '<div class="quote"><span class="dim">Posted by %s %s</span><br/><br/>%s</div>'%(poster,util.ago(post["posted"]),post["post"])
 
 html=[
