@@ -35,8 +35,6 @@ bbcodes=[
 	r'\[sound\]%s\[/sound\]'%url,
 	r'\[audio\]%s\[/audio\]'%url,
 	r'\[video\]%s\[/video\]'%url,
-	r'\[quote\](\d+)\[/quote\]',
-	r'\[quote\](.*?)\[/quote\]',
 	r'\[color=(.*?)\](.*?)\[/color\]',
 	r'\[center](.*?)\[/center\]',
 	r'\[css=(.*?)\](.*?)\[/css\]',
@@ -44,7 +42,9 @@ bbcodes=[
 	r'\[hr\]',
 	r'\[tab\]',
 	r'\[flash\]%s\[/flash\]'%url,
-	r'\[code\](.*?)\[/code\]'
+	r'\[code\](.*?)\[/code\]',
+	r'\[quote\](\d+)\[/quote\]',
+	r'\[quote\](.*?)\[/quote\]'
 ]
 
 def embed_video(match):
@@ -52,26 +52,26 @@ def embed_video(match):
 	site=match.group(3).split('/',1)[0]
 	if site=="youtube.com" or site=="www.youtube.com":
 		if len(match.groups())>3 and '?' in match.group(3):
-			options=match.group(5).split('?',1)
+			options=match.group(5).split('?',1)[1].split('&')
 			for option in options:
 				parts=option.split('=')
 				if parts[0].lower()=='v':
-					return '<iframe width="560" height="315" src="http://www.youtube.com/embed/%s" frameborder="0" allowfullscreen></iframe>'%parts[1]
-			return '<iframe width="560" height="315" src="http://www.youtube.com/embed/" frameborder="0" allowfullscreen></iframe>'
+					return '<div><iframe width="560" height="315" src="http://www.youtube.com/embed/%s" frameborder="0" allowfullscreen></iframe></div>'%parts[1]
+			return '<div><iframe width="560" height="315" src="http://www.youtube.com/embed/" frameborder="0" allowfullscreen></iframe></div>'
 	elif site=="video.google.com":
 		if len(match.groups())>3 and '?' in match.group(5):
 			options=match.group(5).split('?',1)
 			for option in options:
 				parts=option.split('=')
 				if parts[0].lower()=='docid':
-					return '<iframe width="560" height="315" src="http://video.google.com/googleplayer.swf?docid=%s" frameborder="0" allowfullscreen></iframe>'%parts[1]
-		return '<embed style="width:400px; height:326px;" id="VideoPlayback" type="application/x-shockwave-flash" src="http://video.google.com/googleplayer.swf"></embed>'
+					return '<div><iframe width="560" height="315" src="http://video.google.com/googleplayer.swf?docid=%s" frameborder="0" allowfullscreen></iframe></div>'%parts[1]
+		return '<div><embed style="width:400px; height:326px;" id="VideoPlayback" type="application/x-shockwave-flash" src="http://video.google.com/googleplayer.swf"></embed></div>'
 	elif site=="ebaumsworld.com" or site=="www.ebaumsworld.com":
 		if len(match.groups())>3 and "/video/watch/" in match.group(5):
-			return '<object type="application/x-shockwave-flash" data="http://www.ebaumsworld.com/player.swf" width="560" height="315" style="visibility: visible;"><param name="allowfullscreen" value="true"><param name="allowScriptAccess" value="always"><param name="wmode" value="opaque"><param name="flashvars" value="id0=%s"></object>'%match.group(5)[len('/video/watch/'):]
-		return '<object type="application/x-shockwave-flash" data="http://www.ebaumsworld.com/player.swf" width="560" height="315" style="visibility: visible;"><param name="allowfullscreen" value="true"><param name="allowScriptAccess" value="always"><param name="wmode" value="opaque"></object>'
+			return '<div><object type="application/x-shockwave-flash" data="http://www.ebaumsworld.com/player.swf" width="560" height="315" style="visibility: visible;"><param name="allowfullscreen" value="true"><param name="allowScriptAccess" value="always"><param name="wmode" value="opaque"><param name="flashvars" value="id0=%s"></object></div>'%match.group(5)[len('/video/watch/'):]
+		return '<div><object type="application/x-shockwave-flash" data="http://www.ebaumsworld.com/player.swf" width="560" height="315" style="visibility: visible;"><param name="allowfullscreen" value="true"><param name="allowScriptAccess" value="always"><param name="wmode" value="opaque"></object></div>'
 	u='//'+match.group(1)
-	return '<video controls="controls" src="%s">Your browser does not support HTML5.(We recommend <a href="//google.com/chrome">Google Chrome</a>). You can also <a href="%s">download</a> the video instead</video> '%(u,u)
+	return '<div><video controls="controls" src="%s">Your browser does not support HTML5.(We recommend <a href="//google.com/chrome">Google Chrome</a>). You can also <a href="%s">download</a> the video instead</video></div>'%(u,u)
 
 def colorify(s):
 	s=s.split(';')[0]+';'
@@ -86,7 +86,7 @@ def htmlify(s):
 def quote(match):
 	post=db.query("SELECT owner,post,posted,parent FROM posts WHERE id=%i;"%int(match.group(1)));
 	if len(post)==0:
-		return '<div class="quote">%s</div>'%match.group(1)
+		return '<div class="quote">%s</div><br/>'%match.group(1)
 	post=post[0]
 	poster=None
 	op=db.query("SELECT id,owner,parent FROM posts WHERE topic=TRUE and id=%i;"%int(post["parent"]))[0]
@@ -95,7 +95,7 @@ def quote(match):
 		poster=util.anoncode(anons,int(post["owner"]),int(op["owner"]))
 	else:
 		poster=db.query("SELECT username FROM users WHERE id=%i;"%int(post["owner"]))[0]["username"]
-	return '<div class="quote"><span class="dim">Posted by %s %s</span><br/><br/>%s</div>'%(poster,util.ago(post["posted"]),post["post"])
+	return '<div class="quote"><span class="dim">Posted by %s %s</span><br/>%s</div><br/>'%(poster,util.ago(post["posted"]),post["post"])
 
 html=[
 	r'<b>\1</b>',
@@ -106,12 +106,10 @@ html=[
 	r'<span class="transmit" data-transmit="\1">\2</span>',
 	r'<a href="http://\3" target="_blank">\6</a>',
 	r'<a href="http://\3" target="_blank">\3</a>',
-	r'<img src="http://\3"/>',
-	r'<audio controls="controls" src="http://\3">Your browser does not support HTML5. (We recommend Google Chrome) You can <a href="http://\3">download</a> the audio instead</audio>',
-	r'<audio controls="controls" src="http://\3">Your browser does not suport HTML5. (We recommend Google Chrome) You can <a href="http://\3">download</a> the audio instead</audio>',
+	r'<div><img src="http://\3"/></div>',
+	r'<div><audio controls="controls" src="http://\3">Your browser does not support HTML5. (We recommend Google Chrome) You can <a href="http://\3">download</a> the audio instead</audio></div>',
+	r'<div><audio controls="controls" src="http://\3">Your browser does not suport HTML5. (We recommend Google Chrome) You can <a href="http://\3">download</a> the audio instead</audio></div>',
 	embed_video,
-	quote,
-	r'<br/><div class="quote">\1</div>',
 	lambda(match):'<span style="color:%s;">%s</span>'%(colorify(match.group(1)),match.group(2)),
 	r'<center>\1</center>',
 	lambda(match):'<span style="%s">%s</span>'%(cssify(match.group(1)),match.group(2)),
@@ -119,7 +117,9 @@ html=[
 	r'<hr/>',
 	r'<span class="tab"></span>',
 	r'<div class="flash"><object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="640" height="390"><param name="movie" value="http://\3"><param name="allowfullscreen" value="true"><param name="allowscriptaccess" value="always"><embed src="http://\3" width="640" height="390" allowscriptaccess="always" allowfullscreen="false"/></object></div>',
-	r'<code>\1</code>'
+	r'<code>\1</code>',
+	quote,
+	r'<br/><div class="quote">\1</div><br/>'
 ]
 
 for x in range(len(bbcodes)):

@@ -96,7 +96,7 @@ class u413(object):
 		self.j["DisplayItems"].append({"Text":text,"DontType":True,"Mute":mute})
 
 	def set_context(self,context):
-		self.j["ContextText"]=context
+		self.j["ContextText"]=context+' '
 		self.user.context=context
 
 	def set_title(self,title):
@@ -172,6 +172,10 @@ try:
 	import refresh
 
 	import help
+	
+	import messages
+	import message
+	import newmessage
 	
 	import pi
 	import pirates

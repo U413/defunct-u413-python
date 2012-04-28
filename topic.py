@@ -52,7 +52,7 @@ def output_page(topic,page,u413):
 	if page<1:
 		page=1
 	r=db.query("SELECT * FROM posts WHERE parent=%i ORDER BY id LIMIT %i,10;"%(topic,(page-1)*10))#replies
-	u413.type("Retreiving topic...")
+	u413.type("Retrieving topic...")
 	if t["parent"]=='4':
 		u413.donttype('{{<span class="transmit" data-transmit="BOARD 4">4</span>}} {0} {{<span class="transmit" data-transmit="TOPIC {1}">{1}</span>}} <span class="inverted">{2}</span><br/><span class="dim">Posted by OP {3}<br/>'.format(b,topic,t["title"],util.ago(t["posted"])))
 		e=db.query("SELECT username FROM users WHERE id=%i;"%int(t["editor"]))
