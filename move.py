@@ -36,9 +36,10 @@ def move_func(args,u413):
 		if len(rows)==0 or len(checkrows)==0:
 			u413.type("Invalid Parameters")
 		else:
-			database.query("UPDATE posts SET parent=%i WHERE id=%i;"%(int(param[1]),int(param[0])))
+			database.query("UPDATE posts SET parent=%i WHERE id=%i;"%(int(params[1]),int(params[0])))
+			u413.type("Moved topic "+params[0]+" to board "+params[1])
 			
 	else:
 		u413.type("Invalid Parameters")
 
-command.Command("MOVE","<topic id> <board id>",{"topic id":"The id of the topic to move","board id":"The id of the board to move the topic to"},"Allows mods to move a topic to another board",move_function,20)
+command.Command("MOVE","<topic id> <board id>",{"topic id":"The id of the topic to move","board id":"The id of the board to move the topic to"},"Allows mods to move a topic to another board",move_func,20)
