@@ -164,6 +164,7 @@ try:
 	import board
 	import edit
 	import delete
+	import move
 
 	import first
 	import last
@@ -182,6 +183,8 @@ try:
 	import b
 	import turkey
 	import cosmos
+	import do
+	import rude
 
 	command.respond(cli,u)
 
