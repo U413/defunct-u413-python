@@ -96,7 +96,7 @@ class u413(object):
 		self.j["DisplayItems"].append({"Text":text,"DontType":True,"Mute":mute})
 
 	def set_context(self,context):
-		self.j["ContextText"]=context+' '
+		self.j["ContextText"]=context
 		self.user.context=context
 
 	def set_title(self,title):
@@ -184,10 +184,6 @@ try:
 	import cosmos
 
 	command.respond(cli,u)
-
-	day=time.strftime('%A')
-	if day=='Thursday' or day=='Friday' or day=='Saturday':
-		u.exec_js('if((new Date()).getDay()==5){$("#frame").addClass("capslock");}')
 
 	if u.cont:
 		u.j["Command"]=currentuser.cmd

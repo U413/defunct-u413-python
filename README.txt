@@ -168,7 +168,7 @@ database u413
 		+--------+-------------+------+-----+---------+-------+-------------------+
 		| Field  | Type        | Null | Key | Default | Extra |    Description    |
 		+--------+-------------+------+-----+---------+-------+-------------------+
-		| id     | int(11)     | NO   | PRI | NULL    |       |  id of the board  |
+		| id     | int(11)     | NO   | PRI | NULL    |       | id of the board   |
 		| name   | varchar(32) | YES  |     | NULL    |       | name of the board |
 		| onall  | bit(1)      | YES  |     | NULL    |       | displayed on all? |
 		| hidden | bit(1)      | YES  |     | NULL    |       | hidden on boards? |
@@ -178,41 +178,43 @@ database u413
 		+--------+--------------+------+-----+---------+----------------+----------------------+
 		| Field  | Type         | Null | Key | Default | Extra          |     Description      |
 		+--------+--------------+------+-----+---------+----------------+----------------------+
-		| id     | int(11)      | NO   | PRI | NULL    | auto_increment |    id of the post    |
-		| topic  | bit(1)       | YES  |     | NULL    |                |    is it a topic?    |
-		| title  | varchar(128) | YES  |     | NULL    |                |    title (topics)    |
+		| id     | int(16)      | NO   | PRI | NULL    | auto_increment | id of the post       |
+		| topic  | bit(1)       | YES  |     | NULL    |                | is it a topic?       |
+		| title  | varchar(128) | YES  |     | NULL    |                | title (topics)       |
 		| parent | int(11)      | YES  |     | NULL    |                | parent (board/topic) |
-		| owner  | int(11)      | YES  |     | NULL    |                |    owner of post     |
-		| editor | int(11)      | YES  |     | NULL    |                |    editor of post    |
-		| post   | text         | YES  |     | NULL    |                |  the post's content  |
-		| locked | bit(1)       | YES  |     | NULL    |                |    topic locked?     |
-		| edited | datetime     | YES  |     | NULL    |                |   time of editing    |
-		| posted | datetime     | YES  |     | NULL    |                |   time of posting    |
+		| owner  | int(11)      | YES  |     | NULL    |                | owner of post        |
+		| editor | int(11)      | YES  |     | NULL    |                | editor of post       |
+		| post   | text         | YES  |     | NULL    |                | the post's content   |
+		| locked | bit(1)       | YES  |     | NULL    |                | topic locked?        |
+		| edited | datetime     | YES  |     | NULL    |                | time of editing      |
+		| posted | datetime     | YES  |     | NULL    |                | time of posting      |
 		+--------+--------------+------+-----+---------+----------------+----------------------+
 	
 	table sessions
 		+----------+-------------+------+-----+---------+-------+--------------------+
 		| Field    | Type        | Null | Key | Default | Extra |    Description     |
 		+----------+-------------+------+-----+---------+-------+--------------------+
-		| id       | char(64)    | NO   | PRI | NULL    |       |  session id (hex)  |
-		| user     | int(11)     | YES  |     | NULL    |       |      user id       |
-		| username | varchar(32) | YES  |     | NULL    |       |      username      |
-		| access   | int(11)     | YES  |     | NULL    |       |  user access level |
+		| id       | char(64)    | NO   | PRI | NULL    |       | session id (hex)   |
+		| user     | int(11)     | YES  |     | NULL    |       | user id            |
+		| username | varchar(32) | YES  |     | NULL    |       | username           |
+		| access   | int(11)     | YES  |     | NULL    |       | user access level  |
 		| expire   | datetime    | YES  |     | NULL    |       | session expiration |
-		| context  | varchar(32) | YES  |     | NULL    |       |    user context    |
-		| history  | text        | YES  |     | NULL    |       |  user cmd history  |
-		| cmd      | varchar(16) | YES  |     | NULL    |       |  continued command |
-		| cmddata  | text        | YES  |     | NULL    |       |   command's data   |
+		| context  | varchar(32) | YES  |     | NULL    |       | user context       |
+		| history  | text        | YES  |     | NULL    |       | user cmd history   |
+		| cmd      | varchar(16) | YES  |     | NULL    |       | continued command  |
+		| cmddata  | text        | YES  |     | NULL    |       | command's data     |
 		+----------+-------------+------+-----+---------+-------+--------------------+
 	
 	table users
 		+----------+-------------+------+-----+---------+----------------+-------------------+
 		| Field    | Type        | Null | Key | Default | Extra          |   Description     |
 		+----------+-------------+------+-----+---------+----------------+-------------------+
-		| id       | int(11)     | NO   | PRI | NULL    | auto_increment |     user id       |
-		| username | varchar(32) | YES  |     | NULL    |                |     username      |
-		| password | char(64)    | YES  |     | NULL    |                |  hashed password  |
+		| id       | int(11)     | NO   | PRI | NULL    | auto_increment | user id           |
+		| username | varchar(32) | YES  |     | NULL    |                | username          |
+		| password | char(64)    | YES  |     | NULL    |                | hashed password   |
 		| access   | int(11)     | YES  |     | NULL    |                | user access level |
+		| muted    | bit(1)      | YES  |     | b'0'    |                | console muted?    |
+		| alias    | text        | YES  |     | NULL    |                | dict of aliases   |
 		+----------+-------------+------+-----+---------+----------------+-------------------+
 	
 	table wall/nsfwall

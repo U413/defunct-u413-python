@@ -41,3 +41,39 @@ def query(q):
 
 def escape(data):
 	return mysql.escape_string(data)
+
+def count(field,condition):
+	return int(query("SELECT COUNT(*) FROM %s WHERE %s;"%(escape(field),condition))[0]["COUNT(*)"])
+
+def anons(topic):
+	anons=query("SELECT DISTINCT owner FROM (SELECT owner,posted FROM (SELECT owner,posted FROM posts WHERE topic=FALSE AND parent=%i) AS t1 GROUP BY owner ORDER BY posted) AS t2;"%int(topic))
+	for a in range(len(anons)):
+		anons[a]=int(anons[a]["owner"])
+	return anons
+
+def get_username(uid):
+	u=query("SELECT username FROM users WHERE id=%i;"%int(uid))
+	if len(u)==0:
+		return None
+	return u[0]["username"]
+
+def count_posts(topic):
+	return count("posts","parent=%i AND topic=FALSE"%int(topic))
+
+def last_post(topic):
+	r=query("SELECT owner,posted FROM posts WHERE parent=%i AND topic=FALSE ORDER BY posted DESC LIMIT 1;"%int(topic))
+	if len(r)==0:
+		return None
+	return r[0]
+
+def select_topic(tid):
+	r=query("SELECT * FROM posts WHERE topic=TRUE AND id=%i;"%int(tid))
+	if len(r)==0:
+		return None
+	return r[0]
+
+def get_boardname(bid):
+	b=query("SELECT name FROM boards WHERE id=%i;"%int(bid))
+	if len(b)==0:
+		return None
+	return b[0]["name"]

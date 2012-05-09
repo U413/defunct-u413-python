@@ -39,14 +39,31 @@ import math
 import bbcode
 import util
 
+header='''{{<span class="transmit" data-transmit="BOARD {0}">{0}</span>}} {1} {{<span class="transmit" data-transmit="TOPIC {2}">{2}</span>}} <span class="inverted">{3}</span><br/>
+<span class="dim">Posted by <span class="transmit" data-transmit="WHOIS {4}">{4}</span> {5}<br/>'''
+
+edited='''<br/><i>Edited by <span class="transmit" data-transmit="WHOIS {0}">{0}</span> {1}</i><br/>'''
+
+post='''<table>
+	<tr>
+		<td>&gt;</td>
+		<td style="text-align:center;width:160px;border-right:solid 1px lime;">
+			<span class="transmit" data-transmit="WHOIS {0}">{0}</span>
+		</td>
+		<td style="padding-left:8px;padding-right:8px;">{{<span class="transmit" data-transmit="[quote]{1}[/quote]">{1}</span>}}<br/>
+			{2}<br/><br/>{4}
+			<span class="dim">Posted {3}</span>
+		</td>
+	</tr>
+</table><br/>'''
+
 def output_page(topic,page,u413):
-	t=db.query("SELECT * FROM posts WHERE id=%i AND topic=TRUE;"%topic)
-	if len(t)==0:
+	t=db.select_topic(topic)
+	if t==None:
 		u413.type("Invalid topic ID.")
 		return
-	t=t[0]
-	b=db.query("SELECT name FROM boards WHERE id=%i;"%int(t["parent"]))[0]["name"]#board name
-	c=int(db.query("SELECT COUNT(*) FROM posts WHERE parent=%i;"%topic)[0]["COUNT(*)"])#number of replies
+	b=db.get_boardname(t["parent"])
+	c=db.count_posts(topic)
 	if page==0 and page>1 or page!=0 and page>math.ceil(c/10.0):
 		page=math.ceil(c/10.0)
 	if page<1:
@@ -54,20 +71,20 @@ def output_page(topic,page,u413):
 	r=db.query("SELECT * FROM posts WHERE parent=%i ORDER BY id LIMIT %i,10;"%(topic,(page-1)*10))#replies
 	u413.type("Retrieving topic...")
 	if t["parent"]=='4':
-		u413.donttype('{{<span class="transmit" data-transmit="BOARD 4">4</span>}} {0} {{<span class="transmit" data-transmit="TOPIC {1}">{1}</span>}} <span class="inverted">{2}</span><br/><span class="dim">Posted by OP {3}<br/>'.format(b,topic,t["title"],util.ago(t["posted"])))
-		e=db.query("SELECT username FROM users WHERE id=%i;"%int(t["editor"]))
-		if len(e)==0:
-			u413.donttype(bbcode.bbcodify(t["post"])+'<br/>')
-		else:
-			u413.donttype(bbcode.bbcodify(t["post"])+'<br/><br/><i>Edited by <span class="transmit" data-transmit="WHOIS {0}>{0}</span> {1}</i><br/>'.format(e[0]["username"],util.ago(t["posted"])))
+		u413.donttype(header.format(4,b,topic,t["title"],'OP',util.ago(t["posted"])))
+		editor=db.get_username(t["editor"])
+		e=''
+		if editor!=None:
+			e=edited.format(editor,util.ago(t["edited"]))
+		u413.donttype(bbcode.bbcodify(t["post"])+'<br/>'+e)
 	else:
-		u=db.query("SELECT username FROM users WHERE id=%i;"%int(t["owner"]))[0]["username"]#username
-		u413.donttype('{{<span class="transmit" data-transmit="BOARD {0}">{0}</span>}} {1} {{<span class="transmit" data-transmit="TOPIC {2}">{2}</span>}} <span class="inverted">{3}</span><br/><span class="dim">Posted by <span class="transmit" data-transmit="WHOIS {4}">{4}</span> {5}<br/>'.format(int(t["parent"]),b,topic,t["title"],u,util.ago(t["posted"])))
-		e=db.query("SELECT username FROM users WHERE id=%i;"%int(t["editor"]))
-		if len(e)==0:
-			u413.donttype(bbcode.bbcodify(t["post"])+'<br/>')
-		else:
-			u413.donttype(bbcode.bbcodify(t["post"])+'<br/><br/><i>Edited by <span class="transmit" data-transmit="WHOIS {0}>{0}</span> {1}</i><br/>'.format(e[0]["username"],util.ago(t["posted"])))
+		u=db.get_username(t["owner"])
+		u413.donttype(header.format(int(t["parent"]),b,topic,t["title"],u,util.ago(t["posted"])))
+		editor=db.get_username(t["editor"])
+		e=''
+		if editor!=None:
+			e=edited.format(editor,util.ago(t["edited"]))
+		u413.donttype(bbcode.bbcodify(t["post"])+'<br/>'+e)
 	if c==0:
 		u413.donttype('Page 1/1<br/>')
 	else:
@@ -76,26 +93,22 @@ def output_page(topic,page,u413):
 		u413.type("There are no replies.")
 	else:
 		if t['parent']=='4':
-			anons=db.query("SELECT DISTINCT owner FROM (SELECT owner,posted FROM (SELECT owner,posted FROM posts WHERE topic=FALSE AND parent=%i) AS t1 GROUP BY owner ORDER BY posted) AS t2;"%topic)
+			anons=db.anons(topic)
 			for reply in r:
 				owner=util.anoncode(anons,reply["owner"],t["owner"])
-				editor=db.query("SELECT username FROM users WHERE id=%i;"%int(reply["editor"]))
-				if len(editor)==0:
-					u413.donttype('<table><tr><td>&gt;</td><td style="text-align:center;width:160px;border-right:solid 1px lime;"><span class="transmit" data-transmit="WHOIS {0}">{0}</span></td><td style="padding-left:8px;padding-right:8px;">{{<span class="transmit" data-transmit="[quote]{1}[/quote]">{1}</span>}}<br/>{2}<br/><br/><span class="dim">Posted {3}</span></td></tr></table><br/>'.format(owner,int(reply["id"]),bbcode.bbcodify(reply["post"]),util.ago(reply["posted"])))
-				else:
-					editor=owner
-					if reply["editor"]!=reply["owner"]:
-						editor=editor[0]["username"]
-					u413.donttype('<table><tr><td>&gt;</td><td style="text-align:center;width:160px;border-right:solid 1px lime;"><span class="transmit" data-transmit="WHOIS {0}">{0}</span></td><td style="padding-left:8px;padding-right:8px;">{{<span class="transmit" data-transmit="[quote]{1}[/quote]">{1}</span>}}<br/>{2}<br/><br/><i>Edited by <span class="transmit" data-transmit="WHOIS {3}">{3}</span> {4}</i><br/><span class="dim">Posted {5}</span></td></tr></table><br/>'.format(owner,int(reply["id"]),bbcode.bbcodify(reply["post"]),editor,util.ago(reply["edited"]),util.ago(reply["posted"])))
+				editor=db.get_username(reply["editor"])
+				e=''
+				if editor!=None:
+					e=edited.format(editor,util.ago(reply["edited"]))
+				u413.donttype(post.format(owner,int(reply["id"]),bbcode.bbcodify(reply["post"]),util.ago(reply["posted"]),e))
 		else:
 			for reply in r:
-				owner=db.query("SELECT username FROM users WHERE id=%i;"%int(reply["owner"]))[0]["username"]
-				editor=db.query("SELECT username FROM users WHERE id=%i;"%int(reply["editor"]))
-				if len(editor)==0:
-					u413.donttype('<table><tr><td>&gt;</td><td style="text-align:center;width:160px;border-right:solid 1px lime;"><span class="transmit" data-transmit="WHOIS {0}">{0}</span></td><td style="padding-left:8px;padding-right:8px;">{{<span class="transmit" data-transmit="[quote]{1}[/quote]">{1}</span>}}<br/>{2}<br/><br/><span class="dim">Posted {3}</span></td></tr></table><br/>'.format(owner,int(reply["id"]),bbcode.bbcodify(reply["post"]),util.ago(reply["posted"])))
-				else:
-					editor=editor[0]["username"]
-					u413.donttype('<table><tr><td>&gt;</td><td style="text-align:center;width:160px;border-right:solid 1px lime;"><span class="transmit" data-transmit="WHOIS {0}">{0}</span></td><td style="padding-left:8px;padding-right:8px;">{{<span class="transmit" data-transmit="[quote]{1}[/quote]">{1}</span>}}<br/>{2}<br/><br/><i>Edited by <span class="transmit" data-transmit="WHOIS {3}">{3}</span> {4}</i><br/><span class="dim">Posted {5}</span></td></tr></table><br/>'.format(owner,int(reply["id"]),bbcode.bbcodify(reply["post"]),editor,util.ago(reply["edited"]),util.ago(reply["posted"])))
+				owner=db.get_username(reply["owner"])
+				editor=db.get_username(reply["editor"])
+				e=''
+				if editor!=None:
+					e=edited.format(editor,util.ago(reply["edited"]))
+				u413.donttype(post.format(owner,int(reply["id"]),bbcode.bbcodify(reply["post"]),util.ago(reply["posted"]),e))
 		if c==0:
 			u413.donttype('Page 1/1<br/>')
 		else:
@@ -125,7 +138,7 @@ def topic_func(args,u413):
 			if util.isint(params[1]):
 				page=int(params[1])
 			elif params[1].upper()=='LAST':
-				page=int(db.query("SELECT COUNT(*) FROM posts WHERE parent=%i;"%topic)[0]["COUNT(*)"])
+				page=db.count_posts(topic)
 				if page==0:
 					page=1
 				else:

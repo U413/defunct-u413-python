@@ -38,7 +38,7 @@ def next_func(args,u413):
 			command.respond(context[0]+' '+str(context[1])+' '+str(page),u413)
 			return
 	if context[0] in ['BOARD','TOPIC']:
-		pages=int(db.query("SELECT COUNT(*) FROM posts WHERE topic=FALSE AND parent=%i;"%int(context[1]))[0]["COUNT(*)"])
+		pages=int(db.query("SELECT COUNT(*) FROM posts WHERE parent=%i;"%int(context[1]))[0]["COUNT(*)"])
 		if pages==0:
 			pages=1
 		else:

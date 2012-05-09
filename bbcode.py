@@ -91,7 +91,7 @@ def quote(match):
 	poster=None
 	op=db.query("SELECT id,owner,parent FROM posts WHERE topic=TRUE and id=%i;"%int(post["parent"]))[0]
 	if op["parent"]=='4':
-		anons=db.query("SELECT DISTINCT owner FROM (SELECT owner,posted FROM posts WHERE parent=%i ORDER BY posted ASC);"%int(op["id"]))
+		anons=db.query("SELECT DISTINCT owner FROM (SELECT owner,posted FROM posts WHERE parent=%i ORDER BY posted ASC) AS p;"%int(op["id"]))
 		poster=util.anoncode(anons,int(post["owner"]),int(op["owner"]))
 	else:
 		poster=db.query("SELECT username FROM users WHERE id=%i;"%int(post["owner"]))[0]["username"]

@@ -119,7 +119,7 @@ def anoncode(anons,owner,op):
 		return 'OP'
 	offset=0
 	for i in range(len(anons)):
-		if int(anons[i]["owner"])==owner:
+		if anons[i]==owner:
 			offset=i
 			break
 	if offset==0:
