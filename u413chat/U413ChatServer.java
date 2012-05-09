@@ -255,8 +255,8 @@ public class U413ChatServer implements Runnable{ //threads run in same class. I 
 							con.sendSelfNotice("Looked up Session. Received User"); //Send Welcome messages and Stuff
 							con.sendSelfNotice("**Connection Authenticated and Established**");
 							con.sendSelfNotice("*");
-							con.sendSelfNotice("Welcome to U413 Chat, "+con.nick);
-							con.sendSelfNotice("Chat Written by EnKrypt");
+							con.sendSelfNotice("Welcome to U413's Epic Chat Server. "+con.nick);
+							con.sendSelfNotice("Written by EnKrypt");
 							con.sendSelfNotice("*");
 							con.sendSelfNotice("Type '/JOIN <channel>' to join a channel");
 						}

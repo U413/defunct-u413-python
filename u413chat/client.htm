@@ -2,18 +2,27 @@
 	<head>
 		<title>Javascript Telnet - EnKrypt</title>
 		<script src="/Plugins/JQuery.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+		<script src="java_socket_bridge.js"></script>
 		<script>
-			socket= new WebSocket('ws://localhost:'+prompt("PORT")+'/chat');
-			socket.onopen= function() {
-				socket.send('test');
-			};
-			socket.onmessage= function(s) {
-				document.getElementById("text").innerHTML=document.getElementById("text").innerHTML+"<br>"+s.data;
-			};
+		function dot(){
+			document.getElementById("temp").innerHTML="";
+			socket_connect('localhost', 1000);
+		}
+		function on_socket_get(message){
+			document.getElementById('text').innerHTML += message;
+		}
 		</script>
 	</head>
 	<body>
+		<div id="temp">
+			<input type="button" onclick="dot();" value="start"/>
+		</div>
+		<div id="applet">
+			<applet id="JavaSocketBridge" archive="JavaSocketBridge.jar" code="JavaSocketBridge.class" width="0" height="0">
+			</applet>
+		</div>
 		<div id="text"></div>
-		<input type="text" id="fest"><button onclick="socket.send(document.getElementById('fest').value)">
+		<input type="text" id="fest"><button onclick="socket_send(document.getElementById('fest').value)">
 	</body>
 </html>
