@@ -7,7 +7,7 @@
 		<script>
 		function dot(){
 			document.getElementById("temp").innerHTML="";
-			socket_connect('localhost', 1000);
+			socket_connect(prompt("host"), 1000);
 		}
 		function on_socket_get(message){
 			document.getElementById('text').innerHTML += message;
