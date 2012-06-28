@@ -16,29 +16,23 @@
 	You should have received a copy of the GNU Affero General Public License
 	along with this program.  If not,see <http://www.gnu.org/licenses/>.'''
 
-import cgi
-import cgitb
-cgitb.enable(display=1)
+from mod_python import Cookie
 
 import json
 import os
-import Cookie
 import sys
 
-import user
-import command
+def index(req):
+	import user
+	import command
 
-form=cgi.FieldStorage()
-cli=form.getvalue("cli")
-
-session=form.getvalue("session")
-
-#no session
-if session==None:
-	if "HTTP_COOKIE" in os.environ:
-		cookie=Cookie.SimpleCookie(os.environ["HTTP_COOKIE"])
-		if "session" in cookie:
-			session=cookie["session"].value
+	cli=req.form.get("cli",None)
+	session=req.form.get("session",None)
+	#no session
+	if session==None:
+		jar=Cookie.get_cookies(req)
+		if "session" in jar:
+			session=jar.get("session",None)
 			currentuser=user.User(session)
 			if cli==None:
 				cli="LOGIN"
@@ -47,183 +41,177 @@ if session==None:
 			if cli==None:
 				cli="INITIALIZE"
 	else:
-		currentuser=user.User()
+		currentuser=user.User(session)
 		if cli==None:
-			cli="INITIALIZE"
-else:
-	currentuser=user.User(session)
-	if cli==None:
-		cli="LOGIN"
+			cli="LOGIN"
 
-cmdarg=cli.split(' ',1)
-cmd=cmdarg[0]
-args=""
-if len(cmdarg)>1:
-	args=cmdarg[1]
+	cmdarg=cli.split(' ',1)
+	cmd=cmdarg[0]
+	args=""
+	if len(cmdarg)>1:
+		args=cmdarg[1]
 
-callback=form.getvalue("callback")
+	callback=req.form.get("callback",None)
 
-class u413(object):
-	def __init__(self,u):
-		self.j={
-			"Command":"",
-			"ContextText":u.context,
-			"CurrentUser":u.name,
-			"EditText":None,
-			"SessionId":u.session,
-			"TerminalTitle":"Terminal - "+u.name,
-			"ClearScreen":False,
-			"Exit":False,
-			"PasswordField":False,
-			"ScrollToBottom":True,
-			"DisplayItems":[]
-		}
-		self.cmds=command.cmds
-		self.user=u
-		self.cont=False
-		self.cookies=[]
-		self.cmddata=u.cmddata
-		self.mute=u.mute
+	class u413(object):
+		def __init__(self,u):
+			self.j={
+				"Command":"",
+				"ContextText":u.context,
+				"CurrentUser":u.name,
+				"EditText":None,
+				"SessionId":u.session,
+				"TerminalTitle":"Terminal - "+u.name,
+				"ClearScreen":False,
+				"Exit":False,
+				"PasswordField":False,
+				"ScrollToBottom":True,
+				"DisplayItems":[]
+			}
+			self.cmds=command.cmds
+			self.user=u
+			self.cont=False
+			self.cookies=[]
+			self.cmddata=u.cmddata
+			self.mute=u.mute
 
-	def type(self,text,mute=None):
-		if mute==None:
-			mute=self.mute
-		self.j["DisplayItems"].append({"Text":text,"DontType":False,"Mute":mute})
+		def type(self,text,mute=None):
+			if mute==None:
+				mute=self.mute
+			self.j["DisplayItems"].append({"Text":text,"DontType":False,"Mute":mute})
 
-	def donttype(self,text,mute=None):
-		if mute==None:
-			mute=self.mute
-		self.j["DisplayItems"].append({"Text":text,"DontType":True,"Mute":mute})
+		def donttype(self,text,mute=None):
+			if mute==None:
+				mute=self.mute
+			self.j["DisplayItems"].append({"Text":text,"DontType":True,"Mute":mute})
 
-	def set_context(self,context):
-		self.j["ContextText"]=context
-		self.user.context=context
+		def set_context(self,context):
+			self.j["ContextText"]=context
+			self.user.context=context
 
-	def set_title(self,title):
-		self.j["TerminalTitle"]=title
+		def set_title(self,title):
+			self.j["TerminalTitle"]=title
 
-	def edit_text(self,text):
-		self.j["EditText"]=text
+		def edit_text(self,text):
+			self.j["EditText"]=text
 
-	def clear_screen(self):
-		self.j["ClearScreen"]=True
+		def clear_screen(self):
+			self.j["ClearScreen"]=True
 
-	def scroll_down(self):
-		self.j["ScrollToBottom"]=True
+		def scroll_down(self):
+			self.j["ScrollToBottom"]=True
 
-	def use_password(self):
-		self.j["PasswordField"]=True
+		def use_password(self):
+			self.j["PasswordField"]=True
 
-	def continue_cmd(self):
-		self.cont=True
-		self.user.cmd=self.j["Command"]
+		def continue_cmd(self):
+			self.cont=True
+			self.user.cmd=self.j["Command"]
 
-	def set_cookie(self,cookie,value):
-		self.cookies.append({"name":cookie,"value":value})
+		def set_cookie(self,cookie,value):
+			self.cookies.append({"name":cookie,"value":value})
 
-	def exit(self):
-		self.j["Exit"]=True
+		def exit(self):
+			self.j["Exit"]=True
 	
-	def exec_js(self,start,cleanup=''):
-		out=''
-		if cleanup!='':
-			out+='<div id="mark"></div>'
-		out+='<script type="text/javascript">'+start
-		if cleanup!='':
-			out+='$("#mark").data("cleanup",function(){%s});'%cleanup
-		out+='</script>'
-		self.donttype(out)
+		def exec_js(self,start,cleanup=''):
+			out=''
+			if cleanup!='':
+				out+='<div id="mark"></div>'
+			out+='<script type="text/javascript">'+start
+			if cleanup!='':
+				out+='$("#mark").data("cleanup",function(){%s});'%cleanup
+			out+='</script>'
+			self.donttype(out)
 
-u=u413(currentuser)
+	u=u413(currentuser)
 
-try:
-	import database as db
-	import time
+	try:
+		import database as db
+		import time
 
-	import initialize
-	import echo
-	import ping
-	import login
-	import logout
-	import register
-	import who
-	import desu
-	import clear
-	import boards
-	import wall
-	import nsfwall
-	import history
-	import whois
-	import users
-	import mute
-	import alias
+		import initialize
+		import echo
+		import ping
+		import login
+		import logout
+		import register
+		import who
+		import desu
+		import clear
+		import boards
+		import wall
+		import nsfwall
+		import history
+		import whois
+		import users
+		import mute
+		import alias
 
-	import topic
-	import reply
-	import newtopic
-	import board
-	import edit
-	import delete
-	import move
+		import topic
+		import reply
+		import newtopic
+		import board
+		import edit
+		import delete
+		import move
 
-	import first
-	import last
-	import prev
-	import next
-	import refresh
+		import first
+		import last
+		import prev
+		import next
+		import refresh
 
-	import help
+		import help
 	
-	import messages
-	import message
-	import newmessage
+		import messages
+		import message
+		import newmessage
 	
-	import sql
+		import sql
 	
-	import pi
-	import pirates
-	import b
-	import turkey
-	import cosmos
-	import do
-	import rude
+		import pi
+		import pirates
+		import b
+		import turkey
+		import cosmos
+		import do
+		import rude
 
-	command.respond(cli,u)
+		command.respond(cli,u)
 
-	if u.cont:
-		u.j["Command"]=currentuser.cmd
+		if u.cont:
+			u.j["Command"]=currentuser.cmd
+			
+			if currentuser.cmd!='':
+				cmd=currentuser.cmd
+			db.query("UPDATE sessions SET expire=DATE_ADD(NOW(),INTERVAL 6 HOUR),cmd='%s',cmddata='%s',context='%s' WHERE id='%s';"%(cmd,db.escape(repr(u.cmddata)),currentuser.context,currentuser.session))
+		else:
+			db.query("UPDATE sessions SET expire=DATE_ADD(NOW(),INTERVAL 6 HOUR),cmd='',cmddata='{}',context='%s' WHERE id='%s';"%(currentuser.context,currentuser.session))
+			
+		if callback==None:
+			req.content_type='application/json'
+		else:
+			req.content_type='application/javascript'
 
-	if callback==None:
-		print "Content-type: application/json"
-	else:
-		print "Content-type: application/javascript"
+		for cookie in u.cookies:
+			Cookie.add_cookie(req,Cookie.Cookie(cookie["name"],cookie["value"]))
+		session=Cookie.Cookie('session',currentuser.session)
+		session.expires=time.time()+6*60*60
+		Cookie.add_cookie(req,session)
 
-	for cookie in u.cookies:
-		print "Set-Cookie: "+cookie["name"]+"="+cookie["value"]
-	print 'Set-Cookie: session='+currentuser.session+'; Max-Age: 21600'
+		if callback==None:
+			return json.dumps(u.j)
+		else:
+			return callback+'('+json.dumps(u.j)+')'
+	except Exception as e:
+		import traceback
+		u.donttype('<span class="error">'+traceback.format_exc().replace('&','&amp;').replace('<','&lt;').replace('>','&gt;').replace('\n','<br/>').replace(' '*4,'<span class="tab"></tab>')+'</span>')
 
-	print
-
-	if callback==None:
-		print json.dumps(u.j)
-	else:
-		print callback+'('+json.dumps(u.j)+')'
-
-	if u.cont:
-		if currentuser.cmd!='':
-			cmd=currentuser.cmd
-		db.query("UPDATE sessions SET expire=DATE_ADD(NOW(),INTERVAL 6 HOUR),cmd='%s',cmddata='%s',context='%s' WHERE id='%s';"%(cmd,db.escape(repr(u.cmddata)),currentuser.context,currentuser.session))
-	else:
-		db.query("UPDATE sessions SET expire=DATE_ADD(NOW(),INTERVAL 6 HOUR),cmd='',cmddata='{}',context='%s' WHERE id='%s';"%(currentuser.context,currentuser.session))
-except Exception as e:
-	import traceback
-	u.donttype('<span class="error">'+traceback.format_exc().replace('&','&amp;').replace('<','&lt;').replace('>','&gt;').replace('\n','<br/>').replace(' '*4,'<span class="tab"></tab>')+'</span>')
-
-	print "Content-type: application/json"
-	print "Set-Cookie: session="+currentuser.session+'; Max-Age: 21600'
-	print
-	
-	if callback==None:
-		print json.dumps(u.j)
-	else:
-		print callback+'('+json.dumps(u.j)+')'
+		req.content_type="application/json"
+		session=Cookie.Cookie('session',currentuser.session)
+		session.expires=time.time()+6*60*60
+		if callback==None:
+			return json.dumps(u.j)
+		else:
+			return callback+'('+json.dumps(u.j)+')'

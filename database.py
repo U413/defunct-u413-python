@@ -16,8 +16,11 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.'''
 
 import _mysql as mysql
+import os
 
-db=mysql.connect("localhost","u413",open("../../.htu413.pwd","r").read().rstrip('\r\n'),"u413")
+db=mysql.connect("localhost","u413",open(os.path.dirname(__file__)+'/../../.htu413.pwd').read().strip(),"u413")
+
+#open("../../.htu413.pwd","r").read().rstrip('\r\n')
 
 #wrap the ugly _mysql interface with a nice function
 #returns a list of dictionaries corresponding to the rows and columns
