@@ -17,7 +17,7 @@
 
 import _mysql as mysql
 
-db=mysql.connect("localhost","u413",open("/var/u413.pwd","r").read().rstrip('\r\n'),"u413")
+db=mysql.connect("localhost","u413",open("../../.htu413.pwd","r").read().rstrip('\r\n'),"u413")
 
 #wrap the ugly _mysql interface with a nice function
 #returns a list of dictionaries corresponding to the rows and columns

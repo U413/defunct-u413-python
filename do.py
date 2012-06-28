@@ -16,7 +16,6 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.'''
 
 import command
-import util
 
 def do_func(args,u413):
 	if args.upper()=="A BARREL ROLL":

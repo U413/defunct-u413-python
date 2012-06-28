@@ -178,6 +178,8 @@ try:
 	import message
 	import newmessage
 	
+	import sql
+	
 	import pi
 	import pirates
 	import b
