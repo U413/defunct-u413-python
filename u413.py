@@ -27,12 +27,18 @@ def index(req):
 	import command
 
 	cli=req.form.get("cli",None)
+	if cli!=None:
+		cli=cli.value
 	session=req.form.get("session",None)
+	if session!=None:
+		session=session.value
 	#no session
 	if session==None:
 		jar=Cookie.get_cookies(req)
 		if "session" in jar:
 			session=jar.get("session",None)
+			if session!=None:
+				session=session.value
 			currentuser=user.User(session)
 			if cli==None:
 				cli="LOGIN"
