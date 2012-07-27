@@ -93,7 +93,8 @@ def output_board(board,page,u413):
 			page=1
 		elif page>math.ceil(c/10.0):
 			page=math.ceil(c/10.0)
-		t=db.query("SELECT *,id as t FROM posts WHERE topic=TRUE AND parent=%i ORDER BY (SELECT MAX(posted) FROM posts WHERE topic=FALSE AND parent=t OR topic=TRUE AND id=t) ASC LIMIT %i,10;"%(board,(page-1)*10))
+		t=db.query("SELECT *,id as t FROM posts WHERE topic=TRUE AND parent=%i ORDER BY (SELECT MAX(posted) FROM posts WHERE topic=FALSE AND parent=t OR topic=TRUE AND id=t) DESC LIMIT %i,10;"%(board,(page-1)*10))
+		t.reverse()
 		u413.type("Retrieving board topics...")
 		if c==0:
 			output+=header.format(board,b["name"],page,1)

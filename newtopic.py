@@ -17,6 +17,7 @@
 
 import command
 import user
+import util
 import database as db
 
 def isint(i):
@@ -54,7 +55,7 @@ def newtopic_func(args,u413):
 			u413.continue_cmd()
 		#BODY>
 		elif u413.cmddata["step"]==3:
-			db.query("INSERT INTO posts (topic,title,parent,owner,editor,post,locked,edited,posted) VALUES(TRUE,'%s',%i,%i,0,'%s',FALSE,NULL,NOW());"%(db.escape(u413.cmddata["title"]),int(u413.cmddata["board"]),u413.user.userid,db.escape(args)))
+			db.query("INSERT INTO posts (topic,title,parent,owner,editor,post,locked,edited,posted) VALUES(TRUE,'%s',%i,%i,0,'%s',FALSE,NULL,NOW());"%(db.escape(u413.cmddata["title"]),int(u413.cmddata["board"]),u413.user.userid,db.escape(util.htmlify(args))))
 			topic=int(db.query("SELECT id FROM posts ORDER BY id DESC LIMIT 1;")[0]["id"])
 			u413.type("Topic %i was created successfully."%topic)
 			u413.set_context("")

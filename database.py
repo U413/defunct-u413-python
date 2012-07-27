@@ -18,7 +18,12 @@
 import _mysql as mysql
 import os
 
-db=mysql.connect("localhost","u413",open(os.path.dirname(__file__)+'/../../.htu413.pwd').read().strip(),"u413")
+db=None
+
+if os.path.dirname(__file__)=='':
+	db=mysql.connect("localhost","u413",open('/home/pimaster/public_html/.htu413.pwd').read().strip(),"u413")
+else:
+	db=mysql.connect("localhost","u413",open(os.path.dirname(__file__)+'/../../.htu413.pwd').read().strip(),"u413")
 
 #open("../../.htu413.pwd","r").read().rstrip('\r\n')
 

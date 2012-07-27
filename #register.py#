@@ -119,13 +119,11 @@ def register_func(args,u413):
 		#CONFIRM PASSWORD>
 		elif u413.cmddata["step"]==3:
 			if u413.cmddata["password"]==params[0]:
-				if is_taken(u413.cmddata["username"]):
-					u413.type("Username already in use.")
-				else:
-					db.query("INSERT INTO users(username,password,access,alias) VALUES('%s','%s',%i,'[]');"%(db.escape(util.htmlify(util.stripctrl(u413.cmddata["username"]))),user.sha256(params[0]),user.User.member))
+				db.qu
+				db.queryery("INSERT INTO users(username,password,access,alias) VALUES('%s','%s',%i,'[]');"%(db.escape(util.htmlify(util.stripctrl(u413.cmddata["username"]))),user.sha256(params[0]),user.User.member))
 				u413.type("You are now registered.")
 			else:
-				u413.type("The passwords do not match.")
+				u413.type("Passwords do not match.")
 			u413.set_context("")
 	#initial use of command
 	else:
@@ -159,14 +157,11 @@ def register_func(args,u413):
 				u413.use_password()
 			else:
 				u413.cmddata["username"]=params[0]
-				if is_taken(u413.cmddata["username"]):
-					u413.type("Username already in use.")
-				else:
-					u413.cmddata["password"]=params[1]
-					u413.cmddata["step"]=3
-					u413.type("Confirm your password:")
-					u413.set_context("CONFIRM PASSWORD")
-					u413.continue_cmd()
-					u413.use_password()
+				u413.cmddata["password"]=params[1]
+				u413.cmddata["step"]=3
+				u413.type("Confirm your password:")
+				u413.set_context("CONFIRM PASSWORD")
+				u413.continue_cmd()
+				u413.use_password()
 	
 command.Command("REGISTER","[username] [password]",{"username":"Your desired username","password":"Your password"},"Registers a user for u413.",register_func,0)

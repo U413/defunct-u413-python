@@ -34,59 +34,42 @@ class Command(object):
 		self.hidden=hidden
 		cmds[self.name]=self
 
-class OvertimeException(Exception): pass
+class OvertimeException(Exception):pass
 
-def execlimit(function, seconds=4):
-	old_handler = signal.getsignal(signal.SIGALRM)
-	def new_handler(signum, frame):
+def execlimit(function,seconds=4):
+	old_handler=signal.getsignal(signal.SIGALRM)
+	def new_handler(signum,frame):
 		raise OvertimeException(Exception)
-	signal.signal(signal.SIGALRM, new_handler)
+	signal.signal(signal.SIGALRM,new_handler)
 	signal.alarm(seconds)
 	try:
 		return function()
 	finally:
 		signal.alarm(0)
-		signal.signal(signal.SIGALRM, old_handler)
-
-aliasout=None
-
-def getaliashelper(a,s,u):
-	global aliasout
-	m=re.match(a["from"],s)
-	if m!=None:
-		aliasout=a
+		signal.signal(signal.SIGALRM,old_handler)
+	return None
 
 def getalias(s,u413):
 	for a in u413.user.alias:
 		try:
-			execlimit(lambda: getaliashelper(a,s,u413))
+			return execlimit(lambda:re.match(a["from"],s))
 		except OvertimeException:
 			u413.type('Non-terminating regex detected, terminating.')
 			break
-		if aliasout!=None:
-			return aliasout
 	return None
 
-c=''
-
-def execaliashelper(a,u):
-	global c
-	c=re.sub(a["from"],a["to"],c,1)
-
 def execalias(cli,a,u413):
-	global c
-	c=cli
 	try:
-		execlimit(lambda: execaliashelper(a,u413))
+		c=execlimit(lambda:re.sub(a["from"],a["to"],cli,1))
 	except OvertimeException:
 		u413.type('None-terminating regex detected, terminating.')
 		return
-	cmd=c.split(' ')[0].upper()
+	cmd=cli.split(' ')[0].upper()
 	#prevent recursion
 	if cmd not in cmds:
 		u413.type('"%s" is not a valid command or is not available in the current context.'%cmd)
 		return
-	respond(c,u413)
+	respond(cli,u413)
 
 def respond(cli,u413,ashtml=True):
 	cmdarg=cli.split(' ',1)
