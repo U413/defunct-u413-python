@@ -75,7 +75,10 @@ def output_page(topic,page,u413):
 		editor=db.get_username(t["editor"])
 		e=''
 		if editor!=None:
-			e=edited.format(editor,util.ago(t["edited"]))
+			if t["editor"]!=t["owner"]:
+				e=edited.format(editor,util.ago(t["edited"]))
+			else:
+				e=edited.format('OP',util.ago(t["edited"]))
 		u413.donttype(bbcode.bbcodify(t["post"])+'<br/>'+e)
 	else:
 		u=db.get_username(t["owner"])
@@ -99,7 +102,10 @@ def output_page(topic,page,u413):
 				editor=db.get_username(reply["editor"])
 				e=''
 				if editor!=None:
-					e=edited.format(editor,util.ago(reply["edited"]))
+					if reply["editor"]!=reply["owner"]:
+						e=edited.format(editor,util.ago(reply["edited"]))
+					else:
+						e=edited.format(owner,util.ago(reply["edited"]))
 				u413.donttype(post.format(owner,int(reply["id"]),bbcode.bbcodify(reply["post"]),util.ago(reply["posted"]),e))
 		else:
 			for reply in r:

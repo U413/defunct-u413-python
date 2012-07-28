@@ -81,6 +81,9 @@
 		if(apiResult.Notification!=null){
 			$notifications.text(apiResult.Notification);
 		}
+		else{
+			$notifications.text('');
+		}
 	}
 
 	function TypeLines(displayItems,scrollToBottom){

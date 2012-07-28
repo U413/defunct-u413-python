@@ -7298,3 +7298,6 @@
 [Fri Jul 27 21:58:44 2012] [error] [client 1.202.218.8] File does not exist: /home/pimaster/public_html/u413/robots.txt
 [Fri Jul 27 22:07:44 2012] [error] [client 208.115.111.66] File does not exist: /home/pimaster/public_html/u413/api/robots.txt
 [Fri Jul 27 22:07:44 2012] [error] [client 208.115.111.66] File does not exist: /home/pimaster/public_html/u413/api/error
+[Fri Jul 27 22:22:06 2012] [error] [client 119.63.196.51] File does not exist: /home/pimaster/public_html/u413/robots.txt
+[Fri Jul 27 23:02:35 2012] [error] [client 208.115.113.82] File does not exist: /home/pimaster/public_html/u413/api/robots.txt
+[Fri Jul 27 23:02:35 2012] [error] [client 208.115.113.82] File does not exist: /home/pimaster/public_html/u413/api/error
