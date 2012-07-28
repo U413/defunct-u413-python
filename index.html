@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<title>Terminal - Visitor</title>
+		<link rel="shortcut icon" href="favicon.ico"/>
+		<link href="content/styles/Terminal.css" rel="stylesheet" type="text/css"/>
+		<link href="content/styles/Prettify.css" rel="stylesheet" type="text/css"/>
+		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="scripts/snowfall.min.jquery.js"></script>
+		<script type="text/javascript" src="scripts/prettify.js"></script>
+		<script type="text/javascript" src="scripts/soundmanager2-nodebug-jsmin.js"></script>
+		<script type="text/javascript" src="scripts/jquery.scrollTo-min.js"></script>
+		<script type="text/javascript" src="scripts/jquery.coolType_1.2.0.js"></script>
+		<script type="text/javascript" src="scripts/jquery.u413Client.js"></script>
+		<script type="text/javascript">
+			var rootPath='';
+			soundManager.url=rootPath+'content/soundmanager2/';
+			//soundManager.useHTML5Audio=true;
+			soundManager.allowScriptAccess='always';
+			$(function(){
+				Setup(rootPath+'content/sounds/techtyping.mp3');
+			});
+
+			function StopButton(soundName){
+				$('<img src="'+rootPath+'content/stop.png" /\x3E').css({
+					position:'fixed',
+					right:20,
+					top:20,
+					width:'25px',
+					cursor:'pointer',
+					zIndex:9000,
+					opacity:'.50'
+				}).prependTo('body')
+				.click(function(e){
+					soundManager.pause(soundName);
+					$(this).hide();
+					PlayButton(soundName);
+				});
+			}
+
+			function PlayButton(soundName){
+				$('<img src="'+rootPath+'content/play.png" /\x3E').css({
+					position:'fixed',
+					right:20,
+					top:20,
+					width:'25px',
+					cursor:'pointer',
+					zIndex:9000,
+					opacity:'.50'
+				}).prependTo('body')
+				.click(function(e){
+					soundManager.resume(soundName);
+					$(this).hide();
+					StopButton(soundName);
+				});
+			}
+
+			function Setup(soundFile){
+				$(window).resize(function(){
+					$('#frame').height($(window).height()-175);
+				}).resize();
+
+				$.coolType.setup({
+					soundFile:soundFile,
+					playSound:true,
+					speed:25,
+					onSoundLoaded:function(){
+						$('#commandForm').u413Client({
+							elementToScroll:'#frame > .subFrame',
+							apiUrl:'api/u413.py'
+						});
+					}
+				});
+			}
+		</script>
+	</head>
+	<body>
+		<!--[if lt IE 9]>
+			<div style='border:1px solid #F7941D;background:#FEEFDA;text-align:center;clear:both;height:75px;position:relative;z-index:9000;'>
+			<div style='position:absolute;right:3px;top:3px;font-family:courier new;font-weight:bold;'><a href='#' onclick='javascript:this.parentNode.parentNode.style.display="none";return false;'><img src='http://www.codetunnel.comcontent/images/ie6nomore-cornerx.jpg' style='border:none;' alt='Close this notice'/></a></div>
+			<div style='width:780px;margin:0 auto;text-align:left;padding:0;overflow:hidden;color:black;'>
+				<div style='width:75px;float:left;'><img src='http://www.codetunnel.comcontent/images/ie6nomore-warning.jpg' alt='Warning!'/></div>
+				<div style='width:400px;float:left;font-family:Arial,sans-serif;'>
+				<div style='font-size:14px;font-weight:bold;margin-top:12px;'>You are using an outdated and unsupported browser</div>
+				<div style='font-size:12px;margin-top:6px;line-height:12px;'>For a better experience using this site,please upgrade to a newer web browser.</div>
+				</div>
+				<div style='width:75px;float:left;'><a href='http://www.google.com/chrome' target='_blank'><img src='http://www.codetunnel.comcontent/images/browser_logos/chrome.jpg' style='border:none;' alt='Get Google Chrome'/></a></div>
+				<div style='width:75px;float:left;'><a href='http://www.firefox.com' target='_blank'><img src='http://www.codetunnel.comcontent/images/browser_logos/firefox.jpg' style='border:none;' alt='Get Firefox'/></a></div>
+				<div style='width:73px;float:left;'><a href='http://www.apple.com/safari/download/' target='_blank'><img src='http://www.codetunnel.comcontent/images/browser_logos/safari.jpg' style='border:none;' alt='Get Safari'/></a></div>
+				<div style='width:75px;float:left;'><a href='http://www.browserforthebetter.com/download.html' target='_blank'><img src='http://www.codetunnel.comcontent/images/browser_logos/ie.jpg' style='border:none;' alt='Get Internet Explorer'/></a></div>
+			</div>
+			</div>
+		<![endif]-->
+		<img class="backgroundImage" src="content/background.jpg"/>
+		<div style="top:0;left:0;width:100%;position:absolute;z-index:1;">
+			<div id="frame">
+				<div class="opacityFrame"></div>
+				<div class="subFrame" style="overflow:auto;">
+					<form action="/" method="POST" id="commandForm">
+						<div id="terminalDisplay">
+							<noscript id="defdisplay">
+								Welcome to...<br/><br/> &nbsp;__ &nbsp;__ &nbsp;__ __ &nbsp; &nbsp; &nbsp; _ &nbsp; &nbsp; __<br/> /\ \/\ \/\ \\ \ &nbsp; &nbsp;/&#39; \ &nbsp;/&#39;__`\<br/> \ \ \ \ \ \ \\ \ &nbsp;/\_, \/\_\L\ \<br/> &nbsp;\ \ \ \ \ \ \\ \_\/_/\ \/_/_\_&lt;_<br/> &nbsp; \ \ \_\ \ \__ ,__\ \ \ \/\ \L\ \<br/> &nbsp; &nbsp;\ \_____\/_/\_\_/ &nbsp;\ \_\ \____/<br/> &nbsp; &nbsp; \/_____/ &nbsp;\/_/ &nbsp; &nbsp; \/_/\/___/<br/><br/>
+								<p>You need to enable javascript to continue.</p>
+							</noscript>
+						</div>
+						<input id="Display" name="Display" type="hidden"/>
+						<div id="notifications"></div>
+						<input id="Notifications" name="Notifications" type="hidden" value=""/>
+						<div id="loading"></div>
+						<span id="contextDisplay">
+							<span id="context"></span>
+							&gt;&nbsp;
+						</span>
+						<input autocomplete="off" autofocus="autofocus" id="Cli" name="Cli" type="text"/>
+					</form><br/><br/>
+				</div><br/>
+			</div>
+		</div>
+	</body>
+</html>

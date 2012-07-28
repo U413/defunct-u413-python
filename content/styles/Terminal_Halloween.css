@@ -1,0 +1,219 @@
+body
+{
+    background: #000;
+    color: #F7941D;
+    font-family: Courier New;
+    font-size: 15px;
+    margin: 0;
+}
+
+.backgroundImage
+{
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    z-index: 0;
+    opacity: .15;
+    filter: alpha(opacity=15);
+    -moz-opacity: .15;
+}
+
+#frame
+{
+    border: none;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    padding: 10px;
+    margin: 75px;
+    position: relative;
+}
+
+.opacityFrame
+{
+    background: #F7941D;
+    opacity: .1;
+    filter: alpha(opacity=10);
+    -moz-opacity: .1;
+    top: 0;
+    left: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+}
+
+.subFrame
+{
+    position: relative;
+    height: 100%;
+    width: 100%;
+    z-index: 2;
+    scrollbar-face-color: #F7941D;
+    scrollbar-track-color: #311E04;
+    scrollbar-highlight-color: #F7941D;
+    scrollbar-3dlight-color: #F7941D;
+    scrollbar-arrow-color: #000;
+    scrollbar-shadow-color: #F7941D;
+    scrollbar-darkshadow-color: #F7941D;
+}
+
+#terminalDisplay
+{
+    margin-bottom: 15px;
+}
+
+#contextDisplay
+{
+    float: left;
+    margin-top: 4px;
+}
+
+#Cli
+{
+    width: 75%;
+    background: transparent;
+    color: #F7941D;
+    font-family: Courier New;
+    font-size: 15px;
+    outline: none;
+    resize: none;
+    border: none;
+}
+
+code
+{
+    background-color: #111111;
+    color: #F1F2F3;
+    padding-left: 3px;
+    padding-right: 3px;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+}
+
+pre > code
+{
+    display: inline-block;
+    max-height: 500px;
+    overflow: auto;
+    padding: 15px;
+}
+
+img
+{
+    border: none;
+}
+
+.quote
+{
+    border: solid 1px #F7941D;
+    background: #503305;
+    padding: 10px;
+    display: inline-block;
+}
+
+.inverted
+{
+    color: #000;
+    background: #F7941D;
+}
+
+.dim
+{
+    color: #c4610a;
+}
+
+.italics
+{
+    font-style: italic;
+}
+
+.bold
+{
+    font-weight: bold;
+}
+
+a:link, a:visited, a:hover
+{
+    color: #F7941D;
+    font-weight: bold;
+}
+
+/* Turn on a 13x13 scrollbar */
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+ 
+::-webkit-scrollbar-button:vertical {
+    display: none;
+}
+ 
+/* Turn on single button up on top, and down on bottom */
+::-webkit-scrollbar-button:start:decrement,
+::-webkit-scrollbar-button:end:increment {
+    display: none;
+}
+ 
+/* Turn off the down area up on top, and up area on bottom */
+::-webkit-scrollbar-button:vertical:start:increment,
+::-webkit-scrollbar-button:vertical:end:decrement {
+    display: none;
+}
+ 
+/* Place The scroll down button at the bottom */
+::-webkit-scrollbar-button:vertical:increment 
+{
+    display: none;   
+}
+ 
+/* Place The scroll up button at the up */
+::-webkit-scrollbar-button:vertical:decrement {
+    display: none;
+}
+ 
+::-webkit-scrollbar-track:vertical {
+    display: none;
+}
+ 
+/* Top area above thumb and below up button */
+::-webkit-scrollbar-track-piece:vertical:start {
+    
+}
+ 
+/* Bottom area below thumb and down button */
+::-webkit-scrollbar-track-piece:vertical:end {
+    
+}
+ 
+/* Track below and above */
+::-webkit-scrollbar-track-piece {
+    background-color: #311E04;
+}
+ 
+/* The thumb itself */
+::-webkit-scrollbar-thumb:vertical {
+    background-color: #F7941D;
+    cursor: pointer;
+    min-height: 5px;
+}
+
+/* The thumb itself */
+::-webkit-scrollbar-thumb:horizontal {
+    background-color: #F7941D;
+    cursor: pointer;
+    min-width: 5px;
+}
+ 
+/* Corner */
+::-webkit-scrollbar-corner {
+    display: none;
+}
+ 
+/* Resizer */
+::-webkit-scrollbar-resizer {
+    background-color: #F7941D;
+}

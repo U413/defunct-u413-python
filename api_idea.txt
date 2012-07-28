@@ -1,0 +1,42 @@
+Just some basic api idea's and implementation.
+
+
+There is a session dictionary, that is stored in mysql, each session
+has a session dictionary, that hold all the extra vars needed.
+
+Also, importantly, this allows commands to store their own variables
+that they can use later.
+
+The u413.py file should work like this.
+
+Check for session id in get, post, or cookie.
+      If it does NOT, create a new session and store that. (in this case using mysql.)
+
+      If it does, grab the session dictionary.
+      
+Check if continue(in session dict) is set to True, if it is, send input to continueCommand and GOTO  Send Command:
+
+Check if the first word in input is an alias.
+      If it is, expand the word to the value of the alias. This is the new input.
+
+Check if there is a non-empty contextCommand list in the session Dict.
+      If there is, check if the first word of input is a context command
+         If it is, check is there is a current context.
+            If there is, send the input as args to the current context's command and GOTO Send Command:
+            If there is *not* this is an error, report it the user and clear the contextCommandlist.
+Check if the first word of input is equal to the name of a command.
+      If there is, send everything except the first word as args to the command and GOTO Send Command:
+
+
+
+LABEL Send Command: (No your not using a real GOTO silly, this is just for brevity in this outline)
+      Check if the user has a access level needed for the command.
+            IF he does, GOTO Running Command.
+            IF he does not, report an error.
+
+LABEL Running Command:
+      Run the command function giving the args and session dict as arguments.
+      
+      The command will use the out object as a skeleton for return data.
+      Anything dynamic needed can be stored in the session dict, there needs to be a way for the command itself to update this dict, if needed.
+      
