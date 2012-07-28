@@ -78,6 +78,9 @@
 		else{
 			$cli.data('disablePost',false);
 		}
+		if(apiResult.Notification!=null){
+			$notifications.text(apiResult.Notification);
+		}
 	}
 
 	function TypeLines(displayItems,scrollToBottom){

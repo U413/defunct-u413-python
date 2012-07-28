@@ -31,6 +31,11 @@ def msg_func(args,u413):
 		u413.type("Invalid message ID.")
 		return
 	msg=msg[0]
+	if msg["receiver"]!=u413.user.userid and u413.user.level<user.User.admin:
+		u413.type("You do not have permission to view that message.")
+		return
+	if not bool(ord(msg["seen"])):
+		db.query("UPDATE messages SET seen=TRUE WHERE id=%i;"%int(msg["id"]))
 	sender=db.query("SELECT username FROM users WHERE id=%i;"%int(msg["sender"]))[0]["username"]
 	u413.donttype('{{<span class="transmit" data-transmit="MESSAGE {0}">{0}</span>}} <span class="inverted">{1}</span><br/><span class="dim">Sent by {2} {3}</span><br/><br/>{4}'.format(args,msg["topic"],sender,util.ago(msg["sent"]),bbcode.bbcodify(msg["msg"])))
 	u413.clear_screen()

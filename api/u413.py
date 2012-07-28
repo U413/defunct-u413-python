@@ -72,7 +72,8 @@ def index(req):
 				"Exit":False,
 				"PasswordField":False,
 				"ScrollToBottom":True,
-				"DisplayItems":[]
+				"DisplayItems":[],
+				"Notification":None
 			}
 			self.cmds=command.cmds
 			self.user=u
@@ -119,6 +120,9 @@ def index(req):
 
 		def exit(self):
 			self.j["Exit"]=True
+		
+		def notify(self,notification):
+			self.j["Notification"]=notification
 	
 		def exec_js(self,start,cleanup=''):
 			out=''
@@ -205,6 +209,10 @@ def index(req):
 		session=Cookie.Cookie('session',currentuser.session)
 		session.expires=time.time()+6*60*60
 		Cookie.add_cookie(req,session)
+		
+		msgs=int(db.query("SELECT COUNT(*) FROM messages WHERE receiver=%i AND seen=FALSE;"%currentuser.userid)[0]["COUNT(*)"])
+		if msgs>0:
+			u.notify("You have %i new messages in your inbox."%msgs);
 
 		if callback==None:
 			return json.dumps(u.j)

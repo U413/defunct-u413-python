@@ -30,7 +30,7 @@ def msg_func(args,u413):
 	for msg in msgs:
 		user=db.query("SELECT username FROM users WHERE id=%i;"%int(msg["sender"]))[0]["username"]
 		if bool(ord(msg["seen"])):
-			out+='<tr><td>{%i} %s</td><td>Sent by %s %s</td></tr>'%(int(msg["id"]),msg["topic"],user,util.ago(msg["sent"]))
+			out+='<tr><td>{%i}</td><td>%s <span class="dim">sent by %s %s</span></td></tr>'%(int(msg["id"]),msg["topic"],user,util.ago(msg["sent"]))
 		else:
 			out+='<tr><td>{%i}</td><td><b>%s</b> <span class="dim">sent by %s %s</span></td></tr>'%(int(msg["id"]),msg["topic"],user,util.ago(msg["sent"]))
 	out+='</table>'
