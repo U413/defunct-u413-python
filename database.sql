@@ -79,6 +79,16 @@ CREATE TABLE users(
 	alias TEXT
 );
 
+CREATE TABLE messages(
+	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	sender INT(32),
+	receiver INT(32),
+	seen BIT,
+	sent TIMESTAMP,
+	topic VARCHAR(128),
+	msg TEXT
+);
+
 CREATE TABLE wall(
 	user INT(32),
 	text TEXT,

@@ -1,4 +1,0 @@
-AddHandler cgi-script .cgi .py
-Options +ExecCGI
-
-ErrorDocument 404 /error/index.py
