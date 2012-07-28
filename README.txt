@@ -1,6 +1,5 @@
 u413 - an open-source BBS/terminal/PI-themed forum
     Copyright (C) 2012 PiMaster
-    Copyright (C) 2012 EnKrypt
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published by
@@ -115,21 +114,19 @@ Boards:
 	[quote]text[/quote] - Formats the surrounded text to denote a quote by another user.
 	[quote]REPLY ID[/quote] - Quotes the specified reply.
 	[url=URL]URL or text[/url] - Formats text to link to the URL or links to the URL. *
-	*[transmit]text[/transmit] - Formats the text so that clicking it puts it in the prompt. *
+	[transmit]text[/transmit] - Formats the text so that clicking it puts it in the prompt. *
 	[color=HEX]text[/color] - Formats the text so that it's in color (Note: Only hex values are supported) *
 	SHIFT + ENTER - Drop down a line in forum posts.
 	
 	[video]link[/video] - Displays a video (video formats, NOT FOR YOUTUBE) (NOTE: figure out a way to make this like u413.tv).
 	[youtube]link/id[/video] - Displays a youtube video (NOTE: May be deprecated in the future).
 	[audio]link[/audio] - Plays audio (with controls - no autoplay).
-	*[flash]link[/flash] - Embeds a flash animation/game.
-	*[js]code[/js] - Embeds javascript in an iframe.
+	[flash]link[/flash] - Embeds a flash animation/game.
+	[js]code[/js] - Embeds javascript in an iframe.
 	[css=code]text[/css] - Styles text.
-	*[spoiler(=label)]text[/spoiler] - Hides text under a label until the user clicks a button.
-	*[list=start (ex: a A 1, none means unordered)][*]item 1 [*]item 2 [*] item 3 [/list] - Make an ordered or unordered list.
-	*[table][row][column]stuff[/column][/row][/table] - Build a table.
-
-* = not yet implemented
+	[spoiler(=label)]text[/spoiler] - Hides text under a label until the user clicks a button.
+	[list=start (ex: a A 1, none means unordered)][*]item 1 [*]item 2 [*] item 3 [/list] - Make an ordered or unordered list.
+	[table][row][column]stuff[/column][/row][/table] - Build a table.
 
 Requests sent to u413 should be JSON using the following format:
 {
@@ -141,13 +138,12 @@ Responses returned by u413 are JSON with the following format:
 {
 	Command:"HELP",
 	ContextText:"BOARD 3",
-	CurrentUser:"",
+	CurrentUser:",
 	EditText:"This is text that goes into the CLI",
 	SessionId:"The session ID (usually something like jJJ98s3jd90Jj45ovjsjv6JDc)",
 	TerminalTitle:"Terminal - Visitor",
 	ClearScreen:false,
 	Exit:false,
-	Error:false,
 	PasswordField:false,
 	ScrollToBottom:true,
 	DisplayItems:
@@ -163,81 +159,38 @@ Responses returned by u413 are JSON with the following format:
 
 Database organization:
 
-database u413
-	table boards
-		+--------+-------------+------+-----+---------+-------+-------------------+
-		| Field  | Type        | Null | Key | Default | Extra |    Description    |
-		+--------+-------------+------+-----+---------+-------+-------------------+
-		| id     | int(11)     | NO   | PRI | NULL    |       | id of the board   |
-		| name   | varchar(32) | YES  |     | NULL    |       | name of the board |
-		| onall  | bit(1)      | YES  |     | NULL    |       | displayed on all? |
-		| hidden | bit(1)      | YES  |     | NULL    |       | hidden on boards? |
-		+--------+-------------+------+-----+---------+-------+-------------------+
-	
-	table posts (topics and replies)
-		+--------+--------------+------+-----+---------+----------------+----------------------+
-		| Field  | Type         | Null | Key | Default | Extra          |     Description      |
-		+--------+--------------+------+-----+---------+----------------+----------------------+
-		| id     | int(16)      | NO   | PRI | NULL    | auto_increment | id of the post       |
-		| topic  | bit(1)       | YES  |     | NULL    |                | is it a topic?       |
-		| title  | varchar(128) | YES  |     | NULL    |                | title (topics)       |
-		| parent | int(11)      | YES  |     | NULL    |                | parent (board/topic) |
-		| owner  | int(11)      | YES  |     | NULL    |                | owner of post        |
-		| editor | int(11)      | YES  |     | NULL    |                | editor of post       |
-		| post   | text         | YES  |     | NULL    |                | the post's content   |
-		| locked | bit(1)       | YES  |     | NULL    |                | topic locked?        |
-		| edited | datetime     | YES  |     | NULL    |                | time of editing      |
-		| posted | datetime     | YES  |     | NULL    |                | time of posting      |
-		+--------+--------------+------+-----+---------+----------------+----------------------+
-	
-	table sessions
-		+----------+-------------+------+-----+---------+-------+--------------------+
-		| Field    | Type        | Null | Key | Default | Extra |    Description     |
-		+----------+-------------+------+-----+---------+-------+--------------------+
-		| id       | char(64)    | NO   | PRI | NULL    |       | session id (hex)   |
-		| user     | int(11)     | YES  |     | NULL    |       | user id            |
-		| username | varchar(32) | YES  |     | NULL    |       | username           |
-		| access   | int(11)     | YES  |     | NULL    |       | user access level  |
-		| expire   | datetime    | YES  |     | NULL    |       | session expiration |
-		| context  | varchar(32) | YES  |     | NULL    |       | user context       |
-		| history  | text        | YES  |     | NULL    |       | user cmd history   |
-		| cmd      | varchar(16) | YES  |     | NULL    |       | continued command  |
-		| cmddata  | text        | YES  |     | NULL    |       | command's data     |
-		+----------+-------------+------+-----+---------+-------+--------------------+
-	
-	table users
-		+----------+-------------+------+-----+---------+----------------+-------------------+
-		| Field    | Type        | Null | Key | Default | Extra          |   Description     |
-		+----------+-------------+------+-----+---------+----------------+-------------------+
-		| id       | int(11)     | NO   | PRI | NULL    | auto_increment | user id           |
-		| username | varchar(32) | YES  |     | NULL    |                | username          |
-		| password | char(64)    | YES  |     | NULL    |                | hashed password   |
-		| access   | int(11)     | YES  |     | NULL    |                | user access level |
-		| muted    | bit(1)      | YES  |     | b'0'    |                | console muted?    |
-		| alias    | text        | YES  |     | NULL    |                | dict of aliases   |
-		+----------+-------------+------+-----+---------+----------------+-------------------+
-	
-	table wall/nsfwall
-		+--------+-----------+------+-----+-------------------+-------+--------------+
-		| Field  | Type      | Null | Key | Default           | Extra | Description  |
-		+--------+-----------+------+-----+-------------------+-------+--------------+
-		| user   | int(11)   | YES  |     | NULL              |       |   user id    |
-		| text   | text      | YES  |     | NULL              |       | note content |
-		| posted | timestamp | NO   |     | CURRENT_TIMESTAMP |       | posting time |
-		+--------+-----------+------+-----+-------------------+-------+--------------+
+User: u413
+	Database: userdata
+		Table: users:
+			INT id,VARCHAR(32) username,CHAR(32) password,INT access,BOOL banned,VARCHAR(8) cmd,BYTE stage
+			id of the user,the username,hashed password,the access level of the user (see below),true if banned,the last used command,the stage of the command the user is in (if applicable)
+		Table: banned:
+			INT id,DATETIME end
+			id of the user,the date when their ban is over
+	Database: content
+		Table: boards
+			INT id,VARCHAR(32) name,BOOL onall,BOOL hidden
+			id of the board,the name of the board,true if it's on board all,true if it isn't shown with BOARDS
+		Table: topics
+			INT id,VARCHAR(128) title,INT board,INT owner,BOOL locked,TEXT post,BOOL edited,INT editor,DATETIME whenedit,DATETIME posted
+			id of the topic,topic title,id of the board,id of the owner,true if no more posts can be made,the text of the original post,true if the topic has been edited,id of the editor of the topic (if applicable),the date the topic was edited (if applicable),the date the topic was posted
+		Table: posts
+			INT id,INT topic,INT owner,INT offset,BOOL anon,TEXT post,BOOL edited,INT editor,DATETIME whenedit,DATETIME posted
+			id of the post,id of the topic,the offset from the first post (original post=0),true if this post is on the anon board,the content of the post,true if this post has been edited,id of the editor of this post (if applicable),the date the post was edited (if applicable),the date this post was made
+		Table: anons
+			INT id,INT offset,VARCHAR(4) name
+			id of the anonymous post,up to 4 letter anonymous name (like AAB or OP),the id of the real user
 
 Access Levels:
-	-10 - banned, can't see
-	-1 - banned, still visible
+	-1 - banned
 	0 - guest
 	10 - normal user
-	20 - halfmod
-	30 - mod
-	40 - admin
-	50 - owner
+	20 - mod
+	30 - admin
 
-All files are to be kept at api.u413.com
-These are not the files which are to be kept at public_html (or www) to run the site
-They are not part of the api and hence not part of the current project. They are however , required to run u413
-To get those scripts , you can PM/email PiMaster who is the current Administartor of u413 at darknut83@gmail.com
-Or download them yourself.
+Usernames to be reserved:
+	PiMaster
+	PIbot
+	Admin
+	Mod
+	u413
