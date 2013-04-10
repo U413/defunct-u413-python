@@ -1,4 +1,8 @@
+/* Single line comments are not compatible with Windows line endings */
+
 CREATE DATABASE u413;
+
+USE u413;
 
 CREATE TABLE boards(
 	id INT PRIMARY KEY,
@@ -7,7 +11,7 @@ CREATE TABLE boards(
 	hidden BIT
 );
 
---Create u413's default board list
+/* Create u413's default board list */
 INSERT INTO boards(id,name,onall,hidden) VALUES(0,'All',FALSE,FALSE);
 INSERT INTO boards(id,name,onall,hidden) VALUES(1,'Links',TRUE,FALSE);
 INSERT INTO boards(id,name,onall,hidden) VALUES(2,'Site',TRUE,FALSE);
@@ -44,9 +48,9 @@ INSERT INTO boards(id,name,onall,hidden) VALUES(2012,'End of the world',FALSE,FA
 INSERT INTO boards(id,name,onall,hidden) VALUES(9001,'OVER NINE THOUSAND',FALSE,FALSE);
 INSERT INTO boards(id,name,onall,hidden) VALUES(12345,'Gambling',FALSE,FALSE);
 
---Posts begin at 1000
+/* Posts begin at 1000 */
 CREATE TABLE posts(
-	id INT(32) NOT NULL PRIMARY KEY AUTO_INCREMENT=1000,
+	id INT(32) NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	topic BIT,
 	title VARCHAR(128),
 	parent INT,
@@ -57,6 +61,8 @@ CREATE TABLE posts(
 	edited DATETIME,
 	posted DATETIME
 );
+
+ALTER TABLE posts AUTO_INCREMENT=1000;
 
 CREATE TABLE sessions(
 	id CHAR(64) NOT NULL PRIMARY KEY,
