@@ -177,6 +177,8 @@ def index(req):
 		import messages
 		import message
 		import newmessage
+		
+		import chat
 	
 		import sql
 	

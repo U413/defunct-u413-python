@@ -74,7 +74,7 @@ public class U413ChatServer implements Runnable{ //threads run in same class. I 
 				}
 				catch(Exception ex){ }
             }
-			connectionMap.remove(this);
+			connectionMap.remove(nick);
 			System.out.println(nick+" closed the connection");
 			e.printStackTrace();
 		}
@@ -152,7 +152,7 @@ public class U413ChatServer implements Runnable{ //threads run in same class. I 
                 channel.send("LOGOUT "+nick); //tell everyone hes out
                 if (channel.channelMembers.size()==0&&(!channel.persist))
                     channelMap.remove(channel.name); //remove channel on leaving
-				connectionMap.remove(this);
+				connectionMap.remove(nick);
 				socket.close();
             }
         }
@@ -202,7 +202,7 @@ public class U413ChatServer implements Runnable{ //threads run in same class. I 
 			public void run(U413ChatServer con, String prefix, String[] arguments)throws Exception{
 				String url="jdbc:mysql://localhost:3306/u413"; //setting up stuff for MySQL connection
 				String user="u413";
-				File file=new File("/var/u413.pwd"); //read password
+				File file=new File("/home/enkrypt/u413.pwd"); //read password
 				int ch;
 				StringBuffer strContent=new StringBuffer("");
 				try{
@@ -240,14 +240,26 @@ public class U413ChatServer implements Runnable{ //threads run in same class. I 
 					con.send("AUTH Guest");
 					con.send("LOGOUT Bye");
 					con.sendQuit("Invalid");
-					connectionMap.remove(this);
+					connectionMap.remove(con.nick);
 				}
 				else{
 					con.nick=name;
 					synchronized (synch){
 						U413ChatServer testconn=connectionMap.get(con.nick); //test if theres already a similar connection
 						if (testconn!=null){
-							con.sendSelfNotice("User already logged in. Make sure you have no other windows/tabs open. Otherwise PM a mod or admin");
+							con.sendSelfNotice("Did you close the chat last time using '/LOGOUT'? The server thinks you are already logged in. This could be serious somtimes if someone else is using your nick to chat. Ask an admin/mod to monitor suspicious behaviour. For now , you can just refresh and retry.");
+							testconn.sendSelfNotice("Did you close the chat last time using '/LOGOUT'? The server thinks you are already logged in. This could be serious somtimes if someone else is using your nick to chat. Ask an admin/mod to monitor suspicious behaviour. For now , you can just refresh and retry.");
+							con.send("LOGOUT Bye");
+							testconn.send("LOGOUT Bye");
+							testconn.sendQuit("Invalid");
+							connectionMap.remove(testconn.nick);
+							U413ChatServer testlol=null;
+							while((testlol=connectionMap.get(con.nick))!=null){
+								testlol.send("LOGOUT Bye");
+								testlol.sendQuit("Invalid");
+								connectionMap.remove(testlol.nick);
+								System.out.println("Removing extra connections for "+con.nick);
+							}
 						}
 						else{
 							connectionMap.put(con.nick, con); //add the connection
@@ -255,10 +267,11 @@ public class U413ChatServer implements Runnable{ //threads run in same class. I 
 							con.sendSelfNotice("Looked up Session. Received User"); //Send Welcome messages and Stuff
 							con.sendSelfNotice("**Connection Authenticated and Established**");
 							con.sendSelfNotice("*");
-							con.sendSelfNotice("Welcome to U413's Epic Chat Server. "+con.nick);
+							con.sendSelfNotice("Welcome to U413's Chat Server. "+con.nick);
 							con.sendSelfNotice("Written by EnKrypt");
 							con.sendSelfNotice("*");
 							con.sendSelfNotice("Type '/JOIN <channel>' to join a channel");
+							con.sendSelfNotice("Deafult channel is #u413. Type '/JOIN #u413' to join that channel");
 						}
 					}
 				}
@@ -274,7 +287,7 @@ public class U413ChatServer implements Runnable{ //threads run in same class. I 
 					synchronized (synch){
 						Channel channel=channelMap.get(channelName);
 						boolean added=false;
-						if (channel==null){
+						if (!channelMap.containsKey(channelName)){
 							added=true;
 							channel=new Channel(); //create channel
 							channel.name=channelName;
@@ -292,7 +305,7 @@ public class U413ChatServer implements Runnable{ //threads run in same class. I 
 						channel.send("JOIN "+channelName+" "+con.nick); //tell other you've joined
 						String url="jdbc:mysql://localhost:3306/u413"; //setting up stuff for MySQL connection
 						String user="u413";
-						File file=new File("/var/u413.pwd"); //read password
+						File file=new File("/home/enkrypt/u413.pwd"); //read password
 						int ch;
 						StringBuffer strContent=new StringBuffer("");
 						try{
@@ -318,8 +331,17 @@ public class U413ChatServer implements Runnable{ //threads run in same class. I 
 						catch(Exception e){ 
 							access=10;
 						}
-						if (added||access>20){ //user might be a mod or admin of u413
+						String listmem="USERS "+channelName;
+						for (U413ChatServer channelMember : channel.channelMembers){ //give list of members
+							listmem+=" "+channelMember.nick;
+						}
+						con.send(listmem);
+						if (added){ System.out.println("WHY - added");
 							channel.channelops.add(con); //creator becomes op
+							channel.send("OP "+channelName+" "+con.nick);
+						}
+						else if (access>20){ System.out.println("WHY - added");//user might be a mod or admin of u413
+							channel.channelops.add(con); 
 							channel.send("OP "+channelName+" "+con.nick);
 						}
 						String listop="OPS "+channelName;
@@ -327,11 +349,6 @@ public class U413ChatServer implements Runnable{ //threads run in same class. I 
 							listop+=" "+channelop.nick;
 						}
 						con.send(listop);
-						String listmem="USERS "+channelName;
-						for (U413ChatServer channelMember : channel.channelMembers){ //give list of members
-							listmem+=" "+channelMember.nick;
-						}
-						con.send(listmem);
 						if (channel.topic!=null) //give topic
 							con.send("TOPIC "+arguments[0]+" "+channel.topic.replace("%","%25").replace(" ","%20"));
 						else

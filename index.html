@@ -6,14 +6,19 @@
 		<link rel="shortcut icon" href="favicon.ico"/>
 		<link href="content/styles/Terminal.css" rel="stylesheet" type="text/css"/>
 		<link href="content/styles/Prettify.css" rel="stylesheet" type="text/css"/>
+		<link href="content/styles/chat.css" rel="stylesheet" type="text/css"/>
+		<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
 		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="scripts/jquery.autosize-min.js"></script>
 		<script type="text/javascript" src="scripts/snowfall.min.jquery.js"></script>
 		<script type="text/javascript" src="scripts/prettify.js"></script>
 		<script type="text/javascript" src="scripts/soundmanager2-nodebug-jsmin.js"></script>
 		<script type="text/javascript" src="scripts/jquery.scrollTo-min.js"></script>
 		<script type="text/javascript" src="scripts/jquery.coolType_1.2.0.js"></script>
 		<script type="text/javascript" src="scripts/jquery.u413Client.js"></script>
+		<script type="text/javascript" src="scripts/java_socket_bridge.js"></script>
+		<script type="text/javascript" src="scripts/u413chat.js"></script>
 		<script type="text/javascript">
 			var rootPath='';
 			soundManager.url=rootPath+'content/soundmanager2/';
@@ -94,7 +99,8 @@
 			</div>
 		<![endif]-->
 		<img class="backgroundImage" src="content/background.jpg"/>
-		<div style="top:0;left:0;width:100%;position:absolute;z-index:1;">
+		<div id="socket" style="height:0px; width:0px;"></div>
+		<div class="bodyframe" style="top:0;left:0;width:100%;position:absolute;z-index:1;" onclick="$('#Cli').focus();">
 			<div id="frame">
 				<div class="opacityFrame"></div>
 				<div class="subFrame" style="overflow:auto;">
@@ -102,7 +108,7 @@
 						<div id="terminalDisplay">
 							<noscript id="defdisplay">
 								Welcome to...<br/><br/> &nbsp;__ &nbsp;__ &nbsp;__ __ &nbsp; &nbsp; &nbsp; _ &nbsp; &nbsp; __<br/> /\ \/\ \/\ \\ \ &nbsp; &nbsp;/&#39; \ &nbsp;/&#39;__`\<br/> \ \ \ \ \ \ \\ \ &nbsp;/\_, \/\_\L\ \<br/> &nbsp;\ \ \ \ \ \ \\ \_\/_/\ \/_/_\_&lt;_<br/> &nbsp; \ \ \_\ \ \__ ,__\ \ \ \/\ \L\ \<br/> &nbsp; &nbsp;\ \_____\/_/\_\_/ &nbsp;\ \_\ \____/<br/> &nbsp; &nbsp; \/_____/ &nbsp;\/_/ &nbsp; &nbsp; \/_/\/___/<br/><br/>
-								<p>You need to enable javascript to continue.</p>
+								<span style="color:red;">Coming soon to a browser near you!</span>
 							</noscript>
 						</div>
 						<input id="Display" name="Display" type="hidden"/>
@@ -117,6 +123,21 @@
 					</form><br/><br/>
 				</div><br/>
 			</div>
+		</div>
+		<div class="chat" style="opacity: 0; display: none;" onclick="$('.in').focus();">
+			<div class="titlebar">U413 Chat</div><br>
+			<div class="content">
+				<div class="tabbar">
+					<div class="tabs">
+						<div id="Status" class="chattab active" onclick="switchfocus(this.innerHTML);">Status</div>
+					</div>
+				</div>
+				<span class="topic" style="color:red;"><div style="padding:2px; border:solid 1px red;" id="Statustopic">Chat server status</div></span>
+				<div class="out">
+					<span class="Status"></span>
+				</div>
+				&gt; <input type="text" class="in" onKeyDown="if(event.keyCode==13) sendchat(this.value);"/>
+			</div><br>
 		</div>
 	</body>
 </html>

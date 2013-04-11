@@ -219,7 +219,7 @@
 
 			var $body=$('body');
 
-			$body.live('keydown',function(e){
+			$('.bodyframe').live('keydown',function(e){
 				if(!$body.data('dontHandle')){
 					var key=e.keyCode;
 					if(!e.shiftKey && !e.altKey && !e.ctrlKey){
@@ -259,7 +259,7 @@
 				}
 			});
 
-			$body.live('keypress',function(e){
+			$('.bodyframe').live('keypress',function(e){
 				if(!$body.data('dontHandle')){
 					if($cli.data('continueKeyPress')){
 						var key=e.keyCode?e.keyCode:e.charCode;
@@ -267,7 +267,6 @@
 							key=e.charCode;
 						if(key!=13){
 							var letter=String.fromCharCode(key);
-
 							if($cli.data('hasFocus')==false){
 								$elementToScroll.scrollTo($cli,0,{axis:'y'});
 								$cli.focus().val($cli.val()+letter);
@@ -287,10 +286,6 @@
 
 			$cli.live('focus',function(){
 				$(this).data('hasFocus',true);
-			});
-
-			$cli.live('blur',function(){
-				$(this).data('hasFocus',false);
 			});
 
 			$cli.replaceWith('<textarea autocomplete="off" autofocus="autofocus" id="'+settings.cliElement.replace("#","")+'"></textarea>');
