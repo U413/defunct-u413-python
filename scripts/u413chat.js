@@ -38,7 +38,7 @@ function sendchat(value){
 	params=value.split(" ");
 	$(".in").val("");
 	if (value.toUpperCase()=="START"&&gloflag==0){
-		if (socket_connect(document.domain,1000)){
+		if (socket_connect(document.domain,10000)){
 			gloflag=1;
 			$(".Status").html("");
 			socket_send("AUTH "+usession);

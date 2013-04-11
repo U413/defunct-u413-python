@@ -39,14 +39,14 @@ public class U413ChatServer implements Runnable{ //threads run in same class. I 
 	
 	public static void main(String args[]){
 		BufferedReader b=new BufferedReader(new InputStreamReader(System.in));
-		System.out.print("PORT ( default - 1000 ): "); //choose port. Any error will make it 1000 by default
-		int port=1000;
+		System.out.print("PORT ( default - 10000 ): "); //choose port. Any error will make it 10000 by default
+		int port=10000;
 		try{
 			port=Integer.parseInt(b.readLine()); //retards might type space or alphanumeric keys
 		}
 		catch(Exception e){
-			System.out.println("Wrong format. Using 1000 instead"); //if they're retard enough to make it into this block , then tell them on their face that you aint giving them another chance
-			port=1000;
+			System.out.println("Wrong format. Using 10000 instead"); //if they're retard enough to make it into this block , then tell them on their face that you aint giving them another chance
+			port=10000;
 		}
 		System.out.println("Server Started. Waiting for connections");
 		try{
