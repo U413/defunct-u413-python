@@ -15,7 +15,7 @@ CREATE TABLE boards(
 INSERT INTO boards(id,name,onall,hidden) VALUES(0,'All',FALSE,FALSE);
 INSERT INTO boards(id,name,onall,hidden) VALUES(1,'Links',TRUE,FALSE);
 INSERT INTO boards(id,name,onall,hidden) VALUES(2,'Site',TRUE,FALSE);
-INSERT INTO boards(id,name,onall,hidden) VALUES(3,'Programmig',TRUE,FALSE);
+INSERT INTO boards(id,name,onall,hidden) VALUES(3,'Programming',TRUE,FALSE);
 INSERT INTO boards(id,name,onall,hidden) VALUES(4,'Anon',TRUE,FALSE);
 INSERT INTO boards(id,name,onall,hidden) VALUES(5,'Video/movies',TRUE,FALSE);
 INSERT INTO boards(id,name,onall,hidden) VALUES(6,'Audio/music',TRUE,FALSE);
@@ -84,6 +84,9 @@ CREATE TABLE users(
 	muted BIT DEFAULT 0,
 	alias TEXT
 );
+
+/* Create default guest user */
+INSERT INTO users(id,username,password,access,muted,alias) VALUES(1,'guest','',0,FALSE,'[]');
 
 CREATE TABLE messages(
 	id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
