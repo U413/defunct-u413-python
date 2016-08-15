@@ -31,7 +31,7 @@ def msg_func(args,u413):
 		u413.type("Invalid message ID.")
 		return
 	msg=msg[0]
-	if msg["receiver"]!=u413.user.userid and u413.user.level<user.User.admin:
+	if int(msg["receiver"])!=u413.user.userid and u413.user.level<user.User.admin:
 		u413.type("You do not have permission to view that message.")
 		return
 	if not bool(ord(msg["seen"])):
